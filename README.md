@@ -1,93 +1,95 @@
 # HK BIM CDE Standard × ACC RAG
 
-本地三源 RAG 系统：把 **香港 BIM / CDE 标准**、**ACC × 港标实施手册（Playbook）**、以及 **Autodesk Docs 产品帮助** 分库索引，再通过编排器按问题意图做单轨或混合问答。
+A local three-source RAG system that keeps **Hong Kong BIM / CDE standards**, an **ACC × HK implementation playbook**, and **Autodesk Docs product help** in separate indexes, then orchestrates single-track or hybrid answers by question intent.
 
-回答默认面向「标准怎么要求 → 项目怎么落地 → 产品点哪里 → 对齐与缺口」四段结构（`--corpus hybrid`）。
+The default answer shape (`--corpus hybrid`) is:
 
-## 三个 Source RAG
+**Standards requirements → Project implementation → Product steps → Alignment & gaps**
 
-三轨 **物理隔离**（各自独立的 Chroma collection / chunks），**绝不混库 embedding**。Hybrid 只在检索后按引用合并进生成提示。
+## Three source RAGs
 
-| Track | 代号 | 内容 | 语料 / 索引 |
-|-------|------|------|-------------|
-| **1. Standards** | `hk_cde` | 香港行业标准：CIC BIM Standards、CDE Beginner Guide、DEVB Harmonisation、BD ADM-19 / ADV-34、LandsD BIM-GIS 等（章节 Markdown + 中文别名路由） | `knowledge/industry/hk_cde/` → `.rag_data/industry_hk_cde/` |
-| **2. Playbook** | `playbook` | ACC × 港标实施手册：四容器 CDE、命名、权限、审批、设计协同、信息要求、以及 ACC Project Template（GC / Buildings）落地建议 | `knowledge/playbook/acc_hk_bim/` → `.rag_data/playbook_acc_hk/` |
-| **3. Product (Docs)** | `docs` | Autodesk Docs / ACC 官方帮助：文件夹组织、Naming Standard、权限、Workflow、Project Template 等操作步骤 | 爬虫产出 → ingest → `.rag_data/`（产品主库） |
+The three tracks are **physically isolated** (separate Chroma collections / chunk stores). Embeddings are never merged into one collection. Hybrid mode only combines retrieved chunks after retrieval, with numbered citations.
 
-每轨还有独立的 **Query KB（路由字典）**：把口语/中文别名映射到优先章节或 URL，在真正向量检索之前做 pin / 改写，**路由条目本身不进入 LLM 上下文**。
+| Track | ID | What it covers | Corpus / index |
+|-------|------|----------------|----------------|
+| **1. Standards** | `hk_cde` | Hong Kong industry standards: CIC BIM Standards, CDE Beginner Guide, DEVB Harmonisation, BD ADM-19 / ADV-34, LandsD BIM-GIS, and related chapter Markdown plus Chinese alias routing | `knowledge/industry/hk_cde/` → `.rag_data/industry_hk_cde/` |
+| **2. Playbook** | `playbook` | ACC × HK implementation handbook: four-container CDE, naming, permissions, approvals, design collaboration, information requirements, and ACC Project Template (GC / Buildings) guidance | `knowledge/playbook/acc_hk_bim/` → `.rag_data/playbook_acc_hk/` |
+| **3. Product (Docs)** | `docs` | Autodesk Docs / ACC official help: folder organization, Naming Standard, permissions, Workflow, Project Template, and related product steps | crawled help → ingest → `.rag_data/` (docs main store) |
+
+Each track also has its own **Query KB (route dictionary)**: maps colloquial / Chinese aliases to preferred sections or URLs for pinning and query rewriting **before** vector search. Route entries themselves **do not** enter the LLM prompt.
 
 ```text
-知识源（Markdown / 帮助文档）
+Source knowledge (Markdown / help docs)
         │
-        ├─ ingest + chunk + embed ──► Chroma（内容库）
-        └─ build_query_kb ──────────► Route KB（仅路由）
+        ├─ ingest + chunk + embed ──► Chroma (content store)
+        └─ build_query_kb ──────────► Route KB (routing only)
 ```
 
-## Orchestration 架构逻辑
+## Orchestration architecture
 
-入口：`ask.py` → `HybridOrchestrator`（`rag/orchestrator/pipeline.py`）。
+Entry point: `ask.py` → `HybridOrchestrator` (`rag/orchestrator/pipeline.py`).
 
 ```mermaid
 flowchart TD
   Q[User question] --> META{Capabilities help?}
-  META -->|是| HELP[capabilities_help<br/>无检索 / 无 LLM]
-  META -->|否| CL[classify_intent<br/>capability + track 提示]
+  META -->|yes| HELP[capabilities_help<br/>no retrieve / no LLM]
+  META -->|no| CL[classify_intent<br/>capability + track hint]
   CL --> CORPUS{--corpus}
-  CORPUS -->|docs / hk_cde / playbook| SINGLE[单轨 HybridRetriever]
-  CORPUS -->|hybrid 默认| PARA[并行检索三轨]
-  PARA --> PIN[Chunk pin<br/>能力优先章节]
-  PIN --> MERGE[merge_triple_contexts<br/>编号追踪 Docs/HK/Playbook]
-  MERGE --> COMPOSE{可规则成文?}
-  COMPOSE -->|folder 等| RULE[structured_compose<br/>四段模板]
-  COMPOSE -->|否| LLM[generate_hybrid_answer<br/>四段提示 + 引用]
-  RULE --> POLISH[语言头 + polish]
+  CORPUS -->|docs / hk_cde / playbook| SINGLE[Single-track HybridRetriever]
+  CORPUS -->|hybrid default| PARA[Parallel retrieve on 3 tracks]
+  PARA --> PIN[Chunk pin<br/>capability-priority sections]
+  PIN --> MERGE[merge_triple_contexts<br/>numbered Docs/HK/Playbook]
+  MERGE --> COMPOSE{Rule compose?}
+  COMPOSE -->|folder etc.| RULE[structured_compose<br/>4-section template]
+  COMPOSE -->|no| LLM[generate_hybrid_answer<br/>4-section prompt + cites]
+  RULE --> POLISH[Localized headers + polish]
   LLM --> VAL[validate_hybrid_answer]
-  VAL -->|软失败可重试| LLM
+  VAL -->|soft fail may retry| LLM
   VAL --> OUT[Answer + citations]
   SINGLE --> GEN[generate_answer]
   GEN --> OUT
 ```
 
-### 1. 意图与元问答
+### 1. Intent and meta Q&A
 
-- **Capabilities help**（例如「你可以做什么」）：直接返回能力说明，`track=meta`，不检索、不调用 Ollama。
-- **`classify_intent`**：识别能力（`folder` / `naming` / `permissions` / `workflow` / `project_template` …）与偏轨提示，供 hybrid 改写检索 query、pin 章节。
+- **Capabilities help** (e.g. “what can you do”): returns capability text only; `track=meta`; no retrieve, no Ollama.
+- **`classify_intent`**: detects capability (`folder` / `naming` / `permissions` / `workflow` / `project_template` …) and track bias for hybrid query rewrite and section pinning.
 
-### 2. 单轨 vs Hybrid
+### 2. Single-track vs hybrid
 
-| `--corpus` | 行为 |
-|------------|------|
-| `docs` / `hk_cde` / `playbook` | 只检索对应内容库 + 该轨 Query KB |
-| `hybrid`（默认） | 三轨并行检索 → 合并 → 四段成文 |
-| `auto` | 按分类结果选轨（偏产品或偏标准） |
+| `--corpus` | Behavior |
+|------------|----------|
+| `docs` / `hk_cde` / `playbook` | Retrieve only that content store + its Query KB |
+| `hybrid` (default) | Parallel 3-track retrieve → merge → 4-section answer |
+| `auto` | Pick track from classifier (product- vs standards-leaning) |
 
-### 3. Hybrid 合并与成文
+### 3. Hybrid merge and answer writing
 
-1. **并行检索**：Docs / HK CDE / Playbook 各跑 embedding + BM25 混合检索。
-2. **Capability pin**：例如 naming 强制钉港标 federation/naming、Playbook CICBIMS 结构、Docs Naming Standard 帮助页，避免向量「概念回顾」压过操作章。
-3. **`merge_triple_contexts`**：打成统一编号上下文（`[1]`…），并记录每条属于哪一轨；后续校验按轨检查覆盖。
-4. **成文优先级**：
-   - 部分能力（如 folder）走 **`structured_compose`**：规则四段，降低小模型「无法确认」空话。
-   - 否则 **`generate_hybrid_answer`**：强制四段结构，且 **Route KB 不进 prompt**。
-5. **校验**：缺轨引用、空段、Folder/Naming 硬约束失败时软警告并可重试生成。
-6. **语言**：按问题语言本地化四段标题（EN → Standards Requirements / Implementation Guidance / Product Steps / Alignment & Gaps）。
+1. **Parallel retrieval**: Docs / HK CDE / Playbook each run embedding + BM25 hybrid search.
+2. **Capability pin**: e.g. naming pins HK federation/naming, Playbook CICBIMS structure, and Docs Naming Standard help pages so “concept overview” chunks do not dominate actionable chapters.
+3. **`merge_triple_contexts`**: builds a shared numbered context list (`[1]`…) and records which track each chunk came from for later validation.
+4. **Answer priority**:
+   - Some capabilities (e.g. folder) use **`structured_compose`**: rule-based four sections to reduce empty “cannot confirm” answers from small models.
+   - Otherwise **`generate_hybrid_answer`**: enforces the four-section structure; **Route KB never enters the prompt**.
+5. **Validation**: missing-track citations, empty sections, or hard folder/naming constraints emit soft warnings and may retry generation.
+6. **Language**: section headers follow the question language (EN → Standards Requirements / Implementation Guidance / Product Steps / Alignment & Gaps).
 
-### 四段回答契约
+### Four-section answer contract
 
-| 中文 | English | 应对应的源 |
-|------|---------|------------|
+| Chinese | English | Primary source |
+|---------|---------|----------------|
 | 标准要求 | Standards Requirements | `hk_cde` |
 | 实施建议 | Implementation Guidance | `playbook` |
 | 产品操作 | Product Steps | `docs` |
-| 对齐与缺口 | Alignment & Gaps | 综合（对齐点 + 产品/流程缺口） |
+| 对齐与缺口 | Alignment & Gaps | Combined (fits + product/process gaps) |
 
-## 快速开始
+## Quick start
 
-### 依赖
+### Dependencies
 
 - Python 3.11+
-- [Ollama](https://ollama.com/)：本地生成 + embedding（默认见 `rag/config.py`）
-- 已构建的三轨索引（或按下方步骤重建）
+- [Ollama](https://ollama.com/) for local generation + embedding (defaults in `rag/config.py`)
+- Built indexes for all three tracks (or rebuild with the steps below)
 
 ```bash
 cd /path/to/hk-bim-cde-standard-x-acc-rag
@@ -95,71 +97,71 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-# 确保 ollama 已拉取生成与 embedding 模型
+# Pull generation + embedding models
 ollama pull qwen3.5:4b
 ollama pull qwen3-embedding:0.6b
 ```
 
-### 问答
+### Ask questions
 
 ```bash
-python ask.py "香港 CDE 文件夹结构怎么配"
+python ask.py "How should Hong Kong CDE folders be set up?"
 python ask.py "file naming standard"
-python ask.py "你可以做什么"
+python ask.py "what can you do"
 
-# 只看检索、不生成
+# Retrieval only
 python ask.py --no-generate "permissions on folders"
 
-# 指定单轨
+# Single track
 python ask.py --corpus hk_cde "WIP Shared Published"
 python ask.py --corpus docs "Organize Files"
-python ask.py --corpus playbook "01_WIP 专业夹"
+python ask.py --corpus playbook "01_WIP discipline folders"
 ```
 
-更全的 CLI 说明见 [COMMANDS.md](COMMANDS.md)。
+Full CLI reference: [COMMANDS.md](COMMANDS.md).
 
-### 重建索引（摘要）
+### Rebuild indexes (summary)
 
 ```bash
-# Docs 产品库（需先有帮助 HTML / 语料）
+# Docs product store (requires help HTML / corpus first)
 python ingest.py --rebuild
 python scripts/build_query_kb.py
 
-# 香港标准库
+# Hong Kong standards store
 python scripts/ingest_industry_hk_cde.py --rebuild
 python scripts/build_industry_query_kb.py
 python scripts/build_industry_kb_index.py --rebuild
 
-# Playbook
+# Playbook store
 python scripts/ingest_playbook_acc_hk.py --rebuild
 python scripts/build_playbook_query_kb.py
 python scripts/build_playbook_kb_index.py --rebuild
 ```
 
-PDF 抽取与版权说明见 `knowledge/industry/hk_cde/README.md`。官方 PDF 原文放在本地 `output/HK Standard/`（默认不入库 Git）。
+PDF extraction and copyright notes: `knowledge/industry/hk_cde/README.md`. Official PDFs live under local `output/HK Standard/` (not committed by default).
 
-## 仓库结构
+## Repository layout
 
 ```text
-ask.py / ingest.py     CLI 入口
-rag/                   检索、生成、三轨配置、orchestrator
-knowledge/             可版本管理的 Markdown 语料 + query KB
-scripts/               抽取、ingest、eval、研究脚本
-eval/                  评测用例
-tests/                 单元测试
-output/                爬虫与 PDF 原文（本地，.gitignore）
-.rag_data/             Chroma / chunks（本地，.gitignore）
+ask.py / ingest.py     CLI entry points
+rag/                   Retrieval, generation, track configs, orchestrator
+knowledge/             Versioned Markdown corpora + query KBs
+scripts/               Extract, ingest, eval, research scripts
+eval/                  Evaluation cases
+tests/                 Unit tests
+output/                Crawl mirrors and official PDFs (local, gitignored)
+.rag_data/             Chroma / chunks (local, gitignored)
 ```
 
-## 设计原则
+## Design principles
 
-1. **三源分库**：标准、手册、产品帮助语义不同，合并 collection 会污染检索。
-2. **Hybrid 后置合成**：先各管各的 retrieval，再编号合并 + 四段写作。
-3. **Route ≠ Context**：Query KB / 路由索引只用于选章与改写 query。
-4. **小模型友好**：关键能力用 structured compose / pin，减少幻觉与空话。
-5. **可追溯**：答案中的 `[n]` 对应合并后的 chunk 列表，便于核对来源轨。
+1. **Three separate stores**: standards, playbook, and product help have different semantics; one shared collection pollutes retrieval.
+2. **Hybrid synthesizes after retrieve**: each track retrieves independently; then number-merge + four-section writing.
+3. **Route ≠ context**: Query KB / route indexes only select chapters and rewrite queries.
+4. **Small-model friendly**: critical capabilities use structured compose / pinning to cut hallucination and empty answers.
+5. **Traceable**: `[n]` citations map to the merged chunk list so each claim can be checked by track.
 
-## License / 版权注意
+## License / copyright
 
-- 代码与自撰 Playbook 语料可按本仓库惯例使用。
-- CIC / DEVB / BD / LandsD / Autodesk 文档版权归原作者。本项目仅保留抽取后的 Markdown 供 RAG；**请勿把官方 PDF 全文包推送到公共仓库**。
+- Code and self-authored playbook text may be used under this repository’s normal practice.
+- CIC / DEVB / BD / LandsD / Autodesk materials remain copyright of their owners. This project keeps extracted Markdown for RAG; **do not push full official PDF packages to a public repository**.
