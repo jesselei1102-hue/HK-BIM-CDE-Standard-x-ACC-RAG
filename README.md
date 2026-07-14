@@ -10,9 +10,9 @@ The default answer shape (`--corpus hybrid`) is:
 
 Watch a short walkthrough of the hybrid RAG in action:
 
-https://github.com/jesselei1102-hue/HK-BIM-CDE-Standard-x-ACC-RAG/raw/main/assets/rag-demo.mp4
 
-<video src="assets/rag-demo.mp4" controls width="100%"></video>
+https://github.com/user-attachments/assets/a55a3dec-eee8-4c38-9aef-855a1023afbc
+
 
 If the player does not render in your GitHub client, open the file directly: [`assets/rag-demo.mp4`](assets/rag-demo.mp4).
 
