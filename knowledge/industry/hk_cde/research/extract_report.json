@@ -1,0 +1,40 @@
+{
+  "generated_at": "2026-07-13T08:18:26.920309+00:00",
+  "documents": [
+    {
+      "doc_id": "cicbims_2024",
+      "page_count": 220,
+      "section_count": 143,
+      "ok_pages": 218,
+      "empty_pages": 2,
+      "garbage_pages": 0,
+      "page_coverage_pct": 99.09,
+      "gaps": []
+    },
+    {
+      "doc_id": "cic_beginner_cde",
+      "page_count": 54,
+      "section_count": 51,
+      "ok_pages": 53,
+      "empty_pages": 1,
+      "garbage_pages": 0,
+      "page_coverage_pct": 98.15,
+      "gaps": []
+    },
+    {
+      "doc_id": "devb_harmonisation_v3",
+      "page_count": 169,
+      "section_count": 24,
+      "ok_pages": 169,
+      "empty_pages": 0,
+      "garbage_pages": 0,
+      "page_coverage_pct": 100.0,
+      "gaps": []
+    }
+  ],
+  "page_coverage_pct": 99.32,
+  "outline_mapped_pct": 100.0,
+  "gaps": [],
+  "acknowledged_quality_issues": false,
+  "term_probes": {}
+}

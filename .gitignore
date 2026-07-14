@@ -1,0 +1,22 @@
+.DS_Store
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# 本地 RAG 生成物（Chroma / chunks）
+.rag_data/
+eval/results/
+
+# 爬虫镜像、官方 PDF 等大体量 / 版权材料
+output/
+*.zip
+
+# 编辑器 / 本机
+.idea/
+.vscode/
+*.swp

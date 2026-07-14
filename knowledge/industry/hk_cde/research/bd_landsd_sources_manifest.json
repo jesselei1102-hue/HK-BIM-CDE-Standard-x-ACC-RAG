@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-07-13T15:20:28.754457+00:00",
+  "note": "Supplement to CIC/DEVB corpus; not part of extract_hk_cde_pdfs page_ledger gate. Source copies under output/HK Standard/BD_LandsD/.",
+  "sources": [
+    {
+      "doc_id": "bd_adm19",
+      "title": "Buildings Department PNAP ADM-19 Building Approval Process",
+      "path": "output/HK Standard/BD_LandsD/BD_BD_ADM019.pdf",
+      "sha256": "dff7640d7f5b225dc4af752cd80c0e9f72bef6c7e5a3f9a3299e88b28d18c0e8",
+      "pages": 35,
+      "sections": 16,
+      "high_sections": 9,
+      "authority_prefix": "BD PNAP ADM-19",
+      "extracted_at": "2026-07-13T15:20:28.604204+00:00"
+    },
+    {
+      "doc_id": "bd_adv34",
+      "title": "Buildings Department PNAP ADV-34 Building Information Modelling (BIM)",
+      "path": "output/HK Standard/BD_LandsD/BD_BD_ADV034.pdf",
+      "sha256": "aa45cced0da8469d541e6a18d5c6c8f9e908776a9951acc5633742d6c9d110bc",
+      "pages": 4,
+      "sections": 2,
+      "high_sections": 2,
+      "authority_prefix": "BD PNAP ADV-34",
+      "extracted_at": "2026-07-13T15:20:28.636192+00:00"
+    },
+    {
+      "doc_id": "landsd_bim_gis",
+      "title": "LandsD BIM and GIS Data Integration Guidelines (June 2023)",
+      "path": "output/HK Standard/BD_LandsD/LandsD_LandsD_BIM_and_GIS_Data_Integration_Guidelines_Jun2023.pdf",
+      "sha256": "32ccaa22e4729967e29f29547ec915cfe52bd7da1e7e273cc63a26cae7bb029f",
+      "pages": 14,
+      "sections": 6,
+      "high_sections": 3,
+      "authority_prefix": "LandsD BIM-GIS Guidelines Jun 2023",
+      "extracted_at": "2026-07-13T15:20:28.754446+00:00"
+    }
+  ]
+}

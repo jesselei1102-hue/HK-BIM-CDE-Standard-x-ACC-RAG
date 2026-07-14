@@ -1,0 +1,1966 @@
+{
+  "sections": [
+    {
+      "title": "Front Matter",
+      "page_start": 1,
+      "page_end": 9,
+      "section_id": "cicbims_2024_front_matter",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "Foreword",
+      "page_start": 10,
+      "page_end": 12,
+      "section_id": "cicbims_2024_foreword",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "Preface",
+      "page_start": 13,
+      "page_end": 13,
+      "section_id": "cicbims_2024_preface",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "Definition of Abbreviations",
+      "page_start": 14,
+      "page_end": 18,
+      "section_id": "cicbims_2024_definition_of_abbreviations",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "Introduction",
+      "page_start": 19,
+      "page_end": 22,
+      "section_id": "cicbims_2024_introduction",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "1. Information Management [aligned with ISO 19650]",
+      "page_start": 23,
+      "page_end": 23,
+      "section_id": "cicbims_2024_1_information_management_aligned_with_iso_19650",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "1.1 Framework and Workflow",
+      "page_start": 24,
+      "page_end": 27,
+      "section_id": "cicbims_2024_1_1_framework_and_workflow",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "1.2 Parties",
+      "page_start": 28,
+      "page_end": 28,
+      "section_id": "cicbims_2024_1_2_parties",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "1.2.1 Project Information Management Functions",
+      "page_start": 29,
+      "page_end": 29,
+      "section_id": "cicbims_2024_1_2_1_project_information_management_functions",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "1.2.3 Lead Consultant / Lead Contractor",
+      "page_start": 30,
+      "page_end": 30,
+      "section_id": "cicbims_2024_1_2_3_lead_consultant_lead_contractor",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "1.2.4 Task Information Management Functions",
+      "page_start": 31,
+      "page_end": 32,
+      "section_id": "cicbims_2024_1_2_4_task_information_management_functions",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "1.3 Information Management Process",
+      "page_start": 33,
+      "page_end": 33,
+      "section_id": "cicbims_2024_1_3_information_management_process",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2. Information Requirements",
+      "page_start": 34,
+      "page_end": 34,
+      "section_id": "cicbims_2024_2_information_requirements",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.1 Organisational Information Requirements (OIR) (Appendix D1)",
+      "page_start": 35,
+      "page_end": 35,
+      "section_id": "cicbims_2024_2_1_organisational_information_requirements_oir_appendix_d1",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.3 Project Information Requirements (PIR) (Appendix D3)",
+      "page_start": 36,
+      "page_end": 36,
+      "section_id": "cicbims_2024_2_3_project_information_requirements_pir_appendix_d3",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.4 Security Information Requirements (SIR) (Appendix D4)",
+      "page_start": 37,
+      "page_end": 38,
+      "section_id": "cicbims_2024_2_4_security_information_requirements_sir_appendix_d4",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.5 Exchange Information Requirements (EIR)",
+      "page_start": 39,
+      "page_end": 39,
+      "section_id": "cicbims_2024_2_5_exchange_information_requirements_eir",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.6 Level of Information Need",
+      "page_start": 40,
+      "page_end": 40,
+      "section_id": "cicbims_2024_2_6_level_of_information_need",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.6.1 LOIN Definitions",
+      "page_start": 41,
+      "page_end": 42,
+      "section_id": "cicbims_2024_2_6_1_loin_definitions",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.6.2 Level of Graphics (LOD-G)",
+      "page_start": 43,
+      "page_end": 44,
+      "section_id": "cicbims_2024_2_6_2_level_of_graphics_lod_g",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.6.3 Level of Information (LOD-I)",
+      "page_start": 45,
+      "page_end": 46,
+      "section_id": "cicbims_2024_2_6_3_level_of_information_lod_i",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.6.4 Level of Documentation (DOC)",
+      "page_start": 47,
+      "page_end": 47,
+      "section_id": "cicbims_2024_2_6_4_level_of_documentation_doc",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.6.5 LOIN Impact on BIM Objects",
+      "page_start": 48,
+      "page_end": 48,
+      "section_id": "cicbims_2024_2_6_5_loin_impact_on_bim_objects",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.6.7 Field Verification",
+      "page_start": 49,
+      "page_end": 50,
+      "section_id": "cicbims_2024_2_6_7_field_verification",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.7 Standards, Methods and Procedures",
+      "page_start": 51,
+      "page_end": 51,
+      "section_id": "cicbims_2024_2_7_standards_methods_and_procedures",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.8 Project Information Standards",
+      "page_start": 52,
+      "page_end": 52,
+      "section_id": "cicbims_2024_2_8_project_information_standards",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.10 Information Protocol",
+      "page_start": 53,
+      "page_end": 53,
+      "section_id": "cicbims_2024_2_10_information_protocol",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.12 Business / Project Specific Cyber Security",
+      "page_start": 54,
+      "page_end": 54,
+      "section_id": "cicbims_2024_2_12_business_project_specific_cyber_security",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.14 Project Information Model (PIM)",
+      "page_start": 55,
+      "page_end": 55,
+      "section_id": "cicbims_2024_2_14_project_information_model_pim",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.15 Design Information Model (DIM)",
+      "page_start": 56,
+      "page_end": 56,
+      "section_id": "cicbims_2024_2_15_design_information_model_dim",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "2.17 Asset Information Model (AIM)",
+      "page_start": 57,
+      "page_end": 57,
+      "section_id": "cicbims_2024_2_17_asset_information_model_aim",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3. BIM Implementation Planning (BIM IP)",
+      "page_start": 58,
+      "page_end": 58,
+      "section_id": "cicbims_2024_3_bim_implementation_planning_bim_ip",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.1 Appointing Party's / Client’s Requirement Specification",
+      "page_start": 59,
+      "page_end": 60,
+      "section_id": "cicbims_2024_3_1_appointing_party_s_clients_requirement_specification",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.2 Appointment BIM IP",
+      "page_start": 61,
+      "page_end": 62,
+      "section_id": "cicbims_2024_3_2_appointment_bim_ip",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.3 Design Stage BIM IP",
+      "page_start": 63,
+      "page_end": 63,
+      "section_id": "cicbims_2024_3_3_design_stage_bim_ip",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.4 Procurement Strategy Impact on BIM IP",
+      "page_start": 64,
+      "page_end": 65,
+      "section_id": "cicbims_2024_3_4_procurement_strategy_impact_on_bim_ip",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.5 Tender Stage BIM IP",
+      "page_start": 66,
+      "page_end": 66,
+      "section_id": "cicbims_2024_3_5_tender_stage_bim_ip",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.6 BIM Implementation Plan Components",
+      "page_start": 67,
+      "page_end": 67,
+      "section_id": "cicbims_2024_3_6_bim_implementation_plan_components",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.6.2 Project Information Functions",
+      "page_start": 68,
+      "page_end": 68,
+      "section_id": "cicbims_2024_3_6_2_project_information_functions",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.6.3 Delivery Team Capability and Capacity Assessment",
+      "page_start": 69,
+      "page_end": 70,
+      "section_id": "cicbims_2024_3_6_3_delivery_team_capability_and_capacity_assessment",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "BIM Use 1: Design Authoring",
+      "page_start": 71,
+      "page_end": 71,
+      "section_id": "cicbims_2024_bim_use_1_design_authoring",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "BIM Use 4: Existing Conditions Modelling",
+      "page_start": 72,
+      "page_end": 72,
+      "section_id": "cicbims_2024_bim_use_4_existing_conditions_modelling",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "BIM Use 5: Sustainability Evaluation",
+      "page_start": 73,
+      "page_end": 73,
+      "section_id": "cicbims_2024_bim_use_5_sustainability_evaluation",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "BIM Use 9: Spatial Coordination (formerly 3D Coordination)",
+      "page_start": 74,
+      "page_end": 74,
+      "section_id": "cicbims_2024_bim_use_9_spatial_coordination_formerly_3d_coordination",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "BIM Use 10: Engineering Analysis",
+      "page_start": 75,
+      "page_end": 75,
+      "section_id": "cicbims_2024_bim_use_10_engineering_analysis",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "BIM Use 11: Facility Energy Analysis",
+      "page_start": 76,
+      "page_end": 76,
+      "section_id": "cicbims_2024_bim_use_11_facility_energy_analysis",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "BIM Use 14: Digital Fabrication",
+      "page_start": 77,
+      "page_end": 77,
+      "section_id": "cicbims_2024_bim_use_14_digital_fabrication",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "BIM Use 18: Construction System Design",
+      "page_start": 78,
+      "page_end": 78,
+      "section_id": "cicbims_2024_bim_use_18_construction_system_design",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "BIM Use 22: Project Systems Analysis",
+      "page_start": 79,
+      "page_end": 79,
+      "section_id": "cicbims_2024_bim_use_22_project_systems_analysis",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "BIM Use 26: Heritage Information Modelling (HIM)",
+      "page_start": 80,
+      "page_end": 80,
+      "section_id": "cicbims_2024_bim_use_26_heritage_information_modelling_him",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.6.6 Information Management Assignment Matrix",
+      "page_start": 81,
+      "page_end": 82,
+      "section_id": "cicbims_2024_3_6_6_information_management_assignment_matrix",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.6.7 Project Information Standards",
+      "page_start": 83,
+      "page_end": 84,
+      "section_id": "cicbims_2024_3_6_7_project_information_standards",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.6.9 Model Federation Strategy",
+      "page_start": 85,
+      "page_end": 85,
+      "section_id": "cicbims_2024_3_6_9_model_federation_strategy",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.6.10 Security Strategy",
+      "page_start": 86,
+      "page_end": 86,
+      "section_id": "cicbims_2024_3_6_10_security_strategy",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.6.11 High Level Responsibility Matrix",
+      "page_start": 87,
+      "page_end": 87,
+      "section_id": "cicbims_2024_3_6_11_high_level_responsibility_matrix",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.6.12 Roles, Responsibilities and Authority",
+      "page_start": 88,
+      "page_end": 91,
+      "section_id": "cicbims_2024_3_6_12_roles_responsibilities_and_authority",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.6.13 BIM Team Resources, Competency and Training",
+      "page_start": 92,
+      "page_end": 92,
+      "section_id": "cicbims_2024_3_6_13_bim_team_resources_competency_and_training",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.6.14 Delivery Team Risk Register",
+      "page_start": 93,
+      "page_end": 93,
+      "section_id": "cicbims_2024_3_6_14_delivery_team_risk_register",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.6.16 Master Information Delivery Plan (MIDP)",
+      "page_start": 94,
+      "page_end": 94,
+      "section_id": "cicbims_2024_3_6_16_master_information_delivery_plan_midp",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.6.17 Task Information Delivery Plans (TIDP)",
+      "page_start": 95,
+      "page_end": 95,
+      "section_id": "cicbims_2024_3_6_17_task_information_delivery_plans_tidp",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.6.18 BIM Deliverable Schedule (Programme)",
+      "page_start": 96,
+      "page_end": 96,
+      "section_id": "cicbims_2024_3_6_18_bim_deliverable_schedule_programme",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.6.20 Software, Hardware, CDE and IT Infrastructure",
+      "page_start": 97,
+      "page_end": 97,
+      "section_id": "cicbims_2024_3_6_20_software_hardware_cde_and_it_infrastructure",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.6.21 Quality Assurance – BIM Auditing",
+      "page_start": 98,
+      "page_end": 98,
+      "section_id": "cicbims_2024_3_6_21_quality_assurance_bim_auditing",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3.7 BIM Execution Plan (BEP) Contents",
+      "page_start": 99,
+      "page_end": 100,
+      "section_id": "cicbims_2024_3_7_bim_execution_plan_bep_contents",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4. Common Data Environment (CDE) [aligned with ISO 19650]",
+      "page_start": 101,
+      "page_end": 101,
+      "section_id": "cicbims_2024_4_common_data_environment_cde_aligned_with_iso_19650",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.1.3 Data Environments and Common Data Environments",
+      "page_start": 102,
+      "page_end": 104,
+      "section_id": "cicbims_2024_4_1_3_data_environments_and_common_data_environments",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.2 The CDE and Gateways",
+      "page_start": 105,
+      "page_end": 105,
+      "section_id": "cicbims_2024_4_2_the_cde_and_gateways",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.2.1 Work in Progress (WIP)",
+      "page_start": 106,
+      "page_end": 106,
+      "section_id": "cicbims_2024_4_2_1_work_in_progress_wip",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.2.3 WIP Gateway",
+      "page_start": 107,
+      "page_end": 108,
+      "section_id": "cicbims_2024_4_2_3_wip_gateway",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.2.6 Shared",
+      "page_start": 109,
+      "page_end": 109,
+      "section_id": "cicbims_2024_4_2_6_shared",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.2.7 Shared Unauthorised Information",
+      "page_start": 110,
+      "page_end": 110,
+      "section_id": "cicbims_2024_4_2_7_shared_unauthorised_information",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.2.8 Authorisation Gateway",
+      "page_start": 111,
+      "page_end": 111,
+      "section_id": "cicbims_2024_4_2_8_authorisation_gateway",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.2.9 Clients Shared",
+      "page_start": 112,
+      "page_end": 112,
+      "section_id": "cicbims_2024_4_2_9_clients_shared",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.2.10 Appointing Party / Client Shared Unauthorised Information",
+      "page_start": 113,
+      "page_end": 113,
+      "section_id": "cicbims_2024_4_2_10_appointing_party_client_shared_unauthorised_information",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.2.11 Published",
+      "page_start": 114,
+      "page_end": 114,
+      "section_id": "cicbims_2024_4_2_11_published",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.3 The CDE Functional Requirements",
+      "page_start": 115,
+      "page_end": 117,
+      "section_id": "cicbims_2024_4_3_the_cde_functional_requirements",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.4 The CDE Process Requirements",
+      "page_start": 118,
+      "page_end": 120,
+      "section_id": "cicbims_2024_4_4_the_cde_process_requirements",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.4.2 Status Code (Suitability)",
+      "page_start": 121,
+      "page_end": 121,
+      "section_id": "cicbims_2024_4_4_2_status_code_suitability",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.4.4 Application of Authorisation Codes (Indicating Workflow Authorisations)",
+      "page_start": 122,
+      "page_end": 123,
+      "section_id": "cicbims_2024_4_4_4_application_of_authorisation_codes_indicating_workflow_author",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.4.5 Purpose of Issue",
+      "page_start": 124,
+      "page_end": 124,
+      "section_id": "cicbims_2024_4_4_5_purpose_of_issue",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.4.6 Model and Document References",
+      "page_start": 125,
+      "page_end": 125,
+      "section_id": "cicbims_2024_4_4_6_model_and_document_references",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.4.8 Revision",
+      "page_start": 126,
+      "page_end": 126,
+      "section_id": "cicbims_2024_4_4_8_revision",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.4.10 Sketches, Comments, and Reviews",
+      "page_start": 127,
+      "page_end": 129,
+      "section_id": "cicbims_2024_4_4_10_sketches_comments_and_reviews",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.5 CDE Security, Storage and Technology Specification",
+      "page_start": 130,
+      "page_end": 130,
+      "section_id": "cicbims_2024_4_5_cde_security_storage_and_technology_specification",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.5.1 Authorisation Gateway Technical Requirements",
+      "page_start": 131,
+      "page_end": 132,
+      "section_id": "cicbims_2024_4_5_1_authorisation_gateway_technical_requirements",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.5.2 Appointing Party / Client Shared Technology",
+      "page_start": 133,
+      "page_end": 133,
+      "section_id": "cicbims_2024_4_5_2_appointing_party_client_shared_technology",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.5.5 Project Folder Structure",
+      "page_start": 134,
+      "page_end": 135,
+      "section_id": "cicbims_2024_4_5_5_project_folder_structure",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4.6 The CDE Handover Procedures",
+      "page_start": 136,
+      "page_end": 137,
+      "section_id": "cicbims_2024_4_6_the_cde_handover_procedures",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "5. Information Management Workflow for Stages in Project Life cycle",
+      "page_start": 138,
+      "page_end": 138,
+      "section_id": "cicbims_2024_5_information_management_workflow_for_stages_in_project_life_cycle",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "5.1 Information Management Workflow for Planning Stage",
+      "page_start": 139,
+      "page_end": 140,
+      "section_id": "cicbims_2024_5_1_information_management_workflow_for_planning_stage",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "5.2 Information Management Workflow for Design Stage",
+      "page_start": 141,
+      "page_end": 142,
+      "section_id": "cicbims_2024_5_2_information_management_workflow_for_design_stage",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "5.3 Information Management Workflow for Tender Stage",
+      "page_start": 143,
+      "page_end": 145,
+      "section_id": "cicbims_2024_5_3_information_management_workflow_for_tender_stage",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "5.4 Information Management Workflow for Construction Stage",
+      "page_start": 146,
+      "page_end": 148,
+      "section_id": "cicbims_2024_5_4_information_management_workflow_for_construction_stage",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "5.5 Information Management Workflow for As-Built and Handover Stage",
+      "page_start": 149,
+      "page_end": 152,
+      "section_id": "cicbims_2024_5_5_information_management_workflow_for_as_built_and_handover_stage",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "5.6 Information Management Workflow for Design-and-Build Project",
+      "page_start": 153,
+      "page_end": 154,
+      "section_id": "cicbims_2024_5_6_information_management_workflow_for_design_and_build_project",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "5.7 Information Management Workflow for Operation Stage",
+      "page_start": 155,
+      "page_end": 156,
+      "section_id": "cicbims_2024_5_7_information_management_workflow_for_operation_stage",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "5.8 Information Management Process across Various Work Stages",
+      "page_start": 157,
+      "page_end": 157,
+      "section_id": "cicbims_2024_5_8_information_management_process_across_various_work_stages",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "5.8.3 Cost Estimation",
+      "page_start": 158,
+      "page_end": 159,
+      "section_id": "cicbims_2024_5_8_3_cost_estimation",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "5.8.4 Quality Assurance and BIM Audit",
+      "page_start": 160,
+      "page_end": 161,
+      "section_id": "cicbims_2024_5_8_4_quality_assurance_and_bim_audit",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "5.8.5 Clash Analysis",
+      "page_start": 162,
+      "page_end": 162,
+      "section_id": "cicbims_2024_5_8_5_clash_analysis",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "5.8.6 Drawing Production",
+      "page_start": 163,
+      "page_end": 163,
+      "section_id": "cicbims_2024_5_8_6_drawing_production",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6. Modelling Methodology and Requirements",
+      "page_start": 164,
+      "page_end": 164,
+      "section_id": "cicbims_2024_6_modelling_methodology_and_requirements",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6.1 Model Hierarchy",
+      "page_start": 165,
+      "page_end": 165,
+      "section_id": "cicbims_2024_6_1_model_hierarchy",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6.1.1 Referencing",
+      "page_start": 166,
+      "page_end": 166,
+      "section_id": "cicbims_2024_6_1_1_referencing",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6.3 Information Model Zones",
+      "page_start": 167,
+      "page_end": 167,
+      "section_id": "cicbims_2024_6_3_information_model_zones",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6.5 Collaboration Procedures",
+      "page_start": 168,
+      "page_end": 168,
+      "section_id": "cicbims_2024_6_5_collaboration_procedures",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6.7 Federated Model Creation",
+      "page_start": 169,
+      "page_end": 169,
+      "section_id": "cicbims_2024_6_7_federated_model_creation",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6.9 Discipline Modelling Guidelines",
+      "page_start": 170,
+      "page_end": 170,
+      "section_id": "cicbims_2024_6_9_discipline_modelling_guidelines",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6.9.3 Structural Modelling Guidelines",
+      "page_start": 171,
+      "page_end": 171,
+      "section_id": "cicbims_2024_6_9_3_structural_modelling_guidelines",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6.9.5 Underground Utilities Modelling Guidelines",
+      "page_start": 172,
+      "page_end": 172,
+      "section_id": "cicbims_2024_6_9_5_underground_utilities_modelling_guidelines",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6.10 Component Modelling and Its Drawing Presentation Style",
+      "page_start": 173,
+      "page_end": 173,
+      "section_id": "cicbims_2024_6_10_component_modelling_and_its_drawing_presentation_style",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6.11 Drawing Production",
+      "page_start": 174,
+      "page_end": 174,
+      "section_id": "cicbims_2024_6_11_drawing_production",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6.12 Preparation for Publication",
+      "page_start": 175,
+      "page_end": 175,
+      "section_id": "cicbims_2024_6_12_preparation_for_publication",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6.14 Drawing Compilation",
+      "page_start": 176,
+      "page_end": 176,
+      "section_id": "cicbims_2024_6_14_drawing_compilation",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6.15 View Naming",
+      "page_start": 177,
+      "page_end": 177,
+      "section_id": "cicbims_2024_6_15_view_naming",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6.17.2 Annotation",
+      "page_start": 178,
+      "page_end": 178,
+      "section_id": "cicbims_2024_6_17_2_annotation",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6.17.5 Dimensioning",
+      "page_start": 179,
+      "page_end": 179,
+      "section_id": "cicbims_2024_6_17_5_dimensioning",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6.17.6 Drawing Borders and Title Blocks",
+      "page_start": 180,
+      "page_end": 180,
+      "section_id": "cicbims_2024_6_17_6_drawing_borders_and_title_blocks",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "7. openBIM",
+      "page_start": 181,
+      "page_end": 181,
+      "section_id": "cicbims_2024_7_openbim",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "8. BIM Object Coding and Classification",
+      "page_start": 182,
+      "page_end": 184,
+      "section_id": "cicbims_2024_8_bim_object_coding_and_classification",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "Annex 1 Hong Kong ‘Local Annex’ of ISO 19650-2:2018",
+      "page_start": 185,
+      "page_end": 185,
+      "section_id": "cicbims_2024_annex_1_hong_kong_local_annex_of_iso_19650_2_2018",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "LA.3 Field Codification",
+      "page_start": 186,
+      "page_end": 186,
+      "section_id": "cicbims_2024_la_3_field_codification",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "LA.3.6 Field 5: Discipline / (Sub-discipline)",
+      "page_start": 187,
+      "page_end": 188,
+      "section_id": "cicbims_2024_la_3_6_field_5_discipline_sub_discipline",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "LA.3.7 Field 6: Type / (Characteristic)",
+      "page_start": 189,
+      "page_end": 189,
+      "section_id": "cicbims_2024_la_3_7_field_6_type_characteristic",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "LA.3.8 Sub-Field 7: Sequential Number",
+      "page_start": 190,
+      "page_end": 190,
+      "section_id": "cicbims_2024_la_3_8_sub_field_7_sequential_number",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "LA.4 Information Container Metadata",
+      "page_start": 191,
+      "page_end": 191,
+      "section_id": "cicbims_2024_la_4_information_container_metadata",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "LA.4.3 Revision",
+      "page_start": 192,
+      "page_end": 192,
+      "section_id": "cicbims_2024_la_4_3_revision",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "LA.5 Information Model Exchange",
+      "page_start": 193,
+      "page_end": 193,
+      "section_id": "cicbims_2024_la_5_information_model_exchange",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "1 Project Setup",
+      "page_start": 194,
+      "page_end": 194,
+      "section_id": "cicbims_2024_1_project_setup",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3 BIM / Asset Information (LOD-I)",
+      "page_start": 195,
+      "page_end": 196,
+      "section_id": "cicbims_2024_3_bim_asset_information_lod_i",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "4 Documentation (DOC)",
+      "page_start": 197,
+      "page_end": 197,
+      "section_id": "cicbims_2024_4_documentation_doc",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "1 Digitalisation",
+      "page_start": 198,
+      "page_end": 198,
+      "section_id": "cicbims_2024_1_digitalisation",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "3 Common Spatial Data Infrastructure (CSDI)",
+      "page_start": 199,
+      "page_end": 199,
+      "section_id": "cicbims_2024_3_common_spatial_data_infrastructure_csdi",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "6 GIS - BIM Integration",
+      "page_start": 200,
+      "page_end": 200,
+      "section_id": "cicbims_2024_6_gis_bim_integration",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "7 Digital Twin",
+      "page_start": 201,
+      "page_end": 201,
+      "section_id": "cicbims_2024_7_digital_twin",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "8 Smart City",
+      "page_start": 202,
+      "page_end": 202,
+      "section_id": "cicbims_2024_8_smart_city",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "Appendix A Information Management Assignment Matrix Example",
+      "page_start": 203,
+      "page_end": 206,
+      "section_id": "cicbims_2024_appendix_a_information_management_assignment_matrix_example",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "Appendix B Examples of Model Zones and Levels Definitions",
+      "page_start": 207,
+      "page_end": 213,
+      "section_id": "cicbims_2024_appendix_b_examples_of_model_zones_and_levels_definitions",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "Appendix C List of Figures",
+      "page_start": 214,
+      "page_end": 214,
+      "section_id": "cicbims_2024_appendix_c_list_of_figures",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "9. Reference",
+      "page_start": 215,
+      "page_end": 215,
+      "section_id": "cicbims_2024_9_reference",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "10. Committee on Building Information Modelling",
+      "page_start": 216,
+      "page_end": 216,
+      "section_id": "cicbims_2024_10_committee_on_building_information_modelling",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "11. The Task Force on BIM Standards - General Enhancement",
+      "page_start": 217,
+      "page_end": 217,
+      "section_id": "cicbims_2024_11_the_task_force_on_bim_standards_general_enhancement",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "12. Acknowledgement",
+      "page_start": 218,
+      "page_end": 220,
+      "section_id": "cicbims_2024_12_acknowledgement",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "cicbims_2024"
+    },
+    {
+      "title": "Front Matter",
+      "page_start": 1,
+      "page_end": 4,
+      "section_id": "cic_beginner_cde_front_matter",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "Preface",
+      "page_start": 5,
+      "page_end": 5,
+      "section_id": "cic_beginner_cde_preface",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "Definition of Abbreviations",
+      "page_start": 6,
+      "page_end": 6,
+      "section_id": "cic_beginner_cde_definition_of_abbreviations",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "Executive Summary",
+      "page_start": 7,
+      "page_end": 7,
+      "section_id": "cic_beginner_cde_executive_summary",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "The Need for CDE in Construction Industry",
+      "page_start": 7,
+      "page_end": 7,
+      "section_id": "cic_beginner_cde_the_need_for_cde_in_construction_industry",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "Essential functions of CDE",
+      "page_start": 7,
+      "page_end": 7,
+      "section_id": "cic_beginner_cde_essential_functions_of_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "Benefits of adopting CDE",
+      "page_start": 8,
+      "page_end": 8,
+      "section_id": "cic_beginner_cde_benefits_of_adopting_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "General Considerations when selecting a CDE",
+      "page_start": 8,
+      "page_end": 8,
+      "section_id": "cic_beginner_cde_general_considerations_when_selecting_a_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "Introduction",
+      "page_start": 9,
+      "page_end": 11,
+      "section_id": "cic_beginner_cde_introduction",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "1. The needs of CDE in the construction industry",
+      "page_start": 12,
+      "page_end": 12,
+      "section_id": "cic_beginner_cde_1_the_needs_of_cde_in_the_construction_industry",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "1.1. Overview",
+      "page_start": 12,
+      "page_end": 12,
+      "section_id": "cic_beginner_cde_1_1_overview",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "1.2. What is CDE?",
+      "page_start": 13,
+      "page_end": 13,
+      "section_id": "cic_beginner_cde_1_2_what_is_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "1.3. BIM, CDE and collaborative working",
+      "page_start": 14,
+      "page_end": 14,
+      "section_id": "cic_beginner_cde_1_3_bim_cde_and_collaborative_working",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "Collaborative working and open standards",
+      "page_start": 14,
+      "page_end": 14,
+      "section_id": "cic_beginner_cde_collaborative_working_and_open_standards",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "1.4. CDE for PIM and AIM",
+      "page_start": 15,
+      "page_end": 16,
+      "section_id": "cic_beginner_cde_1_4_cde_for_pim_and_aim",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "1.4.1. Project Information Model (PIM)",
+      "page_start": 15,
+      "page_end": 16,
+      "section_id": "cic_beginner_cde_1_4_1_project_information_model_pim",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "1.4.2. Asset Information Model (AIM)",
+      "page_start": 15,
+      "page_end": 16,
+      "section_id": "cic_beginner_cde_1_4_2_asset_information_model_aim",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "1.5. Level of CDE for an enterprise",
+      "page_start": 17,
+      "page_end": 18,
+      "section_id": "cic_beginner_cde_1_5_level_of_cde_for_an_enterprise",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "1.6. When project CDE is used? Who owns or operates it?",
+      "page_start": 19,
+      "page_end": 19,
+      "section_id": "cic_beginner_cde_1_6_when_project_cde_is_used_who_owns_or_operates_it",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "The need for open data and open CDE for the handover of CDE",
+      "page_start": 20,
+      "page_end": 20,
+      "section_id": "cic_beginner_cde_the_need_for_open_data_and_open_cde_for_the_handover_of_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "1.7. Essential functions of CDE",
+      "page_start": 21,
+      "page_end": 22,
+      "section_id": "cic_beginner_cde_1_7_essential_functions_of_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "1.8. Benefit of adopting CDE",
+      "page_start": 23,
+      "page_end": 23,
+      "section_id": "cic_beginner_cde_1_8_benefit_of_adopting_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "1.9. Funding support on adoption of CDE",
+      "page_start": 24,
+      "page_end": 24,
+      "section_id": "cic_beginner_cde_1_9_funding_support_on_adoption_of_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "Eligible Applications",
+      "page_start": 24,
+      "page_end": 24,
+      "section_id": "cic_beginner_cde_eligible_applications",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "CDE in CITF",
+      "page_start": 25,
+      "page_end": 25,
+      "section_id": "cic_beginner_cde_cde_in_citf",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "1.10. Integrated CDE",
+      "page_start": 26,
+      "page_end": 27,
+      "section_id": "cic_beginner_cde_1_10_integrated_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "2. Advice in selection of a CDE",
+      "page_start": 28,
+      "page_end": 29,
+      "section_id": "cic_beginner_cde_2_advice_in_selection_of_a_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "2.1. General area",
+      "page_start": 28,
+      "page_end": 29,
+      "section_id": "cic_beginner_cde_2_1_general_area",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "2.2. CDE hosted in the cloud environment",
+      "page_start": 30,
+      "page_end": 30,
+      "section_id": "cic_beginner_cde_2_2_cde_hosted_in_the_cloud_environment",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "2.2.1. Advice on selection of CDE in public or private cloud environment",
+      "page_start": 31,
+      "page_end": 31,
+      "section_id": "cic_beginner_cde_2_2_1_advice_on_selection_of_cde_in_public_or_private_cloud_env",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "2.3. User Licences in CDE",
+      "page_start": 32,
+      "page_end": 33,
+      "section_id": "cic_beginner_cde_2_3_user_licences_in_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "2.3.1. Subscription/Perpetual",
+      "page_start": 32,
+      "page_end": 33,
+      "section_id": "cic_beginner_cde_2_3_1_subscription_perpetual",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "Subscription",
+      "page_start": 32,
+      "page_end": 33,
+      "section_id": "cic_beginner_cde_subscription",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "Perpetual",
+      "page_start": 32,
+      "page_end": 33,
+      "section_id": "cic_beginner_cde_perpetual",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "2.3.2. Number of users",
+      "page_start": 32,
+      "page_end": 33,
+      "section_id": "cic_beginner_cde_2_3_2_number_of_users",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "2.3.3. Data storage capacity",
+      "page_start": 32,
+      "page_end": 33,
+      "section_id": "cic_beginner_cde_2_3_3_data_storage_capacity",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "2.3.4. Advice on licence consideration",
+      "page_start": 34,
+      "page_end": 34,
+      "section_id": "cic_beginner_cde_2_3_4_advice_on_licence_consideration",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "2.4. Network access to project data",
+      "page_start": 35,
+      "page_end": 35,
+      "section_id": "cic_beginner_cde_2_4_network_access_to_project_data",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "2.4.1. Advice on network access of CDE",
+      "page_start": 35,
+      "page_end": 35,
+      "section_id": "cic_beginner_cde_2_4_1_advice_on_network_access_of_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "2.5. Project coordination in CDE",
+      "page_start": 36,
+      "page_end": 37,
+      "section_id": "cic_beginner_cde_2_5_project_coordination_in_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "2D content coordination",
+      "page_start": 36,
+      "page_end": 37,
+      "section_id": "cic_beginner_cde_2d_content_coordination",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "3D content coordination",
+      "page_start": 36,
+      "page_end": 37,
+      "section_id": "cic_beginner_cde_3d_content_coordination",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "Issue management systems",
+      "page_start": 36,
+      "page_end": 37,
+      "section_id": "cic_beginner_cde_issue_management_systems",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "2.5.1. Advice on project coordination in CDE",
+      "page_start": 36,
+      "page_end": 37,
+      "section_id": "cic_beginner_cde_2_5_1_advice_on_project_coordination_in_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "2.6. Workflow management in CDE",
+      "page_start": 38,
+      "page_end": 39,
+      "section_id": "cic_beginner_cde_2_6_workflow_management_in_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "2.6.1. Advice on workflow management in CDE",
+      "page_start": 38,
+      "page_end": 39,
+      "section_id": "cic_beginner_cde_2_6_1_advice_on_workflow_management_in_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "3. Annex A – Checklist on major features of a CDE",
+      "page_start": 40,
+      "page_end": 45,
+      "section_id": "cic_beginner_cde_3_annex_a_checklist_on_major_features_of_a_cde",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "4. Annex B – Checklist on digital site management",
+      "page_start": 46,
+      "page_end": 49,
+      "section_id": "cic_beginner_cde_4_annex_b_checklist_on_digital_site_management",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "5. Reference",
+      "page_start": 50,
+      "page_end": 51,
+      "section_id": "cic_beginner_cde_5_reference",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "6. Committee on Building Information Modelling",
+      "page_start": 52,
+      "page_end": 52,
+      "section_id": "cic_beginner_cde_6_committee_on_building_information_modelling",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "7. Acknowledgement",
+      "page_start": 53,
+      "page_end": 54,
+      "section_id": "cic_beginner_cde_7_acknowledgement",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "cic_beginner_cde"
+    },
+    {
+      "title": "Front Matter",
+      "page_start": 1,
+      "page_end": 1,
+      "section_id": "devb_harmonisation_v3_front_matter",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "DISTRIBUTION & RELEASE",
+      "page_start": 2,
+      "page_end": 2,
+      "section_id": "devb_harmonisation_v3_distribution_release",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "TABLE OF CONTENTS",
+      "page_start": 3,
+      "page_end": 6,
+      "section_id": "devb_harmonisation_v3_table_of_contents",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "ABBREVIATION",
+      "page_start": 7,
+      "page_end": 8,
+      "section_id": "devb_harmonisation_v3_abbreviation",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "FOREWORD",
+      "page_start": 9,
+      "page_end": 9,
+      "section_id": "devb_harmonisation_v3_foreword",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "EXECUTIVE SUMMARY",
+      "page_start": 10,
+      "page_end": 11,
+      "section_id": "devb_harmonisation_v3_executive_summary",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "INFORMATION REQUIREMENTS AND EXCHANGE",
+      "page_start": 12,
+      "page_end": 14,
+      "section_id": "devb_harmonisation_v3_information_requirements_and_exchange",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "BIM OBJECT FILES",
+      "page_start": 15,
+      "page_end": 25,
+      "section_id": "devb_harmonisation_v3_bim_object_files",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "FEDERATION AND BIM MODEL NAMING",
+      "page_start": 26,
+      "page_end": 32,
+      "section_id": "devb_harmonisation_v3_federation_and_bim_model_naming",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "LOIN IMPLEMENTATION",
+      "page_start": 33,
+      "page_end": 37,
+      "section_id": "devb_harmonisation_v3_loin_implementation",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "THE WAY FORWARD",
+      "page_start": 38,
+      "page_end": 41,
+      "section_id": "devb_harmonisation_v3_the_way_forward",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "Appendix I - ISO 19650 Terminologies (v2)",
+      "page_start": 42,
+      "page_end": 45,
+      "section_id": "devb_harmonisation_v3_appendix_i_iso_19650_terminologies_v2",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "Appendix II - Information Responsibility Assignment Matrix (v2)",
+      "page_start": 46,
+      "page_end": 50,
+      "section_id": "devb_harmonisation_v3_appendix_ii_information_responsibility_assignment_matrix_v",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "Appendix III - Data Filtering Rule Table (v2)",
+      "page_start": 51,
+      "page_end": 52,
+      "section_id": "devb_harmonisation_v3_appendix_iii_data_filtering_rule_table_v2",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "Appendix IV - Master Type List (v2)",
+      "page_start": 53,
+      "page_end": 53,
+      "section_id": "devb_harmonisation_v3_appendix_iv_master_type_list_v2",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "Appendix V - Examples of BIM Object Authoring and Importing Civil 3D BIM Objects into BIM Models (v3.0)",
+      "page_start": 54,
+      "page_end": 85,
+      "section_id": "devb_harmonisation_v3_appendix_v_examples_of_bim_object_authoring_and_importing_",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "Appendix VI - LOD-I Requirements Creation and Extraction (v3.0)",
+      "page_start": 86,
+      "page_end": 112,
+      "section_id": "devb_harmonisation_v3_appendix_vi_lod_i_requirements_creation_and_extraction_v3_",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "Appendix VII - Sample BIM Object Check Form (v2)",
+      "page_start": 113,
+      "page_end": 116,
+      "section_id": "devb_harmonisation_v3_appendix_vii_sample_bim_object_check_form_v2",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "Appendix VIII - Federation Strategy Diagrams and Naming Examples (v2)",
+      "page_start": 117,
+      "page_end": 129,
+      "section_id": "devb_harmonisation_v3_appendix_viii_federation_strategy_diagrams_and_naming_exam",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "Appendix IX - Sample Project-Specific Codes for Naming (v3.0)",
+      "page_start": 130,
+      "page_end": 141,
+      "section_id": "devb_harmonisation_v3_appendix_ix_sample_project_specific_codes_for_naming_v3_0",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "Appendix XI - Sample Spreadsheet for BIM File Name Validation (v3.0)",
+      "page_start": 142,
+      "page_end": 148,
+      "section_id": "devb_harmonisation_v3_appendix_xi_sample_spreadsheet_for_bim_file_name_validatio",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "Appendix XII - Sample Project Close-out Checklist (v2)",
+      "page_start": 149,
+      "page_end": 151,
+      "section_id": "devb_harmonisation_v3_appendix_xii_sample_project_close_out_checklist_v2",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "Appendix XIII-Example of Project Boundary Authoring and Model File List (v3.0)",
+      "page_start": 152,
+      "page_end": 155,
+      "section_id": "devb_harmonisation_v3_appendix_xiii_example_of_project_boundary_authoring_and_mo",
+      "mapped": true,
+      "priority": "normal",
+      "doc_id": "devb_harmonisation_v3"
+    },
+    {
+      "title": "Appendix XIV - Guidelines for Submission of Design and As-built BIM Models to LandsD (v3.0)",
+      "page_start": 156,
+      "page_end": 169,
+      "section_id": "devb_harmonisation_v3_appendix_xiv_guidelines_for_submission_of_design_and_as_bu",
+      "mapped": true,
+      "priority": "high",
+      "doc_id": "devb_harmonisation_v3"
+    }
+  ]
+}

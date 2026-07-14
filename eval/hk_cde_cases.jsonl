@@ -1,0 +1,26 @@
+{"id": "ind_wip_short", "query": "WIP", "expect_section_contains": "work_in_progress", "expect_track": "industry", "lang": "en"}
+{"id": "ind_wip_zh", "query": "进行中", "expect_section_contains": "work_in_progress", "expect_track": "industry", "lang": "zh"}
+{"id": "ind_gateway", "query": "Gateway", "expect_section_contains": "gateway", "expect_track": "industry", "lang": "en"}
+{"id": "ind_gateway_zh", "query": "网关", "expect_section_contains": "gateway", "expect_track": "industry", "lang": "zh"}
+{"id": "ind_pir", "query": "PIR", "expect_section_contains": "pir", "expect_track": "industry", "lang": "en"}
+{"id": "ind_pir_zh", "query": "项目信息要求", "expect_section_contains": "pir", "expect_track": "industry", "lang": "zh"}
+{"id": "ind_container", "query": "信息容器", "expect_section_contains": "naming", "expect_track": "industry", "lang": "zh"}
+{"id": "ind_container_en", "query": "Information Container ID", "expect_section_contains": "naming", "expect_track": "industry", "lang": "en"}
+{"id": "ind_cde_what", "query": "What is CDE?", "expect_section_contains": "cde", "expect_track": "industry", "lang": "en"}
+{"id": "ind_cde_zh", "query": "什么是CDE", "expect_section_contains": "cde", "expect_track": "industry", "lang": "zh"}
+{"id": "ind_iso", "query": "ISO 19650 terminologies", "expect_section_contains": "iso_19650", "expect_track": "industry", "lang": "en"}
+{"id": "ind_landsd", "query": "LandsD BIM submission", "expect_section_contains": "lands", "expect_track": "industry", "lang": "en"}
+{"id": "ind_landsd_zh", "query": "地政总署 提交", "expect_section_contains": "xiv", "expect_track": "industry", "lang": "zh"}
+{"id": "ind_naming", "query": "BIM model naming DEVB", "expect_section_contains": "naming", "expect_track": "industry", "lang": "en"}
+{"id": "ind_naming_zh", "query": "命名标准", "expect_section_contains": "naming", "expect_track": "industry", "lang": "zh"}
+{"id": "ind_shared", "query": "Shared CDE state", "expect_section_contains": "shared", "expect_track": "industry", "lang": "en"}
+{"id": "ind_published", "query": "Published information CDE", "expect_section_contains": "published", "expect_track": "industry", "lang": "en"}
+{"id": "ind_oir", "query": "OIR requirements", "expect_section_contains": "oir", "expect_track": "industry", "lang": "en"}
+{"id": "ind_eir", "query": "Exchange Information Requirements", "expect_section_contains": "eir", "expect_track": "industry", "lang": "en"}
+{"id": "ind_handover", "query": "CDE handover procedures", "expect_section_contains": "handover", "expect_track": "industry", "lang": "en"}
+{"id": "ind_status", "query": "status code suitability CDE", "expect_section_contains": "status_code", "expect_track": "industry", "lang": "en"}
+{"id": "ind_docs_perm", "query": "设置权限", "expect_section_contains": "", "expect_track": "docs", "lang": "zh"}
+{"id": "ind_docs_folder", "query": "创建文件夹", "expect_section_contains": "", "expect_track": "docs", "lang": "zh"}
+{"id": "ind_docs_share", "query": "分享文件", "expect_section_contains": "", "expect_track": "docs", "lang": "zh"}
+{"id": "ind_harmonisation", "query": "DEVB Harmonisation", "expect_section_contains": "harmonisation", "expect_track": "industry", "lang": "en"}
+{"id": "ind_loin", "query": "Level of Information Need", "expect_section_contains": "loin", "expect_track": "industry", "lang": "en"}

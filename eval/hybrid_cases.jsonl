@@ -1,0 +1,12 @@
+{"id": "hy_folder_en", "query": "How do I set up ACC Docs folder structure to align with HK standard", "expect_track": "hybrid", "expect_capability": "folder"}
+{"id": "hy_project", "query": "怎样创建一个ACC项目，符合CIC BIM Standard", "expect_track": "hybrid", "expect_capability": "project_create"}
+{"id": "hy_workflow", "query": "怎么做一个符合ISO 19650要求的审批流", "expect_track": "hybrid", "expect_capability": "workflow"}
+{"id": "hy_naming", "query": "如何按DEVB要求在Docs创建命名标准", "expect_track": "hybrid", "expect_capability": "naming"}
+{"id": "hy_cic_attach", "query": "符合CIC的CDE怎么在ACC落实", "expect_track": "hybrid", "expect_capability": null}
+{"id": "docs_perm", "query": "设置权限", "expect_track": "docs", "expect_capability": null}
+{"id": "docs_share", "query": "如何分享文件", "expect_track": "docs", "expect_capability": null}
+{"id": "ind_wip", "query": "WIP 是什么", "expect_track": "hk_cde", "expect_capability": null}
+{"id": "ind_pir", "query": "Project Information Requirements PIR", "expect_track": "hk_cde", "expect_capability": null}
+{"id": "ind_gateway", "query": "Authorisation Gateway", "expect_track": "hk_cde", "expect_capability": "workflow"}
+{"id": "docs_create_project", "query": "如何在ACC创建项目", "expect_track": "docs", "expect_capability": "project_create"}
+{"id": "hy_force_shape", "query": "按CIC标准配置Docs审批工作流", "expect_track": "hybrid", "expect_capability": "workflow"}

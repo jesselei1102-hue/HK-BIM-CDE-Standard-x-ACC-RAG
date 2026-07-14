@@ -1,0 +1,19 @@
+requests>=2.28.0
+beautifulsoup4>=4.11.0
+
+# 本地 RAG：
+chromadb
+ollama
+rank-bm25
+
+# 香港 CDE 行业知识库抽取：
+pypdf>=4.0.0
+python-docx>=1.1.0
+openpyxl>=3.1.0
+PyYAML>=6.0
+
+# 测试：
+pytest
+
+# 仅当使用 Autodesk 帮助（SPA）时需要：
+# playwright>=1.40.0

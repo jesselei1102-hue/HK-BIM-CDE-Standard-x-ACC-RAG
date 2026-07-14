@@ -1,0 +1,1073 @@
+{
+  "admin": {
+    "page_count": 203,
+    "how_to_count": 110,
+    "representative": {
+      "title": "See Your Subscription",
+      "guid": "Your_Subscription",
+      "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Your_Subscription"
+    },
+    "how_to_pages": [
+      {
+        "title": "See Your Subscription",
+        "guid": "Your_Subscription",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Your_Subscription"
+      },
+      {
+        "title": "Administration",
+        "guid": "Administration",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Administration"
+      },
+      {
+        "title": "Account Administration",
+        "guid": "Account_Administration",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Account_Administration"
+      },
+      {
+        "title": "Project Administration",
+        "guid": "Project_Administration",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Project_Administration"
+      },
+      {
+        "title": "My Home FAQs",
+        "guid": "My_Home_FAQs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=My_Home_FAQs"
+      },
+      {
+        "title": "Search and Filter Files",
+        "guid": "Search_Files",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Search_Files"
+      },
+      {
+        "title": "Automatically Trigger Reviews from Files",
+        "guid": "auto-trigger-reviews-docs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=auto-trigger-reviews-docs"
+      },
+      {
+        "title": "Create a Review",
+        "guid": "Reviews_Start_Review",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Reviews_Start_Review"
+      },
+      {
+        "title": "Send Review Back to Initiator",
+        "guid": "Send_Review_Back_To_Initiator_Reviews_Docs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Send_Review_Back_To_Initiator_Reviews_Docs"
+      },
+      {
+        "title": "Recipient Settings and Add Recipients to Sent Transmittals",
+        "guid": "Add_Recipients_Sent_Transmittal",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Add_Recipients_Sent_Transmittal"
+      }
+    ],
+    "sample_titles": [
+      "Trial Best Practices",
+      "Convert a Trial to a Subscription Account",
+      "Product Access and Subscriptions",
+      "Bring Your Own Subscription",
+      "See Your Subscription",
+      "Getting Started for Administration",
+      "Administration",
+      "Account Administration"
+    ]
+  },
+  "files_formats": {
+    "page_count": 86,
+    "how_to_count": 50,
+    "representative": {
+      "title": "Single Sign-on and Directory Sync",
+      "guid": "ACC_SSO_Directory_Sync",
+      "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=ACC_SSO_Directory_Sync"
+    },
+    "how_to_pages": [
+      {
+        "title": "Single Sign-on and Directory Sync",
+        "guid": "ACC_SSO_Directory_Sync",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=ACC_SSO_Directory_Sync"
+      },
+      {
+        "title": "Autodesk Docs",
+        "guid": "About_Autodesk_Construction_Cloud_Docs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_Autodesk_Construction_Cloud_Docs"
+      },
+      {
+        "title": "My Home FAQs",
+        "guid": "My_Home_FAQs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=My_Home_FAQs"
+      },
+      {
+        "title": "Files on Autodesk Construction Cloud Mobile App",
+        "guid": "Files_On_Mobile",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Files_On_Mobile"
+      },
+      {
+        "title": "Version Sets",
+        "guid": "Version_Sets_Specifications",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Version_Sets_Specifications"
+      },
+      {
+        "title": "Reports - FAQ and Troubleshooting",
+        "guid": "Reports_FAQ_Troubleshooting",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Reports_FAQ_Troubleshooting"
+      },
+      {
+        "title": "Docs",
+        "guid": "Docs_Whats_New_November_25",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Docs_Whats_New_November_25"
+      },
+      {
+        "title": "Insight",
+        "guid": "Insight_Whats_New_November_25",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Insight_Whats_New_November_25"
+      },
+      {
+        "title": "About the Autodesk Construction Cloud Mobile App",
+        "guid": "About_ACC_App",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_ACC_App"
+      },
+      {
+        "title": "Background Sync",
+        "guid": "Mobile_Background_Sync",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Mobile_Background_Sync"
+      }
+    ],
+    "sample_titles": [
+      "System Requirements",
+      "Supported Languages and Preferences",
+      "Single Sign-on and Directory Sync",
+      "Autodesk BIM Collaborate Pro",
+      "Autodesk Takeoff",
+      "Autodesk Docs",
+      "My Home FAQs",
+      "Upload Files"
+    ]
+  },
+  "general": {
+    "page_count": 29,
+    "how_to_count": 10,
+    "representative": {
+      "title": "AutoSpecs",
+      "guid": "About_Autodesk_Construction_Cloud_AutoSpecs",
+      "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_Autodesk_Construction_Cloud_AutoSpecs"
+    },
+    "how_to_pages": [
+      {
+        "title": "AutoSpecs",
+        "guid": "About_Autodesk_Construction_Cloud_AutoSpecs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_Autodesk_Construction_Cloud_AutoSpecs"
+      },
+      {
+        "title": "Automatic Subscription Assignment (Token Flex)",
+        "guid": "Automatic_Subscription_Assignment",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Automatic_Subscription_Assignment"
+      },
+      {
+        "title": "File Attributes",
+        "guid": "File_attributes",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=File_attributes"
+      },
+      {
+        "title": "ACC Profile",
+        "guid": "Members_ACC_Profile",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Members_ACC_Profile"
+      },
+      {
+        "title": "Viewer FAQ",
+        "guid": "Viewer_FAQ_Files",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Viewer_FAQ_Files"
+      },
+      {
+        "title": "Autodesk Replication Tool",
+        "guid": "File_Replication_Tool_Files",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=File_Replication_Tool_Files"
+      },
+      {
+        "title": "Request Full Historical Activity Data",
+        "guid": "Request_Full_Historical_Activity_Data",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Request_Full_Historical_Activity_Data"
+      },
+      {
+        "title": "Member Management",
+        "guid": "Account_Admin_Member_Management",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Account_Admin_Member_Management"
+      },
+      {
+        "title": "Transition Data",
+        "guid": "Transition_Data",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Transition_Data"
+      },
+      {
+        "title": "How to Format Callouts for Automatic Hyperlinking",
+        "guid": "Drawing_Authoring_Hyperlinks_Automated_Drawing_Extraction",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Drawing_Authoring_Hyperlinks_Automated_Drawing_Extraction"
+      }
+    ],
+    "sample_titles": [
+      "Autodesk Regional Offerings FAQ",
+      "AutoSpecs",
+      "Navigating Products and Projects",
+      "Start a Trial",
+      "Automatic Subscription Assignment (Token Flex)",
+      "File Attributes",
+      "Working with Specifications in the Viewer",
+      "Cost Management"
+    ]
+  },
+  "insight": {
+    "page_count": 127,
+    "how_to_count": 58,
+    "representative": {
+      "title": "Autodesk Docs",
+      "guid": "About_Autodesk_Construction_Cloud_Docs",
+      "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_Autodesk_Construction_Cloud_Docs"
+    },
+    "how_to_pages": [
+      {
+        "title": "Autodesk Docs",
+        "guid": "About_Autodesk_Construction_Cloud_Docs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_Autodesk_Construction_Cloud_Docs"
+      },
+      {
+        "title": "Customize My Home Dashboards and Cards",
+        "guid": "My_Home_Customize_Dashboards",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=My_Home_Customize_Dashboards"
+      },
+      {
+        "title": "My Home FAQs",
+        "guid": "My_Home_FAQs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=My_Home_FAQs"
+      },
+      {
+        "title": "Export Reviews Report",
+        "guid": "Reviews_Report",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Reviews_Report"
+      },
+      {
+        "title": "View and Manage Transmittals",
+        "guid": "View_Transmittal",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=View_Transmittal"
+      },
+      {
+        "title": "Report Types",
+        "guid": "Report_Types",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Report_Types"
+      },
+      {
+        "title": "Create and Schedule Reports",
+        "guid": "Create_Schedule_Reports",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Create_Schedule_Reports"
+      },
+      {
+        "title": "Work with Reports in Reports Log",
+        "guid": "Work_with_Reports_in_Reports_Log",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Work_with_Reports_in_Reports_Log"
+      },
+      {
+        "title": "Reports - FAQ and Troubleshooting",
+        "guid": "Reports_FAQ_Troubleshooting",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Reports_FAQ_Troubleshooting"
+      },
+      {
+        "title": "Shared Dashboards",
+        "guid": "Shared_Dashboards",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Shared_Dashboards"
+      }
+    ],
+    "sample_titles": [
+      "Supported Languages and Preferences",
+      "Autodesk Build",
+      "Autodesk BIM Collaborate Pro",
+      "Autodesk Takeoff",
+      "Autodesk Docs",
+      "January 2026",
+      "November 2025",
+      "September 2025"
+    ]
+  },
+  "issues": {
+    "page_count": 100,
+    "how_to_count": 54,
+    "representative": {
+      "title": "Autodesk Docs",
+      "guid": "About_Autodesk_Construction_Cloud_Docs",
+      "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_Autodesk_Construction_Cloud_Docs"
+    },
+    "how_to_pages": [
+      {
+        "title": "Autodesk Docs",
+        "guid": "About_Autodesk_Construction_Cloud_Docs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_Autodesk_Construction_Cloud_Docs"
+      },
+      {
+        "title": "Report Types",
+        "guid": "Report_Types",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Report_Types"
+      },
+      {
+        "title": "Construction IQ",
+        "guid": "Insight_Construction_IQ",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Insight_Construction_IQ"
+      },
+      {
+        "title": "Docs",
+        "guid": "Docs_Whats_New_January_26",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Docs_Whats_New_January_26"
+      },
+      {
+        "title": "Create Issues",
+        "guid": "Issues_Create",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Issues_Create"
+      },
+      {
+        "title": "Edit, Publish, Unpublish, and Comment on Issues",
+        "guid": "Issues_Edit_Publish_Unpublish_Comment",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Issues_Edit_Publish_Unpublish_Comment"
+      },
+      {
+        "title": "Delete and Restore Issues",
+        "guid": "Delete_Restore_Issues",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Delete_Restore_Issues"
+      },
+      {
+        "title": "Work with Issues in the Viewer",
+        "guid": "Work_with_Issues_in_Viewer",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Work_with_Issues_in_Viewer"
+      },
+      {
+        "title": "Export Issues and Issues Reports",
+        "guid": "Issues_Export",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Issues_Export"
+      },
+      {
+        "title": "Issues on Autodesk Construction Cloud Mobile App",
+        "guid": "Issues_on_Autodesk_Construction_Cloud_Mobile_App",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Issues_on_Autodesk_Construction_Cloud_Mobile_App"
+      }
+    ],
+    "sample_titles": [
+      "Autodesk Docs",
+      "Project Home",
+      "Frequently Asked Questions - Autodesk Assistant in Autodesk Construction Cloud",
+      "About Autodesk Assistant Beta",
+      "Report Types",
+      "Construction IQ",
+      "Domain Requirements",
+      "Docs"
+    ]
+  },
+  "limitations": {
+    "page_count": 23,
+    "how_to_count": 0,
+    "representative": {
+      "title": "Product and Tool Limitations",
+      "guid": "Product_Limitations",
+      "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Product_Limitations",
+      "page_type": "limitations"
+    },
+    "how_to_pages": [],
+    "sample_titles": [
+      "Product and Tool Limitations",
+      "Upload Files",
+      "Archive Closed and Void Reviews",
+      "Transmittals Settings",
+      "Bridge for Build and Docs Limitations",
+      "Import Issues from BCF File",
+      "Copy Files",
+      "Create Transmittal"
+    ]
+  },
+  "markups": {
+    "page_count": 30,
+    "how_to_count": 19,
+    "representative": {
+      "title": "Docs",
+      "guid": "Docs_Whats_New_January_26",
+      "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Docs_Whats_New_January_26"
+    },
+    "how_to_pages": [
+      {
+        "title": "Docs",
+        "guid": "Docs_Whats_New_January_26",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Docs_Whats_New_January_26"
+      },
+      {
+        "title": "Create Issues",
+        "guid": "Issues_Create",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Issues_Create"
+      },
+      {
+        "title": "Delete and Restore Issues",
+        "guid": "Delete_Restore_Issues",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Delete_Restore_Issues"
+      },
+      {
+        "title": "Work with Issues in the Viewer",
+        "guid": "Work_with_Issues_in_Viewer",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Work_with_Issues_in_Viewer"
+      },
+      {
+        "title": "About the Autodesk Construction Cloud Mobile App",
+        "guid": "About_ACC_App",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_ACC_App"
+      },
+      {
+        "title": "Export Files",
+        "guid": "Export_Files",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Export_Files"
+      },
+      {
+        "title": "Markups",
+        "guid": "Markups_Files_Docs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Markups_Files_Docs"
+      },
+      {
+        "title": "Markups in Files on Mobile",
+        "guid": "Markups_Mobile_Files_Docs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Markups_Mobile_Files_Docs"
+      },
+      {
+        "title": "Advanced File Settings",
+        "guid": "Advanced_File_Settings",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Advanced_File_Settings"
+      },
+      {
+        "title": "Create and Style Markups",
+        "guid": "Create_Style_Markups_Files_Docs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Create_Style_Markups_Files_Docs"
+      }
+    ],
+    "sample_titles": [
+      "View Files on Web",
+      "Send Review Back to Previous Step",
+      "Bridge for Build and Docs Limitations",
+      "Docs",
+      "Create Issues",
+      "Delete and Restore Issues",
+      "Work with Issues in the Viewer",
+      "About the Autodesk Construction Cloud Mobile App"
+    ]
+  },
+  "mobile": {
+    "page_count": 73,
+    "how_to_count": 43,
+    "representative": {
+      "title": "Files on Autodesk Construction Cloud Mobile App",
+      "guid": "Files_On_Mobile",
+      "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Files_On_Mobile"
+    },
+    "how_to_pages": [
+      {
+        "title": "Files on Autodesk Construction Cloud Mobile App",
+        "guid": "Files_On_Mobile",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Files_On_Mobile"
+      },
+      {
+        "title": "Specifications References on Web",
+        "guid": "Specifications_References_Web",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Specifications_References_Web"
+      },
+      {
+        "title": "Create Issues",
+        "guid": "Issues_Create",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Issues_Create"
+      },
+      {
+        "title": "Delete and Restore Issues",
+        "guid": "Delete_Restore_Issues",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Delete_Restore_Issues"
+      },
+      {
+        "title": "Work with Issues in the Viewer",
+        "guid": "Work_with_Issues_in_Viewer",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Work_with_Issues_in_Viewer"
+      },
+      {
+        "title": "Issues on Autodesk Construction Cloud Mobile App",
+        "guid": "Issues_on_Autodesk_Construction_Cloud_Mobile_App",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Issues_on_Autodesk_Construction_Cloud_Mobile_App"
+      },
+      {
+        "title": "Docs",
+        "guid": "Docs_Whats_New_November_25",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Docs_Whats_New_November_25"
+      },
+      {
+        "title": "Build",
+        "guid": "Build_Whats_New_September_25",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Build_Whats_New_September_25"
+      },
+      {
+        "title": "About the Autodesk Construction Cloud Mobile App",
+        "guid": "About_ACC_App",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_ACC_App"
+      },
+      {
+        "title": "Sign In or Create Your Account on the Mobile App",
+        "guid": "Mobile_Sign_In",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Mobile_Sign_In"
+      }
+    ],
+    "sample_titles": [
+      "Sync and Download Projects",
+      "Project Home",
+      "Files on Autodesk Construction Cloud Mobile App",
+      "Specifications References on Web",
+      "Specifications on Autodesk Construction Cloud Mobile App",
+      "Troubleshooting Sharing with Bridge",
+      "Create Issues",
+      "Delete and Restore Issues"
+    ]
+  },
+  "naming": {
+    "page_count": 24,
+    "how_to_count": 13,
+    "representative": {
+      "title": "File Naming Standards",
+      "guid": "File_Naming_Standard",
+      "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=File_Naming_Standard"
+    },
+    "how_to_pages": [
+      {
+        "title": "File Naming Standards",
+        "guid": "File_Naming_Standard",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=File_Naming_Standard"
+      },
+      {
+        "title": "Docs",
+        "guid": "Docs_Whats_New_January_26",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Docs_Whats_New_January_26"
+      },
+      {
+        "title": "Docs",
+        "guid": "Docs_Whats_New_July_25",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Docs_Whats_New_July_25"
+      },
+      {
+        "title": "Upload Linked Files",
+        "guid": "Upload_Linked_Files_Files_Tool",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Upload_Linked_Files_Files_Tool"
+      },
+      {
+        "title": "Project-Level File Attributes",
+        "guid": "Project_Level_Attributes",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Project_Level_Attributes"
+      },
+      {
+        "title": "Naming Standards Settings",
+        "guid": "Access_Naming_Standard_Settings",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Access_Naming_Standard_Settings"
+      },
+      {
+        "title": "Validate Files Names and Required Attribute Values",
+        "guid": "Add_Files_To_Naming_Standard_Enforced_Folder",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Add_Files_To_Naming_Standard_Enforced_Folder"
+      },
+      {
+        "title": "Activities Tracked in Activity Log",
+        "guid": "Activities_Tracked_in_Activity_Log",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Activities_Tracked_in_Activity_Log"
+      },
+      {
+        "title": "Project Administrator Permission Levels and Settings",
+        "guid": "Folder_Permission_Levels_Project_Administrator",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Folder_Permission_Levels_Project_Administrator"
+      },
+      {
+        "title": "Import and Export Naming Standards",
+        "guid": "Import_Naming_Standard",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Import_Naming_Standard"
+      }
+    ],
+    "sample_titles": [
+      "Product and Tool Limitations",
+      "File Naming Standards",
+      "Docs",
+      "Docs",
+      "Docs",
+      "About Files",
+      "Upload Linked Files",
+      "Lock or Unlock Files"
+    ]
+  },
+  "packages": {
+    "page_count": 27,
+    "how_to_count": 18,
+    "representative": {
+      "title": "Insight",
+      "guid": "Insight_Whats_New_November_25",
+      "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Insight_Whats_New_November_25"
+    },
+    "how_to_pages": [
+      {
+        "title": "Insight",
+        "guid": "Insight_Whats_New_November_25",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Insight_Whats_New_November_25"
+      },
+      {
+        "title": "Docs",
+        "guid": "Docs_Whats_New_July_25",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Docs_Whats_New_July_25"
+      },
+      {
+        "title": "Handover",
+        "guid": "Handover",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Handover"
+      },
+      {
+        "title": "Create Packages and Add Files",
+        "guid": "Create_Packages",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Create_Packages"
+      },
+      {
+        "title": "View and Manage Packages",
+        "guid": "View_Manage_Packages",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=View_Manage_Packages"
+      },
+      {
+        "title": "Manage and Consume Files in Packages",
+        "guid": "Consume_Packages",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Consume_Packages"
+      },
+      {
+        "title": "Package Managers",
+        "guid": "Package_Managers",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Package_Managers"
+      },
+      {
+        "title": "Packages Permissions",
+        "guid": "Package_Permissions",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Package_Permissions"
+      },
+      {
+        "title": "As-built Export",
+        "guid": "asbuilt-export-build",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=asbuilt-export-build"
+      },
+      {
+        "title": "When to Use Handover or As-built Export",
+        "guid": "Handover_Asbuilt_Export",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Handover_Asbuilt_Export"
+      }
+    ],
+    "sample_titles": [
+      "File Packages",
+      "Insight",
+      "Insight",
+      "Takeoff",
+      "Build",
+      "Docs",
+      "Handover",
+      "Add Files to Packages"
+    ]
+  },
+  "permissions": {
+    "page_count": 210,
+    "how_to_count": 110,
+    "representative": {
+      "title": "Single Sign-on and Directory Sync",
+      "guid": "ACC_SSO_Directory_Sync",
+      "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=ACC_SSO_Directory_Sync"
+    },
+    "how_to_pages": [
+      {
+        "title": "Single Sign-on and Directory Sync",
+        "guid": "ACC_SSO_Directory_Sync",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=ACC_SSO_Directory_Sync"
+      },
+      {
+        "title": "Back Up Your Data",
+        "guid": "Back_Up_Data",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Back_Up_Data"
+      },
+      {
+        "title": "About Idea Station",
+        "guid": "About_Idea_Station",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_Idea_Station"
+      },
+      {
+        "title": "Forma",
+        "guid": "About_Autodesk_Construction_Cloud_Forma",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_Autodesk_Construction_Cloud_Forma"
+      },
+      {
+        "title": "Activate Your Account",
+        "guid": "Purchase_And_Activate_Account",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Purchase_And_Activate_Account"
+      },
+      {
+        "title": "See Your Subscription",
+        "guid": "Your_Subscription",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Your_Subscription"
+      },
+      {
+        "title": "Project Administration",
+        "guid": "Project_Administration",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Project_Administration"
+      },
+      {
+        "title": "My Home FAQs",
+        "guid": "My_Home_FAQs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=My_Home_FAQs"
+      },
+      {
+        "title": "Files on Autodesk Construction Cloud Mobile App",
+        "guid": "Files_On_Mobile",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Files_On_Mobile"
+      },
+      {
+        "title": "Search and Filter Files",
+        "guid": "Search_Files",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Search_Files"
+      }
+    ],
+    "sample_titles": [
+      "Product and Tool Limitations",
+      "Single Sign-on and Directory Sync",
+      "Back Up Your Data",
+      "Contact Support",
+      "About Idea Station",
+      "Autodesk Build",
+      "Autodesk Takeoff",
+      "Forma"
+    ]
+  },
+  "reviews": {
+    "page_count": 113,
+    "how_to_count": 51,
+    "representative": {
+      "title": "Welcome to the Autodesk Docs Help Site",
+      "guid": "",
+      "source_url": "https://help.autodesk.com/view/DOCS/ENU/"
+    },
+    "how_to_pages": [
+      {
+        "title": "Welcome to the Autodesk Docs Help Site",
+        "guid": "",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/"
+      },
+      {
+        "title": "Autodesk Docs",
+        "guid": "About_Autodesk_Construction_Cloud_Docs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_Autodesk_Construction_Cloud_Docs"
+      },
+      {
+        "title": "Forma",
+        "guid": "About_Autodesk_Construction_Cloud_Forma",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_Autodesk_Construction_Cloud_Forma"
+      },
+      {
+        "title": "Automatically Trigger Reviews from Files",
+        "guid": "auto-trigger-reviews-docs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=auto-trigger-reviews-docs"
+      },
+      {
+        "title": "Create a Review",
+        "guid": "Reviews_Start_Review",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Reviews_Start_Review"
+      },
+      {
+        "title": "Review and Approve Files",
+        "guid": "Reviews_Review_and_Approve",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Reviews_Review_and_Approve"
+      },
+      {
+        "title": "Send Review Back to Initiator",
+        "guid": "Send_Review_Back_To_Initiator_Reviews_Docs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Send_Review_Back_To_Initiator_Reviews_Docs"
+      },
+      {
+        "title": "Export Reviews Report",
+        "guid": "Reviews_Report",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Reviews_Report"
+      },
+      {
+        "title": "Review Level Activities",
+        "guid": "Reviews_Review_Level_Activities",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Reviews_Review_Level_Activities"
+      },
+      {
+        "title": "Manage Bridged Projects",
+        "guid": "Bridged_Projects_Manage",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Bridged_Projects_Manage"
+      }
+    ],
+    "sample_titles": [
+      "Welcome to the Autodesk Docs Help Site",
+      "About Autodesk Construction Cloud™",
+      "System Requirements",
+      "Contact Support",
+      "Autodesk BIM Collaborate Pro",
+      "Autodesk Docs",
+      "Forma",
+      "Product Access and Subscriptions"
+    ]
+  },
+  "sharing": {
+    "page_count": 78,
+    "how_to_count": 57,
+    "representative": {
+      "title": "Administration",
+      "guid": "Administration",
+      "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Administration"
+    },
+    "how_to_pages": [
+      {
+        "title": "Administration",
+        "guid": "Administration",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Administration"
+      },
+      {
+        "title": "Search and Filter Files",
+        "guid": "Search_Files",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Search_Files"
+      },
+      {
+        "title": "Share Files and Folders",
+        "guid": "Share_files",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Share_files"
+      },
+      {
+        "title": "Data Exchanges",
+        "guid": "Data_Exchanges",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Data_Exchanges"
+      },
+      {
+        "title": "Work with Reports in Reports Log",
+        "guid": "Work_with_Reports_in_Reports_Log",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Work_with_Reports_in_Reports_Log"
+      },
+      {
+        "title": "Manage Bridged Projects",
+        "guid": "Bridged_Projects_Manage",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Bridged_Projects_Manage"
+      },
+      {
+        "title": "Manage Outgoing",
+        "guid": "Outgoing_Bridge",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Outgoing_Bridge"
+      },
+      {
+        "title": "Manage Incoming",
+        "guid": "Incoming_Bridge",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Incoming_Bridge"
+      },
+      {
+        "title": "View Synced Items in the Files and Sheets Tool",
+        "guid": "Bridge_View_Files_Sheets",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Bridge_View_Files_Sheets"
+      },
+      {
+        "title": "Shared Dashboards",
+        "guid": "Shared_Dashboards",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Shared_Dashboards"
+      }
+    ],
+    "sample_titles": [
+      "Administration",
+      "Upload Files",
+      "File Packages",
+      "Search and Filter Files",
+      "Share Files and Folders",
+      "Data Exchanges",
+      "Upgrade Revit Cloud Models",
+      "Work with Reports in Reports Log"
+    ]
+  },
+  "sync": {
+    "page_count": 32,
+    "how_to_count": 14,
+    "representative": {
+      "title": "Single Sign-on and Directory Sync",
+      "guid": "ACC_SSO_Directory_Sync",
+      "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=ACC_SSO_Directory_Sync"
+    },
+    "how_to_pages": [
+      {
+        "title": "Single Sign-on and Directory Sync",
+        "guid": "ACC_SSO_Directory_Sync",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=ACC_SSO_Directory_Sync"
+      },
+      {
+        "title": "Back Up Your Data",
+        "guid": "Back_Up_Data",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Back_Up_Data"
+      },
+      {
+        "title": "Files on Autodesk Construction Cloud Mobile App",
+        "guid": "Files_On_Mobile",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Files_On_Mobile"
+      },
+      {
+        "title": "View Synced Items in the Files and Sheets Tool",
+        "guid": "Bridge_View_Files_Sheets",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Bridge_View_Files_Sheets"
+      },
+      {
+        "title": "About the Autodesk Construction Cloud Mobile App",
+        "guid": "About_ACC_App",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_ACC_App"
+      },
+      {
+        "title": "Background Sync",
+        "guid": "Mobile_Background_Sync",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Mobile_Background_Sync"
+      },
+      {
+        "title": "Sync Troubleshooting",
+        "guid": "Mobile_Sync_Troubleshooting",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Mobile_Sync_Troubleshooting"
+      },
+      {
+        "title": "Upload Linked Files",
+        "guid": "Upload_Linked_Files_Files_Tool",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Upload_Linked_Files_Files_Tool"
+      },
+      {
+        "title": "View and Navigate Files on Mobile",
+        "guid": "View_Files_Mobile",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=View_Files_Mobile"
+      },
+      {
+        "title": "Manage Folder and Sheet Automations",
+        "guid": "Bridge_Automations",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Bridge_Automations"
+      }
+    ],
+    "sample_titles": [
+      "Single Sign-on and Directory Sync",
+      "Back Up Your Data",
+      "Sync and Download Projects",
+      "Files on Autodesk Construction Cloud Mobile App",
+      "Upgrade Revit Cloud Models",
+      "View Synced Items in the Files and Sheets Tool",
+      "Bridge for Build and Docs FAQ",
+      "Cost Management"
+    ]
+  },
+  "transmittals": {
+    "page_count": 13,
+    "how_to_count": 7,
+    "representative": {
+      "title": "Welcome to the Autodesk Docs Help Site",
+      "guid": "",
+      "source_url": "https://help.autodesk.com/view/DOCS/ENU/"
+    },
+    "how_to_pages": [
+      {
+        "title": "Welcome to the Autodesk Docs Help Site",
+        "guid": "",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/"
+      },
+      {
+        "title": "Autodesk Docs",
+        "guid": "About_Autodesk_Construction_Cloud_Docs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_Autodesk_Construction_Cloud_Docs"
+      },
+      {
+        "title": "Review Level Activities",
+        "guid": "Reviews_Review_Level_Activities",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Reviews_Review_Level_Activities"
+      },
+      {
+        "title": "About Transmittals",
+        "guid": "Transmittals",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Transmittals"
+      },
+      {
+        "title": "Recipient Settings and Add Recipients to Sent Transmittals",
+        "guid": "Add_Recipients_Sent_Transmittal",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Add_Recipients_Sent_Transmittal"
+      },
+      {
+        "title": "View and Manage Transmittals",
+        "guid": "View_Transmittal",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=View_Transmittal"
+      },
+      {
+        "title": "Manage and Consume Files in Packages",
+        "guid": "Consume_Packages",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Consume_Packages"
+      }
+    ],
+    "sample_titles": [
+      "Welcome to the Autodesk Docs Help Site",
+      "Autodesk Docs",
+      "Review Level Activities",
+      "About Transmittals",
+      "Transmittals Settings",
+      "Create Transmittals",
+      "Recipient Settings and Add Recipients to Sent Transmittals",
+      "View and Manage Transmittals"
+    ]
+  },
+  "upload": {
+    "page_count": 48,
+    "how_to_count": 36,
+    "representative": {
+      "title": "Files on Autodesk Construction Cloud Mobile App",
+      "guid": "Files_On_Mobile",
+      "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Files_On_Mobile"
+    },
+    "how_to_pages": [
+      {
+        "title": "Files on Autodesk Construction Cloud Mobile App",
+        "guid": "Files_On_Mobile",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Files_On_Mobile"
+      },
+      {
+        "title": "Version Sets",
+        "guid": "Version_Sets_Specifications",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Version_Sets_Specifications"
+      },
+      {
+        "title": "Reports - FAQ and Troubleshooting",
+        "guid": "Reports_FAQ_Troubleshooting",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Reports_FAQ_Troubleshooting"
+      },
+      {
+        "title": "Docs",
+        "guid": "Docs_Whats_New_November_25",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Docs_Whats_New_November_25"
+      },
+      {
+        "title": "About the Autodesk Construction Cloud Mobile App",
+        "guid": "About_ACC_App",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_ACC_App"
+      },
+      {
+        "title": "Background Sync",
+        "guid": "Mobile_Background_Sync",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Mobile_Background_Sync"
+      },
+      {
+        "title": "Sync Troubleshooting",
+        "guid": "Mobile_Sync_Troubleshooting",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Mobile_Sync_Troubleshooting"
+      },
+      {
+        "title": "Upload Linked Files",
+        "guid": "Upload_Linked_Files_Files_Tool",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Upload_Linked_Files_Files_Tool"
+      },
+      {
+        "title": "About the Bulk Upload Tool",
+        "guid": "About_Bulk_Upload_Tool",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=About_Bulk_Upload_Tool"
+      },
+      {
+        "title": "Supported Files on Web",
+        "guid": "Supported_Files_Docs",
+        "source_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Supported_Files_Docs"
+      }
+    ],
+    "sample_titles": [
+      "Upload Files",
+      "Files on Autodesk Construction Cloud Mobile App",
+      "Upgrade Revit Cloud Models",
+      "Add and Publish Specifications",
+      "Version Sets",
+      "Reports - FAQ and Troubleshooting",
+      "Docs",
+      "About the Autodesk Construction Cloud Mobile App"
+    ]
+  }
+}
