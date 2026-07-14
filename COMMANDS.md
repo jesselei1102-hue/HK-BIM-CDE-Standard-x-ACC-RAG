@@ -41,7 +41,18 @@ python ask.py
 # 输入问题；空行 / exit / quit / q 退出
 ```
 
+### 1.0 Streamlit 演示界面
 
+```bash
+source .venv/bin/activate
+pip install -r requirements.txt   # 需含 streamlit
+streamlit run streamlit_demo.py
+```
+
+浏览器打开后：English UI；侧栏默认 Answer language = `en`；点示例或输入问题 → Ask。  
+hybrid 答案按四段卡片展示，右侧列出 HK / Playbook / Docs 来源。
+
+---
 
 ### 1.1 `--corpus` 语料轨
 
@@ -172,6 +183,14 @@ python scripts/build_playbook_kb_index.py --rebuild
 
 ## 3. 评测
 
+一键跑全套并写入 `eval/RESULTS.md`：
+
+```bash
+python scripts/run_eval_suite.py
+```
+
+分项：
+
 ```bash
 python scripts/eval_hk_cde.py
 python scripts/eval_hk_cde.py --cases eval/hk_cde_cases.jsonl
@@ -180,12 +199,16 @@ python scripts/eval_hybrid.py
 python scripts/eval_hybrid.py --generate   # 额外检查 hybrid 生成结构（慢）
 python scripts/eval_hybrid.py --cases eval/hybrid_cases.jsonl
 
+python scripts/eval_hybrid_vs_single.py    # hybrid vs 强制单轨覆盖率对比
 python scripts/eval_playbook_acc_hk.py
 python scripts/eval_playbook_acc_hk.py --cases eval/playbook_acc_hk_cases.jsonl
 
 python scripts/eval_query_kb.py
 python scripts/eval_query_kb.py --cases eval/query_kb_cases.jsonl
 ```
+
+结果摘要：[`eval/RESULTS.md`](eval/RESULTS.md)  
+对比证明：跨域问题上单轨 Dual/TripleRecall=0%，hybrid=100%。
 
 Pytest（切分 / 入库 / KB 等单元测试）：
 

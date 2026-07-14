@@ -93,6 +93,22 @@ flowchart TD
 | 产品操作 | Product Steps | `docs` |
 | 对齐与缺口 | Alignment & Gaps | Combined (fits + product/process gaps) |
 
+## Evaluation
+
+Frozen baseline: [`eval/RESULTS.md`](eval/RESULTS.md).
+
+On cross-domain (`expect_track: hybrid`) cases, forced single-track retrieval **cannot** cover more than one source family. Hybrid reaches **100% DualRecall / TripleRecall** in the latest run (6/6), while `docs` / `hk_cde` / `playbook` alone stay at **0%** multi-source coverage.
+
+```bash
+python scripts/run_eval_suite.py
+# pieces:
+python scripts/eval_query_kb.py
+python scripts/eval_hk_cde.py
+python scripts/eval_playbook_acc_hk.py
+python scripts/eval_hybrid.py
+python scripts/eval_hybrid_vs_single.py
+```
+
 ## Quick start
 
 ### Dependencies

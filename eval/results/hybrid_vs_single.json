@@ -1,0 +1,298 @@
+{
+  "generated_at": "2026-07-14T07:02:51.874841+00:00",
+  "cases_file": "eval/hybrid_cases.jsonl",
+  "hybrid_case_count": 6,
+  "modes": {
+    "docs": {
+      "mode": "docs",
+      "cases": 6,
+      "dual_hits": 0,
+      "triple_hits": 0,
+      "docs_hits": 5,
+      "hk_hits": 0,
+      "playbook_hits": 0,
+      "dual_rate": 0.0,
+      "triple_rate": 0.0
+    },
+    "hk_cde": {
+      "mode": "hk_cde",
+      "cases": 6,
+      "dual_hits": 0,
+      "triple_hits": 0,
+      "docs_hits": 0,
+      "hk_hits": 6,
+      "playbook_hits": 0,
+      "dual_rate": 0.0,
+      "triple_rate": 0.0
+    },
+    "playbook": {
+      "mode": "playbook",
+      "cases": 6,
+      "dual_hits": 0,
+      "triple_hits": 0,
+      "docs_hits": 0,
+      "hk_hits": 0,
+      "playbook_hits": 6,
+      "dual_rate": 0.0,
+      "triple_rate": 0.0
+    },
+    "hybrid": {
+      "mode": "hybrid",
+      "cases": 6,
+      "dual_hits": 6,
+      "triple_hits": 6,
+      "docs_hits": 6,
+      "hk_hits": 6,
+      "playbook_hits": 6,
+      "dual_rate": 1.0,
+      "triple_rate": 1.0
+    }
+  },
+  "verdict": {
+    "hybrid_beats_best_single_on_triple": true,
+    "hybrid_beats_or_ties_best_single_on_dual": true,
+    "pass": true
+  },
+  "details": [
+    {
+      "id": "hy_folder_en",
+      "query": "How do I set up ACC Docs folder structure to align with HK standard",
+      "mode": "docs",
+      "has_docs": true,
+      "has_hk_cde": false,
+      "has_playbook": false,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_project",
+      "query": "怎样创建一个ACC项目，符合CIC BIM Standard",
+      "mode": "docs",
+      "has_docs": true,
+      "has_hk_cde": false,
+      "has_playbook": false,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_workflow",
+      "query": "怎么做一个符合ISO 19650要求的审批流",
+      "mode": "docs",
+      "has_docs": true,
+      "has_hk_cde": false,
+      "has_playbook": false,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_naming",
+      "query": "如何按DEVB要求在Docs创建命名标准",
+      "mode": "docs",
+      "has_docs": true,
+      "has_hk_cde": false,
+      "has_playbook": false,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_cic_attach",
+      "query": "符合CIC的CDE怎么在ACC落实",
+      "mode": "docs",
+      "has_docs": false,
+      "has_hk_cde": false,
+      "has_playbook": false,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_force_shape",
+      "query": "按CIC标准配置Docs审批工作流",
+      "mode": "docs",
+      "has_docs": true,
+      "has_hk_cde": false,
+      "has_playbook": false,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_folder_en",
+      "query": "How do I set up ACC Docs folder structure to align with HK standard",
+      "mode": "hk_cde",
+      "has_docs": false,
+      "has_hk_cde": true,
+      "has_playbook": false,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_project",
+      "query": "怎样创建一个ACC项目，符合CIC BIM Standard",
+      "mode": "hk_cde",
+      "has_docs": false,
+      "has_hk_cde": true,
+      "has_playbook": false,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_workflow",
+      "query": "怎么做一个符合ISO 19650要求的审批流",
+      "mode": "hk_cde",
+      "has_docs": false,
+      "has_hk_cde": true,
+      "has_playbook": false,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_naming",
+      "query": "如何按DEVB要求在Docs创建命名标准",
+      "mode": "hk_cde",
+      "has_docs": false,
+      "has_hk_cde": true,
+      "has_playbook": false,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_cic_attach",
+      "query": "符合CIC的CDE怎么在ACC落实",
+      "mode": "hk_cde",
+      "has_docs": false,
+      "has_hk_cde": true,
+      "has_playbook": false,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_force_shape",
+      "query": "按CIC标准配置Docs审批工作流",
+      "mode": "hk_cde",
+      "has_docs": false,
+      "has_hk_cde": true,
+      "has_playbook": false,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_folder_en",
+      "query": "How do I set up ACC Docs folder structure to align with HK standard",
+      "mode": "playbook",
+      "has_docs": false,
+      "has_hk_cde": false,
+      "has_playbook": true,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_project",
+      "query": "怎样创建一个ACC项目，符合CIC BIM Standard",
+      "mode": "playbook",
+      "has_docs": false,
+      "has_hk_cde": false,
+      "has_playbook": true,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_workflow",
+      "query": "怎么做一个符合ISO 19650要求的审批流",
+      "mode": "playbook",
+      "has_docs": false,
+      "has_hk_cde": false,
+      "has_playbook": true,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_naming",
+      "query": "如何按DEVB要求在Docs创建命名标准",
+      "mode": "playbook",
+      "has_docs": false,
+      "has_hk_cde": false,
+      "has_playbook": true,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_cic_attach",
+      "query": "符合CIC的CDE怎么在ACC落实",
+      "mode": "playbook",
+      "has_docs": false,
+      "has_hk_cde": false,
+      "has_playbook": true,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_force_shape",
+      "query": "按CIC标准配置Docs审批工作流",
+      "mode": "playbook",
+      "has_docs": false,
+      "has_hk_cde": false,
+      "has_playbook": true,
+      "dual": false,
+      "triple": false
+    },
+    {
+      "id": "hy_folder_en",
+      "query": "How do I set up ACC Docs folder structure to align with HK standard",
+      "mode": "hybrid",
+      "has_docs": true,
+      "has_hk_cde": true,
+      "has_playbook": true,
+      "dual": true,
+      "triple": true
+    },
+    {
+      "id": "hy_project",
+      "query": "怎样创建一个ACC项目，符合CIC BIM Standard",
+      "mode": "hybrid",
+      "has_docs": true,
+      "has_hk_cde": true,
+      "has_playbook": true,
+      "dual": true,
+      "triple": true
+    },
+    {
+      "id": "hy_workflow",
+      "query": "怎么做一个符合ISO 19650要求的审批流",
+      "mode": "hybrid",
+      "has_docs": true,
+      "has_hk_cde": true,
+      "has_playbook": true,
+      "dual": true,
+      "triple": true
+    },
+    {
+      "id": "hy_naming",
+      "query": "如何按DEVB要求在Docs创建命名标准",
+      "mode": "hybrid",
+      "has_docs": true,
+      "has_hk_cde": true,
+      "has_playbook": true,
+      "dual": true,
+      "triple": true
+    },
+    {
+      "id": "hy_cic_attach",
+      "query": "符合CIC的CDE怎么在ACC落实",
+      "mode": "hybrid",
+      "has_docs": true,
+      "has_hk_cde": true,
+      "has_playbook": true,
+      "dual": true,
+      "triple": true
+    },
+    {
+      "id": "hy_force_shape",
+      "query": "按CIC标准配置Docs审批工作流",
+      "mode": "hybrid",
+      "has_docs": true,
+      "has_hk_cde": true,
+      "has_playbook": true,
+      "dual": true,
+      "triple": true
+    }
+  ]
+}

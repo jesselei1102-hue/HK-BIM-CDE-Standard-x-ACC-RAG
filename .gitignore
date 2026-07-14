@@ -13,7 +13,11 @@ build/
 
 # 本地 RAG 生成物（Chroma / chunks）
 .rag_data/
-eval/results/
+# Keep machine dumps locally; commit the human summary + vs-single snapshot
+eval/results/*
+!eval/results/.gitkeep
+!eval/results/hybrid_vs_single.json
+
 
 # 爬虫镜像、官方 PDF 等大体量 / 版权材料
 output/
