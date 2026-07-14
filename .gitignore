@@ -1,6 +1,9 @@
 .DS_Store
 .env
 .venv/
+
+# Keep demo under assets/; ignore spaced local copy at repo root
+/RAG Demo.mp4
 __pycache__/
 *.py[cod]
 .pytest_cache/

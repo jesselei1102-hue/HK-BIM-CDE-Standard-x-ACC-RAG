@@ -6,6 +6,16 @@ The default answer shape (`--corpus hybrid`) is:
 
 **Standards requirements → Project implementation → Product steps → Alignment & gaps**
 
+## Demo
+
+Watch a short walkthrough of the hybrid RAG in action:
+
+https://github.com/jesselei1102-hue/HK-BIM-CDE-Standard-x-ACC-RAG/raw/main/assets/rag-demo.mp4
+
+<video src="assets/rag-demo.mp4" controls width="100%"></video>
+
+If the player does not render in your GitHub client, open the file directly: [`assets/rag-demo.mp4`](assets/rag-demo.mp4).
+
 ## Three source RAGs
 
 The three tracks are **physically isolated** (separate Chroma collections / chunk stores). Embeddings are never merged into one collection. Hybrid mode only combines retrieved chunks after retrieval, with numbered citations.
