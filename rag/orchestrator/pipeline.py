@@ -14,6 +14,7 @@ from rag.orchestrator.classify import (
     CAPABILITY_PLAYBOOK_URL_PREFIX,
     IntentDecision,
     classify_intent,
+    detect_capability,
     is_folder_question,
 )
 from rag.orchestrator.merge import MergedContexts, merge_triple_contexts
@@ -96,22 +97,18 @@ class HybridOrchestrator:
             if hard is not None:
                 return [hard]
 
-        wider: list = []
-        if folderish:
             wider = self.playbook_retriever.retrieve_with_debug(
                 "01_WIP 02_Shared 03_Published 04_Archive folder tree structure",
                 max(playbook_top, 6),
-                boost_url_prefix=playbook_boost or CAPABILITY_PLAYBOOK_URL_PREFIX["folder"],
+                boost_url_prefix=playbook_boost
+                or CAPABILITY_PLAYBOOK_URL_PREFIX["folder"],
             ).chunks
-            # 优先含完整目录树的 WIP 配置段，避免「概念回顧」误排第一
+            # 只接受明确 WIP 目录树证据；找不到则退回正常检索
             for chunk in wider:
                 if "2_wip" in chunk.source_url or "Central_Models" in chunk.text:
                     return [chunk]
             for chunk in wider:
                 if "`01_WIP`" in chunk.text and "`02_Shared`" in chunk.text:
-                    return [chunk]
-            for chunk in wider:
-                if "1_cde_四容器概念回顧" not in chunk.source_url:
                     return [chunk]
 
         result = self.playbook_retriever.retrieve_with_debug(
@@ -119,12 +116,7 @@ class HybridOrchestrator:
             playbook_top,
             boost_url_prefix=playbook_boost,
         )
-        chunks = list(result.chunks)
-        if folderish and chunks and "1_cde_四容器概念回顧" in chunks[0].source_url:
-            for chunk in wider if folderish else []:
-                if "2_wip" in chunk.source_url:
-                    return [chunk]
-        return chunks
+        return list(result.chunks)
 
     def classify(self, question: str) -> IntentDecision:
         return classify_intent(question)
@@ -190,6 +182,29 @@ class HybridOrchestrator:
             )
             if pinned_docs:
                 docs_chunks = pinned_docs
+        elif decision.capability == "model_viewer":
+            from rag.orchestrator.chunk_pin import load_docs_model_viewer_chunks
+
+            pinned_docs = load_docs_model_viewer_chunks(
+                self.docs_config.storage.chunks_path,
+                limit=docs_top,
+            )
+            if pinned_docs:
+                docs_chunks = pinned_docs
+        elif decision.capability in {
+            "permissions",
+            "project_create",
+            "project_template",
+            "workflow",
+        }:
+            from rag.orchestrator.chunk_pin import prefer_docs_for_capability
+
+            docs_chunks = prefer_docs_for_capability(
+                decision.capability,
+                docs_chunks,
+                chunks_path=self.docs_config.storage.chunks_path,
+                limit=docs_top,
+            )
 
         playbook_chunks = self._pick_playbook_chunks(
             question=question,
@@ -222,7 +237,14 @@ class HybridOrchestrator:
                 capability=decision.capability,
                 docs_top_k=docs_top,
             )
-        all_pin_warnings = (pin_warnings or []) + naming_warnings
+        viewer_warnings: list[str] = []
+        if decision.capability == "model_viewer":
+            merged, viewer_warnings = self._ensure_model_viewer_hybrid_merged(
+                merged,
+                capability=decision.capability,
+                docs_top_k=docs_top,
+            )
+        all_pin_warnings = (pin_warnings or []) + naming_warnings + viewer_warnings
         debug = OrchestratorDebug(
             intent=decision,
             docs_debug=docs_result.debug,
@@ -256,6 +278,22 @@ class HybridOrchestrator:
             playbook_chunks_path=self.playbook_config.storage.chunks_path,
             docs_chunks_path=self.docs_config.storage.chunks_path,
             industry_chunks_path=self.industry_config.storage.chunks_path,
+            docs_top_k=docs_top_k,
+        )
+
+    def _ensure_model_viewer_hybrid_merged(
+        self,
+        merged: MergedContexts,
+        *,
+        capability: str | None,
+        docs_top_k: int,
+    ) -> tuple[MergedContexts, list[str]]:
+        from rag.orchestrator.chunk_pin import ensure_model_viewer_hybrid_merged
+
+        return ensure_model_viewer_hybrid_merged(
+            merged,
+            capability=capability,
+            docs_chunks_path=self.docs_config.storage.chunks_path,
             docs_top_k=docs_top_k,
         )
 
@@ -326,6 +364,21 @@ class HybridOrchestrator:
                 warnings.extend(naming_warnings)
                 result.debug.validation_warnings = warnings
 
+        if capability == "model_viewer":
+            merged, viewer_warnings = self._ensure_model_viewer_hybrid_merged(
+                merged,
+                capability=capability,
+                docs_top_k=len(merged.docs_chunks) or 2,
+            )
+            if viewer_warnings:
+                result.merged = merged
+                result.chunks_playbook = merged.playbook_chunks
+                result.chunks_docs = merged.docs_chunks
+                result.chunks_industry = merged.industry_chunks
+                warnings = list(result.debug.validation_warnings or [])
+                warnings.extend(viewer_warnings)
+                result.debug.validation_warnings = warnings
+
         pre_merged, pre_drops = prefilter_docs_for_capability(merged, capability)
         if pre_drops:
             result.debug.validation_warnings = [
@@ -362,6 +415,9 @@ class HybridOrchestrator:
                     answer=structured_text,
                     contexts=contexts,
                     model="structured_compose",
+                    context_tokens=sum(
+                        int(getattr(c, "token_count", 0) or 0) for c in contexts
+                    ),
                 )
                 return result
 
@@ -384,6 +440,10 @@ class HybridOrchestrator:
                     answer=hint,
                     contexts=[item.chunk for item in merged.tracked],
                     model="blocked_bad_retrieval",
+                    context_tokens=sum(
+                        int(getattr(t.chunk, "token_count", 0) or 0)
+                        for t in merged.tracked
+                    ),
                 )
                 result.validation_ok = False
                 warnings = list(result.debug.validation_warnings or [])
@@ -487,10 +547,13 @@ class HybridOrchestrator:
             )
 
         if force_track == "docs":
+            capability = detect_capability(question)
             decision = IntentDecision(
                 track="docs",
-                capability=None,
-                product_query=question,
+                capability=capability.key if capability else None,
+                product_query=(
+                    capability.product_query if capability else question
+                ),
                 industry_query=None,
                 playbook_query=None,
                 has_product_signal=True,
@@ -499,11 +562,14 @@ class HybridOrchestrator:
                 reason="forced_docs",
             )
         elif force_track == "hk_cde":
+            capability = detect_capability(question)
             decision = IntentDecision(
                 track="hk_cde",
-                capability=None,
+                capability=capability.key if capability else None,
                 product_query=None,
-                industry_query=question,
+                industry_query=(
+                    capability.industry_query if capability else question
+                ),
                 playbook_query=None,
                 has_product_signal=False,
                 has_industry_signal=True,
@@ -511,12 +577,15 @@ class HybridOrchestrator:
                 reason="forced_hk_cde",
             )
         elif force_track == "playbook":
+            capability = detect_capability(question)
             decision = IntentDecision(
                 track="playbook",
-                capability=None,
+                capability=capability.key if capability else None,
                 product_query=None,
                 industry_query=None,
-                playbook_query=question,
+                playbook_query=(
+                    capability.playbook_query if capability else question
+                ),
                 has_product_signal=False,
                 has_industry_signal=False,
                 has_playbook_signal=True,
@@ -526,22 +595,12 @@ class HybridOrchestrator:
             decision = classify_intent(question)
             if decision.track != "hybrid":
                 from rag.orchestrator.classify import (
-                    CAPABILITY_TEMPLATES,
                     _fallback_queries,
-                    detect_capability,
+                    capability_template_by_key,
                 )
 
                 capability = detect_capability(question) or (
-                    next(
-                        (
-                            template
-                            for template in CAPABILITY_TEMPLATES
-                            if template.key == decision.capability
-                        ),
-                        None,
-                    )
-                    if decision.capability
-                    else None
+                    capability_template_by_key(decision.capability)
                 )
                 if capability is not None:
                     decision = IntentDecision(
@@ -583,7 +642,7 @@ class HybridOrchestrator:
 
         if decision.track == "hk_cde":
             retrieval = self.industry_retriever.retrieve_with_debug(
-                question, top_k=top_k
+                decision.industry_query or question, top_k=top_k
             )
             debug = OrchestratorDebug(
                 intent=decision,
@@ -607,8 +666,13 @@ class HybridOrchestrator:
             )
 
         if decision.track == "playbook":
+            playbook_boost = CAPABILITY_PLAYBOOK_URL_PREFIX.get(
+                decision.capability or ""
+            )
             retrieval = self.playbook_retriever.retrieve_with_debug(
-                decision.playbook_query or question, top_k=top_k
+                decision.playbook_query or question,
+                top_k=top_k,
+                boost_url_prefix=playbook_boost,
             )
             debug = OrchestratorDebug(
                 intent=decision,
@@ -633,17 +697,65 @@ class HybridOrchestrator:
                 retrieval=retrieval,
             )
 
-        retrieval = self.docs_retriever.retrieve_with_debug(question, top_k=top_k)
+        docs_query = decision.product_query or question
+        retrieval = self.docs_retriever.retrieve_with_debug(docs_query, top_k=top_k)
+        docs_chunks = list(retrieval.chunks)
+        if decision.capability in {
+            "permissions",
+            "project_create",
+            "project_template",
+            "workflow",
+            "naming",
+            "model_viewer",
+            "folder",
+        }:
+            from rag.orchestrator.chunk_pin import (
+                load_docs_folder_chunks,
+                load_docs_model_viewer_chunks,
+                load_docs_naming_chunks,
+                prefer_docs_for_capability,
+            )
+
+            limit = top_k or len(docs_chunks) or 3
+            if decision.capability == "folder":
+                preferred = load_docs_folder_chunks(
+                    self.docs_config.storage.chunks_path, limit=limit
+                )
+                if preferred:
+                    docs_chunks = preferred
+            elif decision.capability == "naming":
+                preferred = load_docs_naming_chunks(
+                    self.docs_config.storage.chunks_path, limit=limit
+                )
+                if preferred:
+                    docs_chunks = preferred
+            elif decision.capability == "model_viewer":
+                preferred = load_docs_model_viewer_chunks(
+                    self.docs_config.storage.chunks_path, limit=limit
+                )
+                if preferred:
+                    docs_chunks = preferred
+            else:
+                docs_chunks = prefer_docs_for_capability(
+                    decision.capability,
+                    docs_chunks,
+                    chunks_path=self.docs_config.storage.chunks_path,
+                    limit=limit,
+                )
+            retrieval = RetrievalResult(
+                chunks=docs_chunks,
+                debug=retrieval.debug,
+            )
         debug = OrchestratorDebug(intent=decision, docs_debug=retrieval.debug)
         answer = None
         if not no_generate:
             answer = generate_answer(
-                question, retrieval.chunks, self.docs_config, answer_lang=answer_lang
+                question, docs_chunks, self.docs_config, answer_lang=answer_lang
             )
         return OrchestratorResult(
             track="docs",
             answer=answer,
-            chunks_docs=retrieval.chunks,
+            chunks_docs=docs_chunks,
             chunks_industry=[],
             chunks_playbook=[],
             merged=None,

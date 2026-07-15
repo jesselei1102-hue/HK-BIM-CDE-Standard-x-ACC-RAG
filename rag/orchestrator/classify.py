@@ -51,11 +51,18 @@ _PRODUCT_PATTERNS = (
     re.compile(r"Account\s*Admin", re.I),
     re.compile(r"创建项目|建项目|新建项目"),
     re.compile(r"创建文件夹|建文件夹|文件夹结构|目录结构"),
-    re.compile(r"权限|成员|分享|共享"),
+    re.compile(r"权限|權限|成员|分享|共享"),
     re.compile(r"审批|工作流|审阅"),
     re.compile(r"Review|Approval\s*Workflow|workflow", re.I),
     re.compile(r"怎么做|如何做|怎样做|如何创建|怎么创建|怎样创建"),
     re.compile(r"命名标准"),  # 产品侧也可能问 Docs 命名标准
+    re.compile(r"Model\s*Browser|模型浏览器|模型瀏覽器", re.I),
+    re.compile(r"模型属性|模型屬性|属性过滤|屬性過濾"),
+    re.compile(
+        r"(查看|过滤|過濾).{0,12}(模型|属性|屬性|BIM)|"
+        r"(filter|view).{0,24}(propert|model\s*browser|RVT|IFC)",
+        re.I,
+    ),
 )
 
 # 实施手册 / 推荐配置信号（单轨 playbook，或强化 hybrid 走手册）
@@ -104,23 +111,98 @@ CAPABILITY_TEMPLATES: tuple[CapabilityTemplate, ...] = (
         ),
     ),
     CapabilityTemplate(
-        key="folder",
+        key="model_viewer",
         patterns=(
             re.compile(
-                r"文件夹|文件夾|目录结构|目錄結構|folder\s*structure|project\s*folder",
+                r"Model\s*Browser|模型浏览器|模型瀏覽器|"
+                r"模型属性|模型屬性|属性过滤|屬性過濾|"
+                r"(查看|过滤|過濾).{0,12}(BIM\s*)?(模型|属性|屬性)|"
+                r"(filter|view).{0,24}(BIM\s*)?(model\s*)?(propert|browser)|"
+                r"(RVT|IFC).{0,16}(propert|filter|view)|"
+                r"Viewer\s*Settings",
                 re.I,
             ),
         ),
         industry_query=(
-            "CICBIMS DEVB CDE project folder structure resource folder requirements"
+            "CIC BIM CDE federated model display filter properties "
+            "Annex audit information container model review"
         ),
         product_query=(
-            "Organize files with folders create subfolders "
+            "Model Browser filter RVT IFC properties "
+            "Viewer Settings Autodesk Docs"
+        ),
+        playbook_query=(
+            "Design Collaboration Model Coordination Model Browser "
+            "ACC HK BIM playbook"
+        ),
+    ),
+    CapabilityTemplate(
+        key="permissions",
+        patterns=(
+            re.compile(
+                r"文件夹权限|資料夾權限|文件夹權限|"
+                r"设置权限|設置權限|权限设置|權限設置|"
+                r"folder\s*permissions?|permission\s*levels?|"
+                r"(?<![A-Za-z])permissions?(?![A-Za-z])|"
+                r"权限|權限",
+                re.I,
+            ),
+        ),
+        industry_query=(
+            "CIC CDE access control role based folder permissions "
+            "information security container permission"
+        ),
+        product_query=(
+            "Manage Folder Permissions permission levels "
             "Autodesk Docs Files tool"
         ),
         playbook_query=(
-            "01_WIP 02_Shared 03_Published 04_Archive folder tree "
-            "WIP container configuration ACC HK BIM playbook"
+            "ACC folder permissions roles companies "
+            "recommended default HK BIM playbook"
+        ),
+    ),
+    CapabilityTemplate(
+        key="naming",
+        patterns=(
+            re.compile(
+                r"命名标准|命名標準|命名规范|命名規範|"
+                r"Information\s*Container\s*(ID|naming)|"
+                r"naming\s*standard|文件名|"
+                r"命名",
+                re.I,
+            ),
+        ),
+        industry_query=(
+            "DEVB BIM model naming Information Container ID federation naming"
+        ),
+        product_query="How to create naming standards in Autodesk Docs",
+        playbook_query=(
+            "ACC naming standard CICBIMS DEVB Information Container ID "
+            "recommended fields playbook"
+        ),
+    ),
+    CapabilityTemplate(
+        key="workflow",
+        patterns=(
+            re.compile(
+                r"审批|工作流|审阅|approval|"
+                r"Authorisation\s*Gateway|Authorization\s*Gateway|"
+                r"授权网关|授權網關|"
+                r"(?<![A-Za-z])workflow(?![A-Za-z])|"
+                r"(?<![A-Za-z])gateway(?![A-Za-z])",
+                re.I,
+            ),
+        ),
+        industry_query=(
+            "ISO 19650 CIC CDE authorisation gateway status code "
+            "review approve WIP Gateway workflow"
+        ),
+        product_query=(
+            "How to create review approval workflows in Autodesk Docs"
+        ),
+        playbook_query=(
+            "ACC approval workflow information gateway move folder status "
+            "attribute gap recommended playbook"
         ),
     ),
     CapabilityTemplate(
@@ -143,42 +225,40 @@ CAPABILITY_TEMPLATES: tuple[CapabilityTemplate, ...] = (
         ),
     ),
     CapabilityTemplate(
-        key="naming",
+        key="folder",
         patterns=(
             re.compile(
-                r"命名|Information\s*Container|naming\s*standard|文件名",
+                r"文件夹结构|文件夾結構|目录结构|目錄結構|"
+                r"folder\s*structure|project\s*folder|"
+                r"创建文件夹|建文件夹|创建文件夾|"
+                r"文件夹|文件夾|四容器|cde\s*容器",
                 re.I,
             ),
         ),
         industry_query=(
-            "DEVB BIM model naming Information Container ID federation naming"
-        ),
-        product_query="How to create naming standards in Autodesk Docs",
-        playbook_query=(
-            "ACC naming standard CICBIMS DEVB Information Container ID "
-            "recommended fields playbook"
-        ),
-    ),
-    CapabilityTemplate(
-        key="workflow",
-        patterns=(
-            re.compile(
-                r"审批|工作流|审阅|approval|workflow|gateway|授权网关",
-                re.I,
-            ),
-        ),
-        industry_query=(
-            "ISO 19650 CIC CDE authorisation gateway status code "
-            "review approve WIP Gateway workflow"
+            "CICBIMS DEVB CDE project folder structure resource folder requirements"
         ),
         product_query=(
-            "How to create review approval workflows in Autodesk Docs"
+            "Organize files with folders create subfolders "
+            "Autodesk Docs Files tool"
         ),
         playbook_query=(
-            "ACC approval workflow information gateway move folder status "
-            "attribute gap recommended playbook"
+            "01_WIP 02_Shared 03_Published 04_Archive folder tree "
+            "WIP container configuration ACC HK BIM playbook"
         ),
     ),
+)
+
+
+# 多能力同时命中时的优先级（越靠前越优先）
+_CAPABILITY_PRIORITY: tuple[str, ...] = (
+    "project_template",
+    "model_viewer",
+    "permissions",
+    "naming",
+    "workflow",
+    "project_create",
+    "folder",
 )
 
 
@@ -217,10 +297,36 @@ def has_playbook_signal(query: str) -> bool:
 
 
 def detect_capability(query: str) -> CapabilityTemplate | None:
+    """按优先级选择唯一 capability；避免第一个正则命中抢答。"""
+    matched = [
+        template
+        for template in CAPABILITY_TEMPLATES
+        if any(pattern.search(query) for pattern in template.patterns)
+    ]
+    if not matched:
+        return None
+    by_key = {template.key: template for template in matched}
+    for key in _CAPABILITY_PRIORITY:
+        if key in by_key:
+            return by_key[key]
+    return matched[0]
+
+
+def capability_template_by_key(key: str | None) -> CapabilityTemplate | None:
+    if not key:
+        return None
     for template in CAPABILITY_TEMPLATES:
-        if any(pattern.search(query) for pattern in template.patterns):
+        if template.key == key:
             return template
     return None
+
+
+_VIEWER_QUERY_RE = re.compile(
+    r"Model\s*Browser|模型浏览器|模型瀏覽器|模型属性|模型屬性|"
+    r"(查看|过滤|過濾).{0,12}(属性|屬性|模型)|"
+    r"(filter|view).{0,24}(propert|RVT|IFC|browser)",
+    re.I,
+)
 
 
 def _fallback_queries(query: str) -> tuple[str, str, str]:
@@ -228,7 +334,13 @@ def _fallback_queries(query: str) -> tuple[str, str, str]:
     industry_query = (
         f"{query} CIC DEVB ISO 19650 CDE information requirements"
     )
-    product_query = f"{query} Autodesk Docs ACC how to"
+    if _VIEWER_QUERY_RE.search(query):
+        product_query = (
+            "Model Browser filter RVT IFC properties "
+            "Viewer Settings Autodesk Docs"
+        )
+    else:
+        product_query = f"{query} Autodesk Docs ACC how to"
     playbook_query = (
         f"{query} ACC HK BIM playbook recommended configuration alignment gap"
     )
@@ -242,17 +354,29 @@ CAPABILITY_PLAYBOOK_URL_PREFIX: dict[str, str] = {
     "workflow": "playbook://acc_hk_bim/05_workflow",
     "project_create": "playbook://acc_hk_bim/01_project_setup",
     "project_template": "playbook://acc_hk_bim/08_project_template",
+    "model_viewer": "playbook://acc_hk_bim/06_design_collab",
+    "permissions": "playbook://acc_hk_bim/04_permissions",
 }
 
+# 明确文件夹操作措辞；不含裸 WIP/Shared 等术语（那些属行业概念）
 _FOLDER_QUESTION_RE = re.compile(
-    r"文件夹|文件夾|目录|目錄|folder|cde\s*容器|四容器|wip|shared|published|archive",
+    r"文件夹|文件夾|目录结构|目錄結構|folder\s*structure|"
+    r"project\s*folder|四容器|cde\s*容器|"
+    r"01_WIP|02_Shared|03_Published|04_Archive",
     re.I,
 )
 
 
 def is_folder_question(question: str, capability: str | None = None) -> bool:
+    """仅在 folder capability 或明确文件夹结构措辞时为真。
+
+    裸「WIP 是什么」不应触发文件夹硬钉选/结构化拼装。
+    """
     if capability == "folder":
         return True
+    if capability is not None:
+        # 已识别为其他能力时，不要因夹杂 folder 词误开文件夹管线
+        return False
     return bool(_FOLDER_QUESTION_RE.search(question or ""))
 
 
@@ -296,7 +420,9 @@ def classify_intent(query: str) -> IntentDecision:
             capability=capability.key if capability else None,
             product_query=None,
             industry_query=None,
-            playbook_query=text,
+            playbook_query=(
+                capability.playbook_query if capability else text
+            ),
             has_product_signal=False,
             has_industry_signal=industry,
             has_playbook_signal=True,
@@ -308,7 +434,9 @@ def classify_intent(query: str) -> IntentDecision:
         return IntentDecision(
             track="playbook",
             capability=capability.key if capability else None,
-            product_query=text,
+            product_query=(
+                capability.product_query if capability else text
+            ),
             industry_query=None,
             playbook_query=(
                 capability.playbook_query if capability else text
@@ -324,7 +452,9 @@ def classify_intent(query: str) -> IntentDecision:
             track="hk_cde",
             capability=capability.key if capability else None,
             product_query=None,
-            industry_query=text,
+            industry_query=(
+                capability.industry_query if capability else text
+            ),
             playbook_query=None,
             has_product_signal=False,
             has_industry_signal=True,
@@ -335,7 +465,9 @@ def classify_intent(query: str) -> IntentDecision:
     return IntentDecision(
         track="docs",
         capability=capability.key if capability else None,
-        product_query=text,
+        product_query=(
+            capability.product_query if capability else text
+        ),
         industry_query=None,
         playbook_query=None,
         has_product_signal=product,

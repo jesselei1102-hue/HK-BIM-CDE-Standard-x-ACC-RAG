@@ -54,6 +54,8 @@ def main(argv: list[str] | None = None) -> int:
 
     intent_hits = 0
     intent_total = 0
+    capability_hits = 0
+    capability_total = 0
     dual_hits = 0
     dual_total = 0
     false_hybrid = 0
@@ -71,6 +73,19 @@ def main(argv: list[str] | None = None) -> int:
             intent_hits += 1
         elif expect in {"docs", "hk_cde", "playbook"} and decision.track == "hybrid":
             false_hybrid += 1
+
+        if "expect_capability" in case:
+            capability_total += 1
+            expected_cap = case["expect_capability"]
+            if decision.capability == expected_cap:
+                capability_hits += 1
+            else:
+                print(
+                    f"  capability miss [{case.get('id')}]: "
+                    f"got={decision.capability!r} expect={expected_cap!r} "
+                    f"query={query}",
+                    file=sys.stderr,
+                )
 
         if expect == "hybrid":
             dual_total += 1
@@ -92,12 +107,19 @@ def main(argv: list[str] | None = None) -> int:
                     section_hits += 1
 
     intent_acc = intent_hits / intent_total if intent_total else 0.0
+    capability_acc = (
+        capability_hits / capability_total if capability_total else 1.0
+    )
     dual_recall = dual_hits / dual_total if dual_total else 0.0
     playbook_recall = playbook_hits / playbook_total if playbook_total else 0.0
 
     print("Hybrid Orchestrator Eval")
     print(f"  cases: {len(cases)}")
     print(f"  intent accuracy: {intent_acc:.1%} ({intent_hits}/{intent_total})")
+    print(
+        f"  capability accuracy: {capability_acc:.1%} "
+        f"({capability_hits}/{capability_total})"
+    )
     print(f"  DualRecall: {dual_recall:.1%} ({dual_hits}/{dual_total})")
     print(
         f"  TripleRecall(+playbook): {playbook_recall:.1%} "
@@ -110,7 +132,12 @@ def main(argv: list[str] | None = None) -> int:
             f"{section_hits}/{section_total}"
         )
 
-    ok = dual_recall >= 0.80 and false_hybrid == 0 and intent_acc >= 0.80
+    ok = (
+        dual_recall >= 0.80
+        and false_hybrid == 0
+        and intent_acc >= 0.80
+        and capability_acc >= 0.90
+    )
     if playbook_total and playbook_recall < 0.80:
         ok = False
     if args.generate and section_total and section_hits < section_total:

@@ -18,6 +18,16 @@ DOCS_FOLDER_GUID = "Organize_files_With_Folders"
 DOCS_FILES_GUID = "Files"
 DOCS_NAMING_GUID = "File_Naming_Standard"
 DOCS_SETUP_NAMING_GUID = "Set_Up_Naming_Standard"
+DOCS_MODEL_BROWSER_GUID = "Model_Browser"
+DOCS_VIEWER_SETTINGS_GUID = "Viewer_Settings_Files"
+DOCS_PERMISSIONS_GUID = "Folder_Permissions"
+DOCS_PERMISSION_LEVELS_GUID = "Folder_Permission_Levels"
+DOCS_PROJECT_CREATE_GUID = "Create_Project"
+DOCS_PROJECT_MANAGE_GUID = "Create_Manage_Projects"
+DOCS_TEMPLATES_DOCS_GUID = "Configure_Templates_Docs"
+DOCS_TEMPLATES_CREATE_GUID = "Templates_Create"
+DOCS_REVIEWS_CREATE_GUID = "Reviews_Create_Edit"
+DOCS_REVIEWS_WORKFLOW_GUID = "Reviews_Workflow"
 
 # 港标命名：优先 Information Identification / Harmonisation 命名附录
 HK_NAMING_URL_PARTS = (
@@ -67,19 +77,142 @@ def load_chunk_by_url_part(chunks_path: Path, url_part: str) -> RetrievedChunk |
     return None
 
 
-def load_docs_folder_chunks(chunks_path: Path, limit: int = 2) -> list[RetrievedChunk]:
-    """folder 类 hybrid 优先用 Files 工具操作页，而非泛化 About 页。"""
-    order = (DOCS_FOLDER_GUID, DOCS_FILES_GUID, DOCS_NAMING_GUID)
+def load_chunk_by_guid(chunks_path: Path, guid: str) -> RetrievedChunk | None:
+    """按 Docs guid= 精确匹配，避免 Viewer_Settings_Files 命中 _PDF 变体。"""
+    if not chunks_path.is_file() or not guid:
+        return None
+    needle = f"guid={guid}"
+    with chunks_path.open(encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if not line:
+                continue
+            record = json.loads(line)
+            url = record.get("source_url", "")
+            idx = url.find(needle)
+            if idx < 0:
+                continue
+            end = idx + len(needle)
+            if end < len(url) and url[end] not in "&?#":
+                continue
+            return _chunk_from_record(record)
+    return None
+
+
+def load_docs_by_guids(
+    chunks_path: Path, guids: tuple[str, ...], limit: int = 2
+) -> list[RetrievedChunk]:
     found: list[RetrievedChunk] = []
     seen: set[str] = set()
-    for part in order:
-        chunk = load_chunk_by_url_part(chunks_path, part)
+    for guid in guids:
+        chunk = load_chunk_by_guid(chunks_path, guid)
         if chunk and chunk.chunk_id not in seen:
             found.append(chunk)
             seen.add(chunk.chunk_id)
         if len(found) >= limit:
             break
     return found
+
+
+def prefer_docs_chunks(
+    preferred: list[RetrievedChunk],
+    retrieved: list[RetrievedChunk],
+    *,
+    limit: int,
+) -> list[RetrievedChunk]:
+    """优先保留 preferred GUID 页，再用检索结果补齐；不做无证据硬替换。"""
+    if limit <= 0:
+        return []
+    out: list[RetrievedChunk] = []
+    seen: set[str] = set()
+    for chunk in preferred + retrieved:
+        if chunk.chunk_id in seen:
+            continue
+        out.append(chunk)
+        seen.add(chunk.chunk_id)
+        if len(out) >= limit:
+            break
+    return out
+
+
+def load_docs_folder_chunks(chunks_path: Path, limit: int = 2) -> list[RetrievedChunk]:
+    """folder 类 hybrid 优先用 Files 工具操作页，而非泛化 About 页。"""
+    order = (DOCS_FOLDER_GUID, DOCS_FILES_GUID, DOCS_NAMING_GUID)
+    found: list[RetrievedChunk] = []
+    seen: set[str] = set()
+    for part in order:
+        chunk = load_chunk_by_guid(chunks_path, part) or load_chunk_by_url_part(
+            chunks_path, part
+        )
+        if chunk and chunk.chunk_id not in seen:
+            found.append(chunk)
+            seen.add(chunk.chunk_id)
+        if len(found) >= limit:
+            break
+    return found
+
+
+def load_docs_permissions_chunks(
+    chunks_path: Path, limit: int = 2
+) -> list[RetrievedChunk]:
+    return load_docs_by_guids(
+        chunks_path,
+        (DOCS_PERMISSIONS_GUID, DOCS_PERMISSION_LEVELS_GUID),
+        limit=limit,
+    )
+
+
+def load_docs_project_create_chunks(
+    chunks_path: Path, limit: int = 2
+) -> list[RetrievedChunk]:
+    return load_docs_by_guids(
+        chunks_path,
+        (DOCS_PROJECT_CREATE_GUID, DOCS_PROJECT_MANAGE_GUID),
+        limit=limit,
+    )
+
+
+def load_docs_project_template_chunks(
+    chunks_path: Path, limit: int = 2
+) -> list[RetrievedChunk]:
+    return load_docs_by_guids(
+        chunks_path,
+        (DOCS_TEMPLATES_DOCS_GUID, DOCS_TEMPLATES_CREATE_GUID),
+        limit=limit,
+    )
+
+
+def load_docs_workflow_chunks(
+    chunks_path: Path, limit: int = 2
+) -> list[RetrievedChunk]:
+    return load_docs_by_guids(
+        chunks_path,
+        (DOCS_REVIEWS_CREATE_GUID, DOCS_REVIEWS_WORKFLOW_GUID),
+        limit=limit,
+    )
+
+
+def prefer_docs_for_capability(
+    capability: str | None,
+    retrieved: list[RetrievedChunk],
+    *,
+    chunks_path: Path,
+    limit: int,
+) -> list[RetrievedChunk]:
+    """弱能力：优先插入目标 GUID，保留检索结果作为第二来源。"""
+    loaders = {
+        "permissions": load_docs_permissions_chunks,
+        "project_create": load_docs_project_create_chunks,
+        "project_template": load_docs_project_template_chunks,
+        "workflow": load_docs_workflow_chunks,
+    }
+    loader = loaders.get(capability or "")
+    if loader is None:
+        return retrieved
+    preferred = loader(chunks_path, limit=limit)
+    if not preferred:
+        return retrieved
+    return prefer_docs_chunks(preferred, retrieved, limit=limit)
 
 
 def pin_folder_docs_in_merged(
@@ -185,6 +318,76 @@ def pin_naming_docs_in_merged(
         playbook_top_k=len(playbook) or 0,
     )
     return new_merged, True
+
+
+def load_docs_model_viewer_chunks(
+    chunks_path: Path, limit: int = 2
+) -> list[RetrievedChunk]:
+    """model_viewer：优先 Model Browser，其次 Viewer Settings。"""
+    order = (DOCS_MODEL_BROWSER_GUID, DOCS_VIEWER_SETTINGS_GUID)
+    found: list[RetrievedChunk] = []
+    seen: set[str] = set()
+    for guid in order:
+        chunk = load_chunk_by_guid(chunks_path, guid)
+        if chunk and chunk.chunk_id not in seen:
+            found.append(chunk)
+            seen.add(chunk.chunk_id)
+        if len(found) >= limit:
+            break
+    return found
+
+
+def pin_model_viewer_docs_in_merged(
+    merged: MergedContexts,
+    *,
+    chunks_path: Path,
+    docs_top_k: int = 2,
+) -> tuple[MergedContexts, bool]:
+    from rag.orchestrator.merge import merge_triple_contexts
+
+    current_docs = [t for t in merged.tracked if t.track == "docs"]
+    if current_docs and any(
+        DOCS_MODEL_BROWSER_GUID in t.chunk.source_url for t in current_docs
+    ):
+        return merged, False
+
+    replacement = load_docs_model_viewer_chunks(chunks_path, limit=docs_top_k)
+    if not replacement:
+        return merged, False
+
+    industry = [t.chunk for t in merged.tracked if t.track == "hk_cde"]
+    playbook = [t.chunk for t in merged.tracked if t.track == "playbook"]
+    new_merged = merge_triple_contexts(
+        docs_chunks=replacement,
+        industry_chunks=industry,
+        playbook_chunks=playbook,
+        docs_top_k=len(replacement),
+        industry_top_k=len(industry) or 0,
+        playbook_top_k=len(playbook) or 0,
+    )
+    return new_merged, True
+
+
+def ensure_model_viewer_hybrid_merged(
+    merged: MergedContexts,
+    *,
+    capability: str | None,
+    docs_chunks_path: Path,
+    docs_top_k: int = 2,
+) -> tuple[MergedContexts, list[str]]:
+    if capability != "model_viewer":
+        return merged, []
+
+    docs_pinned, did_docs = pin_model_viewer_docs_in_merged(
+        merged,
+        chunks_path=docs_chunks_path,
+        docs_top_k=docs_top_k or 2,
+    )
+    if not did_docs:
+        return merged, []
+    return docs_pinned, [
+        "[soft] model_viewer_docs_pin: prefer Model Browser / Viewer Settings"
+    ]
 
 
 def pin_naming_hk_in_merged(
