@@ -24,7 +24,7 @@ The three tracks are **physically isolated** (separate Chroma collections / chun
 |-------|------|----------------|----------------|
 | **1. Standards** | `hk_cde` | Hong Kong industry standards: CIC BIM Standards, CDE Beginner Guide, DEVB Harmonisation, BD ADM-19 / ADV-34, LandsD BIM-GIS, and related chapter Markdown plus Chinese alias routing | `knowledge/industry/hk_cde/` → `.rag_data/industry_hk_cde/` |
 | **2. Playbook** | `playbook` | ACC × HK implementation handbook: four-container CDE, naming, permissions, approvals, design collaboration, information requirements, and ACC Project Template (GC / Buildings) guidance | `knowledge/playbook/acc_hk_bim/` → `.rag_data/playbook_acc_hk/` |
-| **3. Product (Docs)** | `docs` | Autodesk Docs / ACC official help: folder organization, Naming Standard, permissions, Workflow, Project Template, and related product steps | crawled help → ingest → `.rag_data/` (docs main store) |
+| **3. Product (Docs)** | `docs` | Autodesk Docs / ACC official help: folder organization, Naming Standard, permissions, Workflow, Project Template, Model Browser, and related product steps | crawled help → ingest → `.rag_data/` (docs main store) |
 
 Each track also has its own **Query KB (route dictionary)**: maps colloquial / Chinese aliases to preferred sections or URLs for pinning and query rewriting **before** vector search. Route entries themselves **do not** enter the LLM prompt.
 
@@ -50,7 +50,7 @@ flowchart TD
   PARA --> PIN[Chunk pin<br/>capability-priority sections]
   PIN --> MERGE[merge_triple_contexts<br/>numbered Docs/HK/Playbook]
   MERGE --> COMPOSE{Rule compose?}
-  COMPOSE -->|folder etc.| RULE[structured_compose<br/>4-section template]
+  COMPOSE -->|folder only| RULE[structured_compose<br/>4-section template]
   COMPOSE -->|no| LLM[generate_hybrid_answer<br/>4-section prompt + cites]
   RULE --> POLISH[Localized headers + polish]
   LLM --> VAL[validate_hybrid_answer]
@@ -63,25 +63,46 @@ flowchart TD
 ### 1. Intent and meta Q&A
 
 - **Capabilities help** (e.g. “what can you do”): returns capability text only; `track=meta`; no retrieve, no Ollama.
-- **`classify_intent`**: detects capability (`folder` / `naming` / `permissions` / `workflow` / `project_template` …) and track bias for hybrid query rewrite and section pinning.
+- **`classify_intent`**: detects a primary **capability** and track bias, then rewrites per-track sub-queries and drives pinning / Docs relevance filters.
+
+Supported capabilities (single primary label; conflicts use priority order):
+
+| Capability | Typical questions | Docs preference / pin |
+|------------|-------------------|------------------------|
+| `project_template` | ACC HK GC / project template | prefer `Configure_Templates_Docs` |
+| `model_viewer` | Model Browser, filter RVT/IFC properties | hard pin `Model_Browser` + `Viewer_Settings_Files` |
+| `permissions` | folder permissions / 设置权限 | prefer `Folder_Permissions` |
+| `naming` | naming standard / Information Container ID | Docs Naming Standard + HK / Playbook naming pins |
+| `workflow` | approval workflow / Authorisation Gateway | prefer `Reviews_Create_Edit` |
+| `project_create` | create ACC project | prefer `Create_Project` |
+| `folder` | folder structure / 四容器 | hard pin Organize Files + Playbook WIP tree |
+
+Notes:
+
+- Bare glossary questions like “WIP 是什么” stay on `hk_cde` and **do not** trigger folder pinning or structured compose.
+- Multi-signal phrases prefer the more specific capability (e.g. “文件夹权限” → `permissions`, “文件夹命名标准” → `naming`).
+- Forced `--corpus docs|hk_cde|playbook|hybrid` **keeps** the detected capability and uses its template sub-queries on that track.
 
 ### 2. Single-track vs hybrid
 
 | `--corpus` | Behavior |
 |------------|----------|
-| `docs` / `hk_cde` / `playbook` | Retrieve only that content store + its Query KB |
+| `docs` / `hk_cde` / `playbook` | Retrieve only that content store + its Query KB; still applies capability rewrite / soft Docs prefer when detected |
 | `hybrid` (default) | Parallel 3-track retrieve → merge → 4-section answer |
 | `auto` | Pick track from classifier (product- vs standards-leaning) |
 
 ### 3. Hybrid merge and answer writing
 
-1. **Parallel retrieval**: Docs / HK CDE / Playbook each run embedding + BM25 hybrid search.
-2. **Capability pin**: e.g. naming pins HK federation/naming, Playbook CICBIMS structure, and Docs Naming Standard help pages so “concept overview” chunks do not dominate actionable chapters.
+1. **Parallel retrieval**: Docs / HK CDE / Playbook each run embedding + BM25 hybrid search with capability-specific queries when available.
+2. **Capability pin / prefer**:
+   - Strong pins (`folder`, `naming`, `model_viewer`): swap in known good pages when retrieval drifts to overview / noise pages.
+   - Soft prefer (`permissions`, `project_create`, `project_template`, `workflow`): put target Docs GUIDs first, keep normal retrieval as the second source.
+   - Folder Playbook fallback only accepts explicit WIP tree evidence; otherwise it falls back to normal retrieval (no arbitrary first hit).
 3. **`merge_triple_contexts`**: builds a shared numbered context list (`[1]`…) and records which track each chunk came from for later validation.
 4. **Answer priority**:
-   - Some capabilities (e.g. folder) use **`structured_compose`**: rule-based four sections to reduce empty “cannot confirm” answers from small models.
+   - `folder` uses **`structured_compose`**: rule-based four sections to reduce empty “cannot confirm” answers from small models.
    - Otherwise **`generate_hybrid_answer`**: enforces the four-section structure; **Route KB never enters the prompt**.
-5. **Validation**: missing-track citations, empty sections, or hard folder/naming constraints emit soft warnings and may retry generation.
+5. **Validation**: Docs capability keyword prefilter drops overview / Power BI / “What’s New” noise; soft warnings may trigger a regenerate retry.
 6. **Language**: section headers follow the question language (EN → Standards Requirements / Implementation Guidance / Product Steps / Alignment & Gaps).
 
 ### Four-section answer contract
@@ -95,9 +116,20 @@ flowchart TD
 
 ## Evaluation
 
-Frozen baseline: [`eval/RESULTS.md`](eval/RESULTS.md).
+Frozen baseline comparison suite: [`eval/RESULTS.md`](eval/RESULTS.md).
 
-On cross-domain (`expect_track: hybrid`) cases, forced single-track retrieval **cannot** cover more than one source family. Hybrid reaches **100% DualRecall / TripleRecall** in the latest run (6/6), while `docs` / `hk_cde` / `playbook` alone stay at **0%** multi-source coverage.
+`scripts/eval_hybrid.py` also asserts `expect_capability` from [`eval/hybrid_cases.jsonl`](eval/hybrid_cases.jsonl). Latest hybrid orchestration run:
+
+| Metric | Result |
+|--------|--------|
+| Cases | 14 |
+| Intent accuracy | **100%** (14/14) |
+| Capability accuracy | **100%** (14/14) |
+| DualRecall (Docs+HK) | **100%** (7/7 hybrid expects) |
+| TripleRecall (+Playbook) | **100%** (7/7) |
+| False hybrid (pure track stolen) | **0** |
+
+On cross-domain hybrid-expect cases, forced single-track retrieval still cannot cover more than one source family; see `eval_hybrid_vs_single.py` / `RESULTS.md`.
 
 ```bash
 python scripts/run_eval_suite.py
@@ -134,11 +166,13 @@ ollama pull qwen3-embedding:0.6b
 python ask.py "How should Hong Kong CDE folders be set up?"
 python ask.py "file naming standard"
 python ask.py "what can you do"
+python ask.py "按港标要求在ACC配置文件夹权限"
+python ask.py "在 ACC 里如何查看并过滤 BIM 模型属性，并对照香港 BIM 要求做审核？"
 
-# Retrieval only
-python ask.py --no-generate "permissions on folders"
+# Retrieval only + path debug
+python ask.py --no-generate --show-retrieval-debug "permissions on folders"
 
-# Single track
+# Single track (capability rewrite still applied when detected)
 python ask.py --corpus hk_cde "WIP Shared Published"
 python ask.py --corpus docs "Organize Files"
 python ask.py --corpus playbook "01_WIP discipline folders"
@@ -171,10 +205,10 @@ PDF extraction and copyright notes: `knowledge/industry/hk_cde/README.md`. Offic
 ```text
 ask.py / ingest.py     CLI entry points
 rag/                   Retrieval, generation, track configs, orchestrator
-knowledge/             Versioned Markdown corpora + query KBs
+knowledge/             Versioned Markdown corpora + route KBs
 scripts/               Extract, ingest, eval, research scripts
-eval/                  Evaluation cases
-tests/                 Unit tests
+eval/                  Evaluation cases (+ RESULTS.md baseline)
+tests/                 Unit tests (capability / pin / corpus)
 output/                Crawl mirrors and official PDFs (local, gitignored)
 .rag_data/             Chroma / chunks (local, gitignored)
 ```
@@ -184,8 +218,9 @@ output/                Crawl mirrors and official PDFs (local, gitignored)
 1. **Three separate stores**: standards, playbook, and product help have different semantics; one shared collection pollutes retrieval.
 2. **Hybrid synthesizes after retrieve**: each track retrieves independently; then number-merge + four-section writing.
 3. **Route ≠ context**: Query KB / route indexes only select chapters and rewrite queries.
-4. **Small-model friendly**: critical capabilities use structured compose / pinning to cut hallucination and empty answers.
-5. **Traceable**: `[n]` citations map to the merged chunk list so each claim can be checked by track.
+4. **Capability-aware routing**: classify once, then rewrite, pin/prefer, and validate so Docs stays on actionable pages (not About / What’s New / Power BI drift).
+5. **Small-model friendly**: critical capabilities use structured compose / pinning to cut hallucination and empty answers.
+6. **Traceable**: `[n]` citations map to the merged chunk list so each claim can be checked by track.
 
 ## License / copyright
 
