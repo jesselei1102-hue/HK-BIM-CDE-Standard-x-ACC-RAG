@@ -4,10 +4,11 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 
 from rag.config import get_config
-from rag.generation import format_sources
+from rag.generation import format_sources, format_token_usage
 from rag.industry_hk.config import get_industry_hk_config
 from rag.orchestrator.merge import format_hybrid_sources
 from rag.orchestrator.pipeline import HybridOrchestrator, format_orchestrator_debug
@@ -15,10 +16,19 @@ from rag.playbook_acc_hk.config import get_playbook_config
 from rag.retrieval import format_retrieval_debug
 
 
-def _print_answer(question: str, answer_text: str, source_lines: list[str], show_context: bool, contexts) -> None:
+def _print_answer(
+    question: str,
+    answer_text: str,
+    source_lines: list[str],
+    show_context: bool,
+    contexts,
+    token_line: str | None = None,
+) -> None:
     print(f"\n问题：{question}")
     print("\n回答：")
     print(answer_text)
+    if token_line:
+        print(f"\n{token_line}")
     print("\n来源：")
     if source_lines:
         print("\n".join(source_lines))
@@ -103,8 +113,11 @@ def ask_once(
 
     if no_generate:
         answer_text = "(仅检索模式，未调用生成模型)"
+        context_tokens = sum(int(getattr(c, "token_count", 0) or 0) for c in contexts)
+        token_line = f"Token：上下文 {context_tokens} | 提示 - | 生成 -"
     else:
         answer_text = result.answer.answer if result.answer else "(无回答)"
+        token_line = format_token_usage(result.answer) if result.answer else None
 
     _print_answer(
         question,
@@ -112,6 +125,7 @@ def ask_once(
         source_lines,
         show_context=show_context or no_generate,
         contexts=contexts,
+        token_line=token_line,
     )
     return 0
 
@@ -132,6 +146,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--no-generate", action="store_true")
     parser.add_argument("--show-retrieval-debug", action="store_true")
     parser.add_argument(
+        "--no-nlp-coarse",
+        action="store_true",
+        help="关闭 BM25 NLP 粗筛（默认开启）",
+    )
+    parser.add_argument(
+        "--no-nlp-rerank",
+        action="store_true",
+        help="关闭 NLP 特征精排（默认开启）",
+    )
+    parser.add_argument(
         "--lang",
         choices=["auto", "en", "zh-Hans", "zh-Hant"],
         default="auto",
@@ -139,13 +163,20 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
+    if args.no_nlp_coarse:
+        os.environ["RAG_NLP_COARSE"] = "false"
+    if args.no_nlp_rerank:
+        os.environ["RAG_NLP_RERANK"] = "false"
+
     docs_config = get_config()
     industry_config = get_industry_hk_config()
     playbook_config = get_playbook_config()
     print(
         f"模型：{docs_config.models.generation_model} | "
         f"Embedding：{docs_config.models.embedding_model} | "
-        f"corpus={args.corpus} | lang={args.lang}"
+        f"corpus={args.corpus} | lang={args.lang} | "
+        f"nlp_coarse={docs_config.retrieval.nlp_coarse_enabled} | "
+        f"nlp_rerank={docs_config.retrieval.nlp_rerank_enabled}"
     )
     if args.corpus in {"hybrid", "auto"}:
         pb_chunks = playbook_config.storage.chunks_path

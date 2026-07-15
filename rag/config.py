@@ -66,6 +66,13 @@ class ChunkConfig:
     minimum_tokens: int = 40
 
 
+def _env_bool(name: str, default: bool) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.lower() in {"1", "true", "yes", "on"}
+
+
 @dataclass(frozen=True)
 class RetrievalConfig:
     vector_candidates: int = 12
@@ -74,6 +81,13 @@ class RetrievalConfig:
     rrf_k: int = 60
     maximum_context_tokens: int = 2_000
     minimum_vector_similarity: float = 0.55
+    # NLP 粗筛：BM25 先缩小候选池，再做向量/混合检索
+    nlp_coarse_enabled: bool = True
+    nlp_coarse_candidates: int = 80
+    # NLP 特征精排：在 RRF 后重打分，减少无效上下文进 LLM
+    nlp_rerank_enabled: bool = True
+    # 粗筛后预取更多混合候选，再由精排压缩到 top_k
+    hybrid_prefetch: int = 12
 
 
 @dataclass(frozen=True)
@@ -143,6 +157,10 @@ class AppConfig:
             raise ValueError("RAG_MAX_CONTEXT_TOKENS 必须大于 0")
         if not 0 <= self.retrieval.minimum_vector_similarity <= 1:
             raise ValueError("RAG_MIN_SIMILARITY 必须位于 0 到 1 之间")
+        if self.retrieval.nlp_coarse_candidates <= 0:
+            raise ValueError("RAG_NLP_COARSE_CANDIDATES 必须大于 0")
+        if self.retrieval.hybrid_prefetch <= 0:
+            raise ValueError("RAG_HYBRID_PREFETCH 必须大于 0")
         if self.query_kb.short_query_max_chars <= 0:
             raise ValueError("KB_SHORT_QUERY_MAX_CHARS 必须大于 0")
         if not 0 <= self.query_kb.trigger_sim <= 1:
@@ -180,6 +198,10 @@ def get_config() -> AppConfig:
             rrf_k=_env_int("RAG_RRF_K", 60),
             maximum_context_tokens=_env_int("RAG_MAX_CONTEXT_TOKENS", 2_000),
             minimum_vector_similarity=_env_float("RAG_MIN_SIMILARITY", 0.55),
+            nlp_coarse_enabled=_env_bool("RAG_NLP_COARSE", True),
+            nlp_coarse_candidates=_env_int("RAG_NLP_COARSE_CANDIDATES", 80),
+            nlp_rerank_enabled=_env_bool("RAG_NLP_RERANK", True),
+            hybrid_prefetch=_env_int("RAG_HYBRID_PREFETCH", 12),
         ),
         query_kb=QueryKBConfig(
             enabled=os.getenv("KB_ENABLED", "true").lower() in {"1", "true", "yes"},

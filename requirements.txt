@@ -12,6 +12,9 @@ python-docx>=1.1.0
 openpyxl>=3.1.0
 PyYAML>=6.0
 
+# 演示 UI：
+streamlit>=1.32.0
+
 # 测试：
 pytest
 

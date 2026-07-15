@@ -16,6 +16,12 @@ import ollama
 from rank_bm25 import BM25Okapi
 
 from .config import AppConfig, get_config
+from .nlp_coarse import (
+    analyze_query,
+    coarse_candidate_ids,
+    rerank_chunks,
+    trim_chunks_by_token_budget,
+)
 from .query_kb import KBRouter, RouteCandidate, RouteDecision
 
 
@@ -54,6 +60,11 @@ class RetrievalDebugInfo:
     rewritten_top1_sim: float | None = None
     adopted_path: str = "original"  # original | kb_rewrite | kb_boost
     target_url_boosted: bool = False
+    nlp_coarse_enabled: bool = False
+    nlp_rerank_enabled: bool = False
+    nlp_keywords: list[str] = field(default_factory=list)
+    nlp_coarse_pool_size: int = 0
+    context_token_estimate: int = 0
 
 
 @dataclass
@@ -122,21 +133,35 @@ class HybridRetriever:
         )
         return response.embeddings[0]
 
-    def _vector_hits(self, query: str) -> list[tuple[str, float, int]]:
+    def _vector_hits(
+        self,
+        query: str,
+        *,
+        n_results: int | None = None,
+        allowed_ids: set[str] | None = None,
+    ) -> list[tuple[str, float, int]]:
+        fetch = n_results or self.config.retrieval.vector_candidates
+        # 粗筛后在更大候选中过滤，避免被池外噪声占满 Top-N。
+        if allowed_ids is not None:
+            fetch = max(fetch, min(len(allowed_ids), fetch * 3))
         embedding = self._embed_query(query)
         result = self._collection.query(
             query_embeddings=[embedding],
-            n_results=self.config.retrieval.vector_candidates,
+            n_results=min(fetch, max(len(self.chunk_ids), 1)),
             include=["distances"],
         )
         ids = result["ids"][0]
         distances = result["distances"][0]
         hits: list[tuple[str, float, int]] = []
         for rank, (chunk_id, distance) in enumerate(zip(ids, distances), start=1):
+            if allowed_ids is not None and chunk_id not in allowed_ids:
+                continue
             similarity = 1.0 - float(distance)
             if similarity < self.config.retrieval.minimum_vector_similarity:
                 continue
-            hits.append((chunk_id, similarity, rank))
+            hits.append((chunk_id, similarity, len(hits) + 1))
+            if len(hits) >= (n_results or self.config.retrieval.vector_candidates):
+                break
         return hits
 
     def _raw_top_vector_sim(self, query: str) -> float | None:
@@ -150,18 +175,30 @@ class HybridRetriever:
             return None
         return 1.0 - float(result["distances"][0][0])
 
-    def _lexical_hits(self, query: str) -> list[tuple[str, float, int]]:
-        scores = self._bm25.get_scores(tokenize(query))
+    def _lexical_hits(
+        self,
+        query: str,
+        *,
+        allowed_ids: set[str] | None = None,
+        analysis_keywords: list[str] | None = None,
+    ) -> list[tuple[str, float, int]]:
+        terms = analysis_keywords or tokenize(query)
+        scores = self._bm25.get_scores(terms)
         ranked = sorted(
             enumerate(scores),
             key=lambda item: item[1],
             reverse=True,
-        )[: self.config.retrieval.lexical_candidates]
+        )
         hits: list[tuple[str, float, int]] = []
-        for rank, (index, score) in enumerate(ranked, start=1):
+        for index, score in ranked:
             if score <= 0:
                 continue
-            hits.append((self.chunk_ids[index], float(score), rank))
+            chunk_id = self.chunk_ids[index]
+            if allowed_ids is not None and chunk_id not in allowed_ids:
+                continue
+            hits.append((chunk_id, float(score), len(hits) + 1))
+            if len(hits) >= self.config.retrieval.lexical_candidates:
+                break
         return hits
 
     def _retrieve_internal(
@@ -170,37 +207,78 @@ class HybridRetriever:
         top_k: int,
         *,
         boost_target_url: str | None = None,
+        debug: RetrievalDebugInfo | None = None,
     ) -> list[RetrievedChunk]:
-        vector_hits = self._vector_hits(query)
-        lexical_hits = self._lexical_hits(query)
+        analysis = analyze_query(query)
+        cfg = self.config.retrieval
+        allowed_ids: set[str] | None = None
+        coarse_ids: list[str] = []
+
+        if cfg.nlp_coarse_enabled:
+            coarse_ids = coarse_candidate_ids(
+                self._bm25,
+                self.chunk_ids,
+                analysis,
+                top_n=cfg.nlp_coarse_candidates,
+            )
+            allowed_ids = set(coarse_ids) if coarse_ids else None
+
+        if debug is not None:
+            debug.nlp_coarse_enabled = cfg.nlp_coarse_enabled
+            debug.nlp_rerank_enabled = cfg.nlp_rerank_enabled
+            debug.nlp_keywords = list(analysis.keywords)
+            debug.nlp_coarse_pool_size = len(coarse_ids)
+
+        prefetch = max(top_k, cfg.hybrid_prefetch)
+        vector_n = max(cfg.vector_candidates, prefetch)
+        vector_hits = self._vector_hits(
+            query,
+            n_results=vector_n,
+            allowed_ids=allowed_ids,
+        )
+        # 粗筛过严导致向量空时回退全库，避免漏召回。
+        if not vector_hits and allowed_ids is not None:
+            vector_hits = self._vector_hits(query, n_results=vector_n)
+            if debug is not None:
+                debug.nlp_coarse_pool_size = 0
+
+        lexical_hits = self._lexical_hits(
+            query,
+            allowed_ids=allowed_ids,
+            analysis_keywords=analysis.keywords or analysis.tokens,
+        )
 
         rrf_scores: dict[str, float] = {}
         vector_meta: dict[str, tuple[float, int]] = {}
         lexical_meta: dict[str, int] = {}
 
-        cjk_chars = len(re.findall(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]", query))
-        if cjk_chars / max(len(query), 1) >= 0.25:
+        if analysis.is_cjk_heavy:
             vector_weight = 5.0
-            lexical_weight = 0.0
+            lexical_weight = 1.0 if cfg.nlp_coarse_enabled else 0.0
         else:
             vector_weight = 2.0
             lexical_weight = 1.0
 
         for chunk_id, similarity, rank in vector_hits:
             rrf_scores[chunk_id] = rrf_scores.get(chunk_id, 0.0) + vector_weight / (
-                self.config.retrieval.rrf_k + rank
+                cfg.rrf_k + rank
             )
             vector_meta[chunk_id] = (similarity, rank)
 
         for chunk_id, _score, rank in lexical_hits:
             rrf_scores[chunk_id] = rrf_scores.get(chunk_id, 0.0) + lexical_weight / (
-                self.config.retrieval.rrf_k + rank
+                cfg.rrf_k + rank
             )
             lexical_meta[chunk_id] = rank
 
         if boost_target_url:
             boost = self.config.query_kb.target_url_boost
-            for chunk_id, chunk in self.chunks_by_id.items():
+            pool_items = (
+                ((cid, self.chunks_by_id[cid]) for cid in allowed_ids if cid in self.chunks_by_id)
+                if allowed_ids is not None
+                else self.chunks_by_id.items()
+            )
+            for chunk_id, chunk in pool_items:
                 url = chunk["source_url"]
                 if url == boost_target_url or url.startswith(
                     boost_target_url.rstrip("/") + "/"
@@ -210,16 +288,11 @@ class HybridRetriever:
         ordered = sorted(rrf_scores.items(), key=lambda item: item[1], reverse=True)
         selected: list[RetrievedChunk] = []
         used_pages: set[str] = set()
-        context_tokens = 0
 
         for chunk_id, score in ordered:
             chunk = self.chunks_by_id[chunk_id]
             page_key = chunk["source_url"]
             if page_key in used_pages:
-                continue
-
-            token_count = int(chunk["token_count"])
-            if selected and context_tokens + token_count > self.config.retrieval.maximum_context_tokens:
                 continue
 
             vector_similarity, vector_rank = vector_meta.get(chunk_id, (None, None))
@@ -234,7 +307,7 @@ class HybridRetriever:
                     product=chunk["product"],
                     chunk_index=int(chunk["chunk_index"]),
                     chunk_count=int(chunk["chunk_count"]),
-                    token_count=token_count,
+                    token_count=int(chunk["token_count"]),
                     text=chunk["text"],
                     score=score,
                     vector_similarity=vector_similarity,
@@ -243,10 +316,19 @@ class HybridRetriever:
                 )
             )
             used_pages.add(page_key)
-            context_tokens += token_count
-            if len(selected) >= top_k:
+            if len(selected) >= prefetch:
                 break
 
+        if cfg.nlp_rerank_enabled and selected:
+            selected = rerank_chunks(selected, analysis)
+
+        selected = trim_chunks_by_token_budget(
+            selected,
+            top_k=top_k,
+            max_tokens=cfg.maximum_context_tokens,
+        )
+        if debug is not None:
+            debug.context_token_estimate = sum(item.token_count for item in selected)
         return selected
 
     def retrieve_with_debug(
@@ -264,7 +346,10 @@ class HybridRetriever:
         debug = RetrievalDebugInfo(original_query=query)
 
         original_chunks = self._retrieve_internal(
-            query, limit, boost_target_url=boost_url_prefix
+            query,
+            limit,
+            boost_target_url=boost_url_prefix,
+            debug=debug,
         )
         original_sim = (
             original_chunks[0].vector_similarity if original_chunks else None
@@ -296,7 +381,7 @@ class HybridRetriever:
         rewritten = route_decision.rewritten_query
         debug.rewritten_query = rewritten
 
-        rewritten_chunks = self._retrieve_internal(rewritten, limit)
+        rewritten_chunks = self._retrieve_internal(rewritten, limit, debug=debug)
         rewritten_sim = (
             rewritten_chunks[0].vector_similarity if rewritten_chunks else None
         )
@@ -319,6 +404,9 @@ class HybridRetriever:
         if adopt_rewrite and rewritten_chunks:
             if rewritten_chunks[0].source_url == target_url:
                 debug.adopted_path = "kb_rewrite"
+                debug.context_token_estimate = sum(
+                    item.token_count for item in rewritten_chunks
+                )
                 self.last_debug = debug
                 return RetrievalResult(chunks=rewritten_chunks, debug=debug)
 
@@ -326,6 +414,7 @@ class HybridRetriever:
             query,
             limit,
             boost_target_url=target_url,
+            debug=debug,
         )
         if boosted_chunks:
             debug.adopted_path = "kb_boost"
@@ -376,6 +465,10 @@ def format_retrieval_debug(debug: RetrievalDebugInfo) -> str:
         f"rewritten_top1_sim: {debug.rewritten_top1_sim}",
         f"adopted_path: {debug.adopted_path}",
         f"target_url_boosted: {debug.target_url_boosted}",
+        f"nlp_coarse: {debug.nlp_coarse_enabled} pool={debug.nlp_coarse_pool_size}",
+        f"nlp_rerank: {debug.nlp_rerank_enabled}",
+        f"nlp_keywords: {', '.join(debug.nlp_keywords) or '-'}",
+        f"context_token_estimate: {debug.context_token_estimate}",
     ]
     if debug.kb_candidates:
         lines.append("kb_top_candidates:")

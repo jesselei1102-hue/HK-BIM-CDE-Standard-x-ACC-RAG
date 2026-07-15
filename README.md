@@ -105,6 +105,36 @@ Notes:
 5. **Validation**: Docs capability keyword prefilter drops overview / Power BI / “What’s New” noise; soft warnings may trigger a regenerate retry.
 6. **Language**: section headers follow the question language (EN → Standards Requirements / Implementation Guidance / Product Steps / Alignment & Gaps).
 
+### 4. Optional NLP coarse filter + feature rerank *(this branch)*
+
+On `feature/nlp-hybrid-rerank`, each track’s `HybridRetriever` can run a lightweight NLP layer **before/after** the usual vector + BM25 RRF path:
+
+```text
+Query
+  → NLP coarse (BM25 candidate pool ~80)
+  → vector + BM25 hybrid (RRF)
+  → NLP feature rerank (keyword / title / vector)
+  → Top-K + token budget → LLM
+```
+
+| Control | Default | Meaning |
+|---------|---------|---------|
+| `RAG_NLP_COARSE` / `--no-nlp-coarse` | on | BM25 pool before mixing |
+| `RAG_NLP_RERANK` / `--no-nlp-rerank` | on | Feature re-score after RRF |
+
+**When it helps:** noisier / colloquial / mixed questions (e.g. BIM property filter + HK audit), where keyword expand + rerank can push HK Annex-style pages over bare Reference hits.
+
+**When it rarely changes anything:** clean capability-pinned questions (naming / folder permissions). Capability rewrite and GUID pins already dominate ranking.
+
+Compare:
+
+```bash
+python ask.py --corpus hybrid --show-retrieval-debug "你的问题"
+python ask.py --corpus hybrid --no-nlp-coarse --no-nlp-rerank --show-retrieval-debug "你的问题"
+```
+
+`ask.py` also prints token usage (`上下文 | 提示 | 生成 | 合计`) to make context-budget A/B easier.
+
 ### Four-section answer contract
 
 | Chinese | English | Primary source |

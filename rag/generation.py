@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 import ollama
 
@@ -98,6 +99,50 @@ class Answer:
     answer: str
     contexts: list[RetrievedChunk]
     model: str
+    context_tokens: int = 0
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+
+    @property
+    def total_tokens(self) -> int | None:
+        if self.prompt_tokens is None and self.completion_tokens is None:
+            return None
+        return int(self.prompt_tokens or 0) + int(self.completion_tokens or 0)
+
+
+def _context_token_total(chunks: list[RetrievedChunk]) -> int:
+    return sum(int(getattr(chunk, "token_count", 0) or 0) for chunk in chunks)
+
+
+def _ollama_token_counts(response: Any) -> tuple[int | None, int | None]:
+    def _get(name: str) -> int | None:
+        if isinstance(response, dict):
+            value = response.get(name)
+        else:
+            value = getattr(response, name, None)
+        if value is None:
+            return None
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return None
+
+    return _get("prompt_eval_count"), _get("eval_count")
+
+
+def format_token_usage(answer: Answer) -> str:
+    parts = [f"上下文 {answer.context_tokens}"]
+    if answer.prompt_tokens is not None:
+        parts.append(f"提示 {answer.prompt_tokens}")
+    else:
+        parts.append("提示 -")
+    if answer.completion_tokens is not None:
+        parts.append(f"生成 {answer.completion_tokens}")
+    else:
+        parts.append("生成 -")
+    if answer.total_tokens is not None:
+        parts.append(f"合计 {answer.total_tokens}")
+    return "Token：" + " | ".join(parts)
 
 
 def build_user_prompt(
@@ -199,6 +244,7 @@ def generate_answer(
             answer="根据现有资料无法确认。",
             contexts=chunks,
             model=app_config.models.generation_model,
+            context_tokens=_context_token_total(chunks),
         )
 
     prompt = system_prompt or SYSTEM_PROMPT
@@ -226,11 +272,15 @@ def generate_answer(
             "num_predict": 400,
         },
     )
+    prompt_tokens, completion_tokens = _ollama_token_counts(response)
     return Answer(
         question=question,
         answer=_extract_content(response),
         contexts=chunks,
         model=app_config.models.generation_model,
+        context_tokens=_context_token_total(chunks),
+        prompt_tokens=prompt_tokens,
+        completion_tokens=completion_tokens,
     )
 
 
@@ -286,6 +336,9 @@ def generate_hybrid_answer(
             ),
             contexts=[item.chunk for item in merged.tracked],
             model=app_config.models.generation_model,
+            context_tokens=_context_token_total(
+                [item.chunk for item in merged.tracked]
+            ),
         )
 
     lang_line = language_instruction(lang)
@@ -313,12 +366,17 @@ def generate_hybrid_answer(
             "num_predict": 900,
         },
     )
+    prompt_tokens, completion_tokens = _ollama_token_counts(response)
+    contexts = [item.chunk for item in merged.tracked]
     raw = _extract_content(response)
     return Answer(
         question=question,
         answer=polish_hybrid_answer(raw, lang=lang),
-        contexts=[item.chunk for item in merged.tracked],
+        contexts=contexts,
         model=app_config.models.generation_model,
+        context_tokens=_context_token_total(contexts),
+        prompt_tokens=prompt_tokens,
+        completion_tokens=completion_tokens,
     )
 
 

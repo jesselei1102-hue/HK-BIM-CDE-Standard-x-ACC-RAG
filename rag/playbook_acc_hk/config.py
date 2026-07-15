@@ -11,6 +11,7 @@ from rag.config import (
     ModelConfig,
     PROJECT_ROOT,
     RetrievalConfig,
+    _env_bool,
     _env_float,
     _env_int,
     _env_path,
@@ -129,6 +130,10 @@ def get_playbook_config() -> PlaybookConfig:
             rrf_k=_env_int("RAG_RRF_K", 60),
             maximum_context_tokens=_env_int("RAG_MAX_CONTEXT_TOKENS", 2_000),
             minimum_vector_similarity=_env_float("RAG_MIN_SIMILARITY", 0.50),
+            nlp_coarse_enabled=_env_bool("RAG_NLP_COARSE", True),
+            nlp_coarse_candidates=_env_int("RAG_NLP_COARSE_CANDIDATES", 80),
+            nlp_rerank_enabled=_env_bool("RAG_NLP_RERANK", True),
+            hybrid_prefetch=_env_int("RAG_HYBRID_PREFETCH", 12),
         ),
         query_kb=PlaybookQueryKBConfig(
             enabled=os.getenv("PLAYBOOK_KB_ENABLED", "true").lower()
