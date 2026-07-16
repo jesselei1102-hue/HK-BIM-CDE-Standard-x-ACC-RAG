@@ -7,7 +7,7 @@ title: 1 Digitalisation
 page_start: 198
 page_end: 198
 authority: CICBIMS 2024 §1
-priority: normal
+priority: high
 language: en
 source_url: hk_cde://cicbims_2024/cicbims_2024_1_digitalisation
 ---

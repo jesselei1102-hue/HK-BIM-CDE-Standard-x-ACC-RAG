@@ -37,6 +37,8 @@ _INDUSTRY_PATTERNS = (
         r"香港标准|香港標準|"
         r"香港\s*BIM|香港.*BIM\s*standard|香港.*BIM\s*标准|香港.*BIM\s*標準|"
         r"HK\s*BIM|HK\s*CDE|HK\s*standard|"
+        r"HK[- ]?aligned|aligned\s+with\s+HK|"
+        r"Hong\s*Kong[- ]?aligned|"
         r"Hong\s*Kong\s*(BIM\s*)?standard|"
         r"CIC\s*BIM|"
         r"BIM\s*standard|BIM\s*标准|BIM\s*標準",
@@ -198,11 +200,12 @@ CAPABILITY_TEMPLATES: tuple[CapabilityTemplate, ...] = (
             "review approve WIP Gateway workflow"
         ),
         product_query=(
-            "How to create review approval workflows in Autodesk Docs"
+            "How to create and edit approval workflows Action Upon Completion "
+            "copy approved files update attributes Autodesk Docs Reviews"
         ),
         playbook_query=(
-            "ACC approval workflow information gateway move folder status "
-            "attribute gap recommended playbook"
+            "ACC approval workflow Action Upon Completion Copy approved files "
+            "Update attributes information gateway WIP Shared Published playbook"
         ),
     ),
     CapabilityTemplate(
@@ -328,10 +331,55 @@ _VIEWER_QUERY_RE = re.compile(
     re.I,
 )
 
+# 概括性「港标/CIC/Harmonisation 是什么」→ 改写到实章节，避免捞到前言/致谢
+_CICBIMS_OVERVIEW_RE = re.compile(
+    r"(CICBIMS|CIC\s*BIM\s*Standards?(?:\s*General)?|"
+    r"CIC\s*(?:BIM\s*)?(?:CDE\s*)?[Ss]tandard|"
+    r"港标|香港\s*BIM\s*标准|香港\s*BIM\s*標準)",
+    re.I,
+)
+_CIC_OVERVIEW_ASK_RE = re.compile(
+    r"(what|know|tell|more|overview|comprehensive|headline|contents?|"
+    r"cover|about|knowledge|介绍|什么|哪些|概览|涵盖|讲什么)",
+    re.I,
+)
+_DEVB_HARMONISATION_OVERVIEW_RE = re.compile(
+    r"harmonisation|harmonization|"
+    r"DEVB\s*BIM|"
+    r"BIM\s*协调|BIM\s*調和",
+    re.I,
+)
+
+
+def rewrite_industry_overview_query(query: str) -> str | None:
+    """把空泛的港标总览问句改成可命中 CICBIMS / DEVB 正文的检索句。"""
+    text = (query or "").strip()
+    if not text:
+        return None
+    if _DEVB_HARMONISATION_OVERVIEW_RE.search(text) and not re.search(
+        r"naming|LandsD|Appendix\s*XIV|命名", text, re.I
+    ):
+        return (
+            "DEVB BIM Harmonisation Guidelines v3 executive summary "
+            "foreword table of contents overview Works Departments"
+        )
+    if _CICBIMS_OVERVIEW_RE.search(text) and (
+        _CIC_OVERVIEW_ASK_RE.search(text)
+        or len(text) < 80
+        or re.search(r"headline|contents?|overview|comprehensive", text, re.I)
+    ):
+        # 避免塞进 ISO 19650 / CDE 选型词，防止漂到 DEVB 附录或 Beginner Guide
+        return (
+            "CIC BIM Standards General CICBIMS 2024 introduction purpose "
+            "Appointing Party deliverables project delivery cycle overview"
+        )
+    return None
+
 
 def _fallback_queries(query: str) -> tuple[str, str, str]:
     """未识别能力对象时：原问分别侧重标准侧 / 产品侧 / 实施手册。"""
-    industry_query = (
+    rewritten = rewrite_industry_overview_query(query)
+    industry_query = rewritten or (
         f"{query} CIC DEVB ISO 19650 CDE information requirements"
     )
     if _VIEWER_QUERY_RE.search(query):
@@ -448,18 +496,25 @@ def classify_intent(query: str) -> IntentDecision:
         )
 
     if industry:
+        rewritten = rewrite_industry_overview_query(text)
         return IntentDecision(
             track="hk_cde",
             capability=capability.key if capability else None,
             product_query=None,
             industry_query=(
-                capability.industry_query if capability else text
+                capability.industry_query
+                if capability
+                else (rewritten or text)
             ),
             playbook_query=None,
             has_product_signal=False,
             has_industry_signal=True,
             has_playbook_signal=False,
-            reason="industry_only",
+            reason=(
+                "industry_overview_rewrite"
+                if rewritten and not capability
+                else "industry_only"
+            ),
         )
 
     return IntentDecision(

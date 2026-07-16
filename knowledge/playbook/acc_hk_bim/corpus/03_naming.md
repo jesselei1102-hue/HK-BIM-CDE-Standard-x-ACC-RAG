@@ -174,9 +174,9 @@ HK001-ARP-BLKA-GF-DR-A-0001-A4-C02.pdf
 
 | 表達方式 | 位置 | 自動 | 說明 |
 |----------|------|------|------|
-| **文件夾位置** | 01_WIP / 02_Shared / 03_Published | ❌ 人工遷夾 | 粗粒度（4 狀態） |
+| **文件夾位置** | 01_WIP / 02_Shared / 03_Published | ✅ Workflow 可 Copy approved files | 粗粒度（4 狀態）；源夾清理仍人工 |
 | **文件名 Status 段** | 文件名倒數第二段 | ❌ 人工命名 | 細粒度（S0-CR） |
-| **Custom Attribute** | 文件屬性面板 | ❌ 人工更新 | 可搜索/篩選 |
+| **Custom Attribute** | 文件屬性面板 | ✅ Workflow 可 Update attributes | 可搜索/篩選；未配置時仍需人工 |
 
 > **BEP 須約定**：三者必須一致。若不一致，以 **Custom Attribute** 為基準（可修改不換文件名），文件夾位置為粗顆粒驗證。
 

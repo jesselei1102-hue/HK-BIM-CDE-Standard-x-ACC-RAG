@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from rag.config import AppConfig, CorpusConfig, QueryKBConfig
 from rag.industry_hk.config import IndustryHKConfig, get_industry_hk_config
-from rag.retrieval import HybridRetriever
+from rag.orchestrator.industry_prefer import prefer_industry_chunks
+from rag.retrieval import HybridRetriever, RetrievalResult
 
 
 class IndustryStorageBridge:
@@ -76,3 +77,23 @@ class IndustryHybridRetriever(HybridRetriever):
         industry = config or get_industry_hk_config()
         super().__init__(industry_to_app_config(industry))
         self.industry_config = industry
+
+    def retrieve_with_debug(
+        self,
+        query: str,
+        top_k: int | None = None,
+        *,
+        boost_url_prefix: str | None = None,
+    ) -> RetrievalResult:
+        result = super().retrieve_with_debug(
+            query, top_k, boost_url_prefix=boost_url_prefix
+        )
+        preferred = prefer_industry_chunks(
+            query,
+            list(result.chunks),
+            chunks_path=self.industry_config.storage.chunks_path,
+            limit=top_k or len(result.chunks) or 3,
+        )
+        if preferred == result.chunks:
+            return result
+        return RetrievalResult(chunks=preferred, debug=result.debug)

@@ -83,7 +83,7 @@ def _compose_folder_hybrid_en(
     alignment = f"""## {h3}
 - **Aligned**: HK four containers map to folder location + permissions; the playbook uses `01_WIP`…`04_Archive` naming [{hk_idx}][{pb_idx}]
 - **Aligned**: Docs supports folders, permissions, and naming standards to host that structure {doc_cite_str}
-- **Gap**: ACC does **not** auto-move files from WIP to Shared after approval; Status also does **not** auto-update with Workflow — needs document control or API [{pb_idx}]"""
+- **Gap**: Workflow **Action Upon Completion** can **copy** approved files and **update attributes**, but it is copy≠move (source remains) and the target must be under the same top-level folder — document source cleanup in the BEP [{pb_idx}]"""
 
     return "\n\n".join([standards, implementation, product, alignment])
 
@@ -120,7 +120,7 @@ def _compose_folder_hybrid_zh(
         alignment = f"""## {h3}
 - **對齊**：港標四容器 = 用資料夾位置 + 權限表達狀態；手冊用 `01_WIP`…`04_Archive` 命名映射 [{hk_idx}][{pb_idx}]
 - **對齊**：Docs 提供建夾、權限、命名標準，可承載上述結構 {doc_cite_str}
-- **缺口**：ACC **不會**在審批通過後自動把檔案從 WIP 遷到 Shared；Status 屬性也 **不會**隨 Workflow 自動更新，需文控人工操作或 API [{pb_idx}]"""
+- **缺口**：Workflow **Action Upon Completion** 可 **複製**已批准檔並 **更新屬性**，但是 copy≠move（源檔仍在），且目標須同 top-level；源夾清理寫入 BEP [{pb_idx}]"""
     else:
         standards = f"""## {h0}
 - 项目数据应放在标准 CDE 文件夹结构中，遵循 ISO 19650 的 **WIP / Shared / Published / Archive(d)** 数据隔离原则 [{hk_idx}]
@@ -142,7 +142,7 @@ def _compose_folder_hybrid_zh(
         alignment = f"""## {h3}
 - **对齐**：港标四容器 = 用文件夹位置 + 权限表达状态；手册用 `01_WIP`…`04_Archive` 命名映射 [{hk_idx}][{pb_idx}]
 - **对齐**：Docs 提供建夹、权限、命名标准，可承载上述结构 {doc_cite_str}
-- **缺口**：ACC **不会**在审批通过后自动把文件从 WIP 迁到 Shared；Status 属性也 **不会**随 Workflow 自动更新，需文控人工操作或 API [{pb_idx}]"""
+- **缺口**：Workflow **Action Upon Completion** 可 **复制**已批准文件并 **更新属性**，但是 copy≠move（源文件仍在），且目标须同 top-level；源夹清理写入 BEP [{pb_idx}]"""
 
     implementation = f"## {h1}\n" + "\n".join(impl_lines)
 
@@ -211,6 +211,98 @@ def compose_folder_hybrid(
     return _compose_folder_hybrid_zh(lang=lang, **kwargs)
 
 
+def _doc_cite_str(tracked: list[TrackedChunk]) -> str | None:
+    doc_idxs = _docs_indices(tracked)
+    if not doc_idxs:
+        return None
+    if len(doc_idxs) == 1:
+        return f"[{doc_idxs[0]}]"
+    return "[" + "][".join(str(i) for i in doc_idxs) + "]"
+
+
+def compose_workflow_hybrid(
+    merged: MergedContexts,
+    *,
+    lang: AnswerLanguage = "zh-Hans",
+) -> str | None:
+    """workflow capability：固定拼装 Action Upon Completion，避免小模型写回「不能自动迁夹」。"""
+    tracked = merged.tracked
+    if not tracked:
+        return None
+    hk_idx = _idx(tracked, "hk_cde")
+    pb_idx = _idx(tracked, "playbook")
+    doc_cite_str = _doc_cite_str(tracked)
+    if hk_idx is None or pb_idx is None or doc_cite_str is None:
+        return None
+
+    h0, h1, h2, h3 = hybrid_section_headers(lang)
+    if lang == "en":
+        return "\n\n".join(
+            [
+                f"""## {h0}
+- HK / ISO-aligned CDE needs a formal check → review → approve gate before information moves container state [{hk_idx}]
+- Status / suitability codes must show whether further authorisation or client acceptance is required [{hk_idx}]
+- An Information Gateway is the audited transition between WIP / Shared / Published / Archive [{hk_idx}]""",
+                f"""## {h1}
+- Map each gateway to an ACC Approval Workflow: WIP→Shared (internal), Shared→Published (formal) [{pb_idx}]
+- In each workflow enable **Action Upon Completion → Copy approved files** to the next container folder (e.g. `02_Shared`, `03_Published`) [{pb_idx}]
+- Also enable **Update attributes** (Status / Revision / Approval Date); prefer **When = All files approved** [{pb_idx}]
+- Remember copy≠move: clean up or archive source files per BEP [{pb_idx}]""",
+                f"""## {h2}
+1. Docs → **Reviews** → Settings → **Create approval workflow**; pick a template (One/Two/Three Step…) {doc_cite_str}
+2. Set Initiator / Reviewer / Approver, time allowed, and File Review Status labels {doc_cite_str}
+3. Under **Action Upon Completion**: turn on **Copy approved files**, choose When + target folder (same top-level); turn on **Update attributes** as needed {doc_cite_str}
+4. Save/activate; members start reviews with that workflow; approved files copy to the target folder on completion {doc_cite_str}""",
+                f"""## {h3}
+- **Aligned**: Docs Approval Workflow + Action Upon Completion can implement the HK gateway approve + copy + attribute update path [{hk_idx}][{pb_idx}]{doc_cite_str}
+- **Gap**: Action is **copy** not move; target must share the source top-level folder; source cleanup / Archive locking still need BEP discipline [{pb_idx}]""",
+            ]
+        )
+    if lang == "zh-Hant":
+        return "\n\n".join(
+            [
+                f"""## {h0}
+- 港標 / ISO 對齊的 CDE 要求信息在轉換容器狀態前走正式 check → review → approve [{hk_idx}]
+- Status / suitability 須標明是否還需後續授權或客戶接受 [{hk_idx}]
+- Information Gateway = WIP / Shared / Published / Archive 之間帶審計的關卡 [{hk_idx}]""",
+                f"""## {h1}
+- 每個 Gateway 對應一個 ACC Approval Workflow：WIP→Shared（內部）、Shared→Published（正式） [{pb_idx}]
+- 工作流開啟 **Action Upon Completion → Copy approved files** 到下一容器（如 `02_Shared`、`03_Published`） [{pb_idx}]
+- 同步開啟 **Update attributes**（Status / Revision / Approval Date）；When 建議 **All files approved** [{pb_idx}]
+- copy≠move：源檔清理/歸檔寫入 BEP [{pb_idx}]""",
+                f"""## {h2}
+1. Docs → **Reviews** → Settings → **Create approval workflow**，選模板（One/Two/Three Step…） {doc_cite_str}
+2. 設定 Initiator / Reviewer / Approver、時限與 File Review Status {doc_cite_str}
+3. 在 **Action Upon Completion** 開啟 **Copy approved files**（選 When + 目標夾，須同 top-level），並按需開啟 **Update attributes** {doc_cite_str}
+4. 保存並啟用；成員用該工作流發起 Review；批准後文件複製到目標夾 {doc_cite_str}""",
+                f"""## {h3}
+- **對齊**：Docs Approval Workflow + Action Upon Completion 可承載港標 Gateway 的審批、複製與屬性更新 [{hk_idx}][{pb_idx}]{doc_cite_str}
+- **缺口**：是 **copy** 非 move；目標須同 top-level；源夾清理 / Archive 鎖定仍靠 BEP 紀律 [{pb_idx}]""",
+            ]
+        )
+    return "\n\n".join(
+        [
+            f"""## {h0}
+- 港标 / ISO 对齐的 CDE 要求信息在转换容器状态前走正式 check → review → approve [{hk_idx}]
+- Status / suitability 须标明是否还需后续授权或客户接受 [{hk_idx}]
+- Information Gateway = WIP / Shared / Published / Archive 之间带审计的关卡 [{hk_idx}]""",
+            f"""## {h1}
+- 每个 Gateway 对应一个 ACC Approval Workflow：WIP→Shared（内部）、Shared→Published（正式） [{pb_idx}]
+- 工作流开启 **Action Upon Completion → Copy approved files** 到下一容器（如 `02_Shared`、`03_Published`） [{pb_idx}]
+- 同步开启 **Update attributes**（Status / Revision / Approval Date）；When 建议 **All files approved** [{pb_idx}]
+- copy≠move：源文件清理/归档写入 BEP [{pb_idx}]""",
+            f"""## {h2}
+1. Docs → **Reviews** → Settings → **Create approval workflow**，选模板（One/Two/Three Step…） {doc_cite_str}
+2. 设定 Initiator / Reviewer / Approver、时限与 File Review Status {doc_cite_str}
+3. 在 **Action Upon Completion** 开启 **Copy approved files**（选 When + 目标夹，须同 top-level），并按需开启 **Update attributes** {doc_cite_str}
+4. 保存并启用；成员用该工作流发起 Review；批准后文件复制到目标夹 {doc_cite_str}""",
+            f"""## {h3}
+- **对齐**：Docs Approval Workflow + Action Upon Completion 可承载港标 Gateway 的审批、复制与属性更新 [{hk_idx}][{pb_idx}]{doc_cite_str}
+- **缺口**：是 **copy** 非 move；目标须同 top-level；源夹清理 / Archive 锁定仍靠 BEP 纪律 [{pb_idx}]""",
+        ]
+    )
+
+
 def try_compose_structured_hybrid(
     merged: MergedContexts,
     capability: str | None,
@@ -218,7 +310,9 @@ def try_compose_structured_hybrid(
     question: str = "",
     answer_lang: str = "auto",
 ) -> str | None:
-    if capability != "folder":
-        return None
     lang = resolve_answer_language(question, answer_lang)
-    return compose_folder_hybrid(merged, lang=lang)
+    if capability == "folder":
+        return compose_folder_hybrid(merged, lang=lang)
+    if capability == "workflow":
+        return compose_workflow_hybrid(merged, lang=lang)
+    return None

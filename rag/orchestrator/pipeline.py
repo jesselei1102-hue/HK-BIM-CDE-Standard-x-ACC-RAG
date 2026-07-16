@@ -562,13 +562,18 @@ class HybridOrchestrator:
                 reason="forced_docs",
             )
         elif force_track == "hk_cde":
+            from rag.orchestrator.classify import rewrite_industry_overview_query
+
             capability = detect_capability(question)
+            rewritten = rewrite_industry_overview_query(question)
             decision = IntentDecision(
                 track="hk_cde",
                 capability=capability.key if capability else None,
                 product_query=None,
                 industry_query=(
-                    capability.industry_query if capability else question
+                    capability.industry_query
+                    if capability
+                    else (rewritten or question)
                 ),
                 playbook_query=None,
                 has_product_signal=False,

@@ -27,11 +27,13 @@ python -m rag.preflight
 ## 1. 问答（最常用）
 
 入口：`ask.py`  
-**默认** `--corpus hybrid`**（三轨）**。
+**默认** `--corpus auto`**（按意图分流；复合问会进 hybrid）**。
 
 ```bash
-# 默认 hybrid：港标 + Playbook + Docs
+# 默认 auto：编排分流（产品+港标 → hybrid 三轨）
 python ask.py "怎么按港标在 ACC 配置文件夹结构"
+# 强制三轨：
+# python ask.py --corpus hybrid "…"
 
 # 能力说明（不检索）
 python ask.py "你可以做什么"

@@ -349,6 +349,70 @@ SEEDS = [
         "authority": "BD PNAP ADV-34",
     },
     {
+        "id": "hk_cicbims_overview",
+        "topic": "CIC BIM Standards – General (CICBIMS) overview",
+        "aliases": [
+            "CIC standard",
+            "CIC standards",
+            "CIC BIM",
+            "CIC BIM Standard",
+            "CIC BIM Standards",
+            "CIC BIM Standards General",
+            "CICBIMS",
+            "CICBIMS overview",
+            "港标CIC",
+            "CIC标准",
+            "CIC BIM标准",
+            "CIC BIM 标准",
+        ],
+        "canonical_query_en": (
+            "CIC BIM Standards General CICBIMS 2024 introduction purpose "
+            "scope ISO 19650 information management overview"
+        ),
+        "canonical_query_zh": "CIC BIM Standards General（CICBIMS）涵盖什么范围与目的？",
+        "target_section": "cicbims_2024/cicbims_2024_introduction",
+        "authority": "CICBIMS 2024 §Introduction",
+    },
+    {
+        "id": "hk_cicbims_digitalisation",
+        "topic": "CICBIMS Digitalisation chapter headline",
+        "aliases": [
+            "CIC BIM CDE standards",
+            "CICBIMS chapter",
+            "CIC standards headline",
+            "CIC BIM contents",
+        ],
+        "canonical_query_en": (
+            "CIC BIM Standards General CICBIMS digitalisation information "
+            "management process chapter overview"
+        ),
+        "canonical_query_zh": "CICBIMS 数字化与信息管理章节讲什么？",
+        "target_section": "cicbims_2024/cicbims_2024_1_digitalisation",
+        "authority": "CICBIMS 2024 §1",
+    },
+    {
+        "id": "hk_devb_harmonisation_overview",
+        "topic": "DEVB BIM Harmonisation Guidelines overview",
+        "aliases": [
+            "harmonization guide",
+            "harmonisation guide",
+            "BIM harmonization",
+            "BIM Harmonisation",
+            "DEVB Harmonisation",
+            "Harmonisation Guidelines",
+            "工务署 BIM 协调",
+            "BIM协调指南",
+            "BIM 调和下",
+        ],
+        "canonical_query_en": (
+            "DEVB BIM Harmonisation Guidelines v3 executive summary "
+            "table of contents federation naming LOIN overview"
+        ),
+        "canonical_query_zh": "DEVB BIM Harmonisation Guidelines 主要内容是什么？",
+        "target_section": "devb_harmonisation_v3/devb_harmonisation_v3_executive_summary",
+        "authority": "DEVB Harmonisation v3.0 Executive Summary",
+    },
+    {
         "id": "hk_bd_adm19_bim",
         "topic": "BD PNAP ADM-19 BIM model data extraction consent",
         "aliases": [

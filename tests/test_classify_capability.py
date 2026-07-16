@@ -34,6 +34,30 @@ def test_folder_permissions_prefers_permissions_over_folder() -> None:
     assert cap.key == "permissions"
 
 
+def test_industry_overview_rewrite_cic() -> None:
+    from rag.orchestrator.classify import (
+        classify_intent,
+        rewrite_industry_overview_query,
+    )
+
+    q = "I want to know more about CIC Standard, can you tell me"
+    rewritten = rewrite_industry_overview_query(q)
+    assert rewritten is not None
+    assert "CICBIMS" in rewritten
+    decision = classify_intent(q)
+    assert decision.track == "hk_cde"
+    assert decision.industry_query and "CICBIMS" in decision.industry_query
+
+
+def test_industry_overview_rewrite_harmonisation() -> None:
+    from rag.orchestrator.classify import rewrite_industry_overview_query
+
+    q = "I want to know BIM harmonization guide"
+    rewritten = rewrite_industry_overview_query(q)
+    assert rewritten is not None
+    assert "Harmonisation" in rewritten or "harmonisation" in rewritten.lower()
+
+
 def test_folder_naming_prefers_naming_over_folder() -> None:
     cap = detect_capability("文件夹命名标准怎么配")
     assert cap is not None
@@ -74,6 +98,15 @@ def test_hybrid_folder_capability() -> None:
     assert decision.track == "hybrid"
     assert decision.capability == "folder"
     assert is_folder_question(decision.product_query or "", decision.capability)
+
+
+def test_hk_aligned_workflow_routes_hybrid() -> None:
+    q = "How to run HK-aligned approval workflows in ACC"
+    decision = classify_intent(q)
+    assert decision.track == "hybrid"
+    assert decision.capability == "workflow"
+    assert "Action Upon Completion" in (decision.product_query or "")
+    assert "Copy approved files" in (decision.playbook_query or "")
 
 
 def test_explicit_folder_words_without_capability() -> None:

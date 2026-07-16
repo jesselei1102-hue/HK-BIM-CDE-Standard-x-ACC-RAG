@@ -7,7 +7,7 @@ title: EXECUTIVE SUMMARY
 page_start: 10
 page_end: 11
 authority: DEVB BIM Harmonisation v3.0 §EXECUTIVE
-priority: normal
+priority: high
 language: en
 source_url: hk_cde://devb_harmonisation_v3/devb_harmonisation_v3_executive_summary
 ---

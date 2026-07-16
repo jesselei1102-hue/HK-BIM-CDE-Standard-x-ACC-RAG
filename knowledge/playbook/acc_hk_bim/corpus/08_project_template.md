@@ -194,7 +194,7 @@ ProjectCode-Discipline-FileType-Sequence-Version
 | WF-C | BD Statutory | SUB（建議 `STAT-` 前綴） | GC_Engineering, Consultant | GC_Management | BD Checklist + 2D/3D Consistency |
 | WF-D | Handover | RPT, MOD, SUB | GC_Engineering, GC_QHSE | GC_Management | — |
 
-> **缺口**：ACC Workflow 通過後 **不會**自動把檔案從 WIP 遷到 Shared；須文控人工遷夾或 API。見 `05_workflow.md`。
+> **配置要求**：各 Workflow 應開啟 Docs **Action Upon Completion → Copy approved files**（及 Update attributes），指向下一容器目標夾。注意是 **copy** 非 move，且目標須與源在同一 top-level folder；源夾清理寫入 BEP。見 `05_workflow.md`。
 
 ---
 
@@ -285,7 +285,7 @@ Buildings 可選：`BlockNo`、`FloorNo`、`UnitType`、`FlatNo`、`Zone`、`Are
 |------|------|
 | 兩套目錄策略 | 第 02 章頂層四容器 vs 本章 GC 業務樹；項目須選定並寫入 BEP |
 | Shared folder 不可逆 | Design Collaboration 指定前必須凍結路徑 |
-| 審批≠遷夾 | Workflow 通過後仍需人工遷夾與更新 Status 屬性 |
+| 審批完成動作須配置 | 開啟 Action Upon Completion（Copy + Update attributes）；源夾清理（copy ≠ move）寫入 BEP |
 | 法定格式 | BD ADM-19/ADV-34、LandsD 附錄 XIV 細節在 Authoring/外部流程完成，ACC 負責存放與門禁勾選 |
 | Civil vs Buildings | Civil 偏 LandsD；Buildings 偏 BD；勿混用同一法定子樹而不標註 |
 

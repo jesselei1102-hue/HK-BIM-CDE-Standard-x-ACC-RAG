@@ -138,8 +138,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--corpus",
         choices=["auto", "docs", "hk_cde", "playbook", "hybrid"],
-        default="hybrid",
-        help="语料轨：默认 hybrid=强制三轨；auto=编排分流；docs/hk_cde/playbook=单轨",
+        default="auto",
+        help="语料轨：默认 auto=编排分流；hybrid=强制三轨；docs/hk_cde/playbook=单轨",
     )
     parser.add_argument("--top-k", type=int, default=None, help="每轨返回多少个上下文")
     parser.add_argument("--show-context", action="store_true")

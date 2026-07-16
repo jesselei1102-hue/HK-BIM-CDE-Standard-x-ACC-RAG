@@ -7,7 +7,7 @@ title: Introduction
 page_start: 19
 page_end: 22
 authority: CICBIMS 2024 §Introduction
-priority: normal
+priority: high
 language: en
 source_url: hk_cde://cicbims_2024/cicbims_2024_introduction
 ---
