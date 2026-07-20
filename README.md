@@ -326,5 +326,6 @@ output/                      Crawl mirrors and official PDFs (local, gitignored)
 
 ## License / copyright
 
-- Code and self-authored playbook text may be used under this repository’s normal practice.
-- CIC / DEVB / BD / LandsD / Autodesk materials remain copyright of their owners. This project keeps extracted Markdown for RAG; **do not push full official PDF packages to a public repository**.
+- **Software** (code, tests, eval scaffolding, self-authored playbook text): [MIT License](LICENSE).
+- **Third-party standards and product help** (CIC / DEVB / BD / LandsD / Autodesk): **not** covered by MIT. Copyright remains with the original publishers. See [NOTICE](NOTICE).
+- Extracted Markdown under `knowledge/industry/hk_cde/corpus/` is for local RAG use only; **do not redistribute official PDF packages** or treat extracted text as openly licensed unless you have separate permission from the rights holders.

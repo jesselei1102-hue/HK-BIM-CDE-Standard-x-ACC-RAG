@@ -1,0 +1,25 @@
+Third-party materials (not covered by the MIT License)
+========================================================
+
+The MIT License in LICENSE applies only to original software and documentation
+authored for this repository (for example: rag/, scripts/, tests/, eval
+scaffolding, and self-authored playbook text under knowledge/playbook/).
+
+The following materials remain the copyright of their respective owners and are
+NOT licensed for redistribution under this repository's MIT License:
+
+- Hong Kong industry standards and guidance extracted under
+  knowledge/industry/hk_cde/ (CIC, DEVB, Buildings Department, LandsD, and
+  related bodies).
+- Autodesk product help and related documentation under knowledge/product/ and
+  any locally downloaded Autodesk help content.
+- Official PDF packages and source publications referenced in
+  knowledge/industry/hk_cde/sources/ and local output/ directories.
+
+These third-party materials are kept in this project for local retrieval and
+research purposes only. Do not republish official PDF packages or treat
+extracted Markdown as openly redistributable unless you have separate permission
+from the rights holders.
+
+Obtain official publications from the original publishers and run the provided
+extract/ingest scripts locally when building your own corpus.
