@@ -26,6 +26,7 @@ def _print_answer(
     token_line: str | None = None,
     *,
     rewritten_query: str | None = None,
+    suggested_followups: list[str] | None = None,
 ) -> None:
     print(f"\n问题：{question}")
     if rewritten_query and rewritten_query.strip() != question.strip():
@@ -39,6 +40,10 @@ def _print_answer(
         print("\n".join(source_lines))
     else:
         print("(无)")
+    if suggested_followups:
+        print("\n你可以继续问：")
+        for index, item in enumerate(suggested_followups, start=1):
+            print(f"  {index}. {item}")
 
     if show_context and contexts:
         print("\n检索上下文：")
@@ -141,6 +146,7 @@ def ask_once(
         contexts=contexts,
         token_line=token_line,
         rewritten_query=result.debug.rewritten_query,
+        suggested_followups=list(result.suggested_followups or []),
     )
     return 0
 

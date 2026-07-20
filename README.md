@@ -133,7 +133,9 @@ Query (capability-rewritten when available)
 ### 1. Intent and meta Q&A
 
 - **Capabilities help** (e.g. “what can you do”): returns capability text only; `track=meta`; no retrieve, no Ollama.
-- **`classify_intent`**: detects a primary **capability** and track bias (`docs` / `hk_cde` / `playbook` / `hybrid`), then rewrites per-track sub-queries and drives pinning / Docs relevance filters.
+- **`classify_intent`**: detects a primary **capability** and track bias (`docs` / `hk_cde` / `playbook` / `hybrid`), then drives retrieval budgets, conditional pinning, and Docs relevance filters.
+- **Semantic routing** (`RAG_SEMANTIC_ROUTER=shadow|on|off`, default `shadow`): local embedding index over multilingual route exemplars in `knowledge/orchestrator_routes.jsonl`. Semantic scores decide **where to search**; answers still come only from retrieved chunks this turn. Regex rules remain as a low-confidence safety net (OOD, meta, high-cost conflicts). In `shadow`, legacy decisions stay live while semantic A/B is logged in debug.
+- **Retrieval-led queries**: hybrid / single-track search uses the user’s standalone question (+ optional lightweight semantic hint), not fixed English templates. Template text is reserved for low-score pin / retry paths.
 
 Supported capabilities (single primary label; conflicts use priority order):
 
@@ -145,7 +147,7 @@ Supported capabilities (single primary label; conflicts use priority order):
 | `naming` | naming standard / Information Container ID | Docs Naming Standard + HK / Playbook naming pins |
 | `workflow` | approval workflow / Authorisation Gateway / HK-aligned workflows | prefer `Reviews_Create_Edit`; **rule compose** covers Action Upon Completion |
 | `project_create` | create ACC project | prefer `Create_Project` |
-| `folder` | folder structure / four CDE containers | hard pin Organize Files + Playbook WIP tree; **rule compose** |
+| `folder` | folder structure / four CDE containers | conditional pin when retrieval weak or concept chunk; **rule compose** |
 
 Notes:
 
@@ -164,9 +166,9 @@ Notes:
 ### 3. Hybrid merge and answer writing
 
 1. **Parallel retrieval**: Docs / HK CDE / Playbook each run embedding + BM25 hybrid search with capability-specific queries when available.
-2. **Capability pin / prefer**:
-   - Strong pins (`folder`, `naming`, `model_viewer`): swap in known good pages when retrieval drifts to overview / noise pages.
-   - Soft prefer (`permissions`, `project_create`, `project_template`, `workflow`): put target Docs GUIDs first, keep normal retrieval as the second source.
+2. **Capability pin / prefer** (conditional):
+   - Pins (`folder`, `naming`, `model_viewer`): only when top-1 similarity is low or the wrong overview/concept chunk was retrieved.
+   - Soft prefer (`permissions`, `project_create`, `project_template`, `workflow`): reorder known Docs GUIDs when retrieval is weak.
    - Folder Playbook fallback only accepts explicit WIP tree evidence; otherwise it falls back to normal retrieval (no arbitrary first hit).
 3. **`merge_triple_contexts`**: builds a shared numbered context list (`[1]`…) and records which track each chunk came from for later validation.
 4. **Answer priority**:
@@ -219,16 +221,22 @@ Frozen baseline comparison suite: [`eval/RESULTS.md`](eval/RESULTS.md).
 | TripleRecall (+Playbook) | **100%** (7/7) |
 | False hybrid (pure track stolen) | **0** |
 
-On cross-domain hybrid-expect cases, forced single-track retrieval still cannot cover more than one source family; see `eval_hybrid_vs_single.py` / `RESULTS.md`.
+HK coverage (SectionRecall) gate: R@1 ≥85%, R@3 ≥95%, DocumentRecall@1 = 100%, DEVB family R@1 ≥60%. Latest run: **106/106** SectionRecall@1.
 
 ```bash
 python scripts/run_eval_suite.py
 # pieces:
 python scripts/eval_query_kb.py
+python scripts/eval_conversation.py
+python scripts/eval_generation_gate.py
+python scripts/eval_docs.py
 python scripts/eval_hk_cde.py
+python scripts/eval_hk_cde_coverage.py
 python scripts/eval_playbook_acc_hk.py
 python scripts/eval_hybrid.py
 python scripts/eval_hybrid_vs_single.py
+# latency (retrieve-only):
+python scripts/benchmark_ask.py --corpus hk_cde
 ```
 
 ## Quick start
@@ -237,7 +245,7 @@ python scripts/eval_hybrid_vs_single.py
 
 - Python 3.11+
 - [Ollama](https://ollama.com/) for local generation + embedding (defaults in `rag/config.py`)
-- Built indexes for all three tracks (or rebuild with the steps below)
+- Built indexes (HK + Playbook ship from committed Markdown; Docs requires your own help corpus)
 
 ```bash
 cd /path/to/hk-bim-cde-standard-x-acc-rag
@@ -248,6 +256,23 @@ pip install -r requirements.txt
 # Pull generation + embedding models
 ollama pull qwen3.5:4b
 ollama pull qwen3-embedding:0.6b
+
+# First-time indexes for HK CDE + Playbook (no Docs crawl required)
+bash scripts/bootstrap_indexes.sh
+python -m rag.preflight
+```
+
+Fresh clones can answer Hong Kong standards questions immediately:
+
+```bash
+python ask.py --corpus hk_cde "What is WIP?"
+```
+
+Docs / full hybrid need Autodesk Docs help Markdown under `output/DOCS/` (copyright of Autodesk; obtain legally), then:
+
+```bash
+bash scripts/bootstrap_indexes.sh --with-docs
+python -m rag.preflight --require-docs
 ```
 
 ### Ask questions
@@ -275,16 +300,20 @@ python ask.py --corpus playbook "01_WIP discipline folders"
 python ask.py --corpus hybrid "How to configure ACC folder permissions for HK CDE"
 ```
 
-Full CLI reference: [COMMANDS.md](COMMANDS.md).
+Full CLI reference: [COMMANDS.md](COMMANDS.md). Default `--corpus` is **`auto`** (intent routing). Use `--corpus hybrid` to force all three tracks.
 
 ### Rebuild indexes (summary)
 
 ```bash
+# Fast path (committed HK + Playbook Markdown)
+bash scripts/bootstrap_indexes.sh
+
 # Docs product store (requires help HTML / corpus first)
 python ingest.py --rebuild
 python scripts/build_query_kb.py
+python scripts/build_kb_index.py --rebuild
 
-# Hong Kong standards store (production = high scope)
+# Hong Kong standards store (production = high scope) — also covered by bootstrap
 python scripts/inventory_hk_sources.py
 python scripts/extract_hk_cde_pdfs.py
 python scripts/extract_hk_bd_landsd.py
@@ -293,7 +322,7 @@ python scripts/build_industry_query_kb.py
 python scripts/build_industry_kb_index.py --rebuild
 # Optional A/B: python scripts/compare_hk_indexes.py
 
-# Playbook store
+# Playbook store — also covered by bootstrap
 python scripts/ingest_playbook_acc_hk.py --rebuild
 python scripts/build_playbook_query_kb.py
 python scripts/build_playbook_kb_index.py --rebuild

@@ -251,9 +251,19 @@ CAPABILITY_TEMPLATES: tuple[CapabilityTemplate, ...] = (
         patterns=(
             re.compile(
                 r"文件夹结构|文件夾結構|目录结构|目錄結構|"
-                r"folder\s*structure|project\s*folder|"
+                r"folder\s*(structure|tree|hierarch(y|ies)?)|"
+                r"folder\s*example|"
+                r"project\s*folder|"
+                r"discipline\s+folder|"
+                r"sub\s*-?\s*folder|"
                 r"创建文件夹|建文件夹|创建文件夾|"
-                r"文件夹|文件夾|四容器|cde\s*容器",
+                r"文件夹|文件夾|四容器|cde\s*容器|"
+                r"four\s*container|4\s*container|"
+                r"(?<![A-Za-z])WIP(?![A-Za-z]).{0,48}"
+                r"(folder|tree|discipline|container|subfolder|ARC|STR|MEP|CIV)|"
+                r"(folder|tree|discipline|container|subfolder).{0,48}"
+                r"(?<![A-Za-z])WIP(?![A-Za-z])|"
+                r"01_WIP|02_Shared|03_Published|04_Archive",
                 re.I,
             ),
         ),
@@ -295,6 +305,8 @@ class IntentDecision:
     has_industry_signal: bool
     has_playbook_signal: bool
     reason: str
+    routing_source: str = "legacy"  # legacy | semantic | semantic_fallback | shadow
+    semantic_hint: str | None = None
 
 
 def has_industry_signal(query: str) -> bool:
@@ -375,15 +387,42 @@ _DEVB_HARMONISATION_OVERVIEW_RE = re.compile(
     r"BIM\s*协调|BIM\s*調和",
     re.I,
 )
+_SPECIFIC_SECTION_RE = re.compile(
+    r"(?::\s*\S)|"  # "DOC: Section title"
+    r"(?:\b\d+(?:\.\d+)+\b)|"  # numbered section 2.3.1
+    r"(?:\bAppendix\s+[A-Z0-9]+\b)|"
+    r"(?:\bLOIN\b)|"
+    r"(?:\bLOD(?:-?I)?\b)|"
+    r"(?:\bnaming\b)|"
+    r"(?:命名)|"
+    r"(?:\bLandsD\b)|"
+    r"(?:\bTHE WAY FORWARD\b)|"
+    r"(?:\bABBREVIATION\b)|"
+    r"(?:\bINFORMATION REQUIREMENTS\b)|"
+    r"(?:\bDISTRIBUTION\b)|"
+    r"(?:\bBIM OBJECT FILES\b)|"
+    r"(?:\bSubscription/?Perpetual\b)|"
+    r"(?:\bUse of the Standards\b)|"
+    r"(?:requirements?\s+for\s+.+?\s+in\s+)",
+    re.I,
+)
 
 
 def rewrite_industry_overview_query(query: str) -> str | None:
-    """把空泛的港标总览问句改成可命中 CICBIMS / DEVB 正文的检索句。"""
+    """把空泛的港标总览问句改成可命中 CICBIMS / DEVB 正文的检索句。
+
+    Do **not** rewrite when the user already names a concrete section; otherwise
+    overview pins (e.g. EXECUTIVE SUMMARY) steal SectionRecall@1.
+    """
     text = (query or "").strip()
     if not text:
         return None
-    if _DEVB_HARMONISATION_OVERVIEW_RE.search(text) and not re.search(
-        r"naming|LandsD|Appendix\s*XIV|命名", text, re.I
+    if _SPECIFIC_SECTION_RE.search(text):
+        return None
+    if _DEVB_HARMONISATION_OVERVIEW_RE.search(text) and (
+        _CIC_OVERVIEW_ASK_RE.search(text)
+        or len(text) < 60
+        or re.search(r"headline|contents?|overview|comprehensive|guide\b", text, re.I)
     ):
         return (
             "DEVB BIM Harmonisation Guidelines v3 executive summary "
@@ -432,9 +471,11 @@ CAPABILITY_PLAYBOOK_URL_PREFIX: dict[str, str] = {
     "permissions": "playbook://acc_hk_bim/04_permissions",
 }
 
-# 明确文件夹操作措辞；不含裸 WIP/Shared 等术语（那些属行业概念）
+# 保留最小确定性措辞，供 legacy 低置信度回退（非主路由路径）
 _FOLDER_QUESTION_RE = re.compile(
-    r"文件夹|文件夾|目录结构|目錄結構|folder\s*structure|"
+    r"文件夹|文件夾|目录结构|目錄結構|"
+    r"folder\s*(structure|tree|hierarch(y|ies)?)|"
+    r"discipline\s+folder|sub\s*-?\s*folder|"
     r"project\s*folder|四容器|cde\s*容器|"
     r"01_WIP|02_Shared|03_Published|04_Archive",
     re.I,
@@ -442,25 +483,103 @@ _FOLDER_QUESTION_RE = re.compile(
 
 
 def is_folder_question(question: str, capability: str | None = None) -> bool:
-    """仅在 folder capability 或明确文件夹结构措辞时为真。
-
-    裸「WIP 是什么」不应触发文件夹硬钉选/结构化拼装。
-    """
+    """folder capability 为真；legacy 回退时保留四容器/树形措辞检测。"""
     if capability == "folder":
         return True
     if capability is not None:
-        # 已识别为其他能力时，不要因夹杂 folder 词误开文件夹管线
         return False
     return bool(_FOLDER_QUESTION_RE.search(question or ""))
 
 
-def classify_intent(query: str) -> IntentDecision:
-    text = query.strip()
-    product = has_product_signal(text)
-    industry = has_industry_signal(text)
-    playbook = has_playbook_signal(text)
-    capability = detect_capability(text)
-    out_of_domain = has_out_of_domain_signal(text)
+def _append_semantic_hint(question: str, hint: str | None) -> str:
+    text = question.strip()
+    hint = (hint or "").strip()
+    if not hint or hint.casefold() in text.casefold():
+        return text
+    return f"{text} ({hint})"
+
+
+def _retrieval_queries_from_question(
+    question: str,
+    *,
+    capability: CapabilityTemplate | None,
+    semantic_hint: str | None,
+    industry_rewrite: str | None,
+    track: str,
+) -> tuple[str | None, str | None, str | None]:
+    """原问句主导召回；仅在语义高置信时追加轻量 hint。"""
+    base = question.strip()
+    hinted = _append_semantic_hint(base, semantic_hint)
+
+    if track == "out_of_domain":
+        return None, None, None
+
+    if track == "hybrid":
+        product_q = hinted
+        industry_q = industry_rewrite or hinted
+        playbook_q = hinted
+        if capability:
+            # 低分补救模板仅作 hint 后缀，不替换原问句
+            for part in (
+                capability.product_query,
+                capability.industry_query,
+                capability.playbook_query,
+            ):
+                if part and part.casefold() not in hinted.casefold():
+                    pass  # templates reserved for conditional pin / low-score retry
+        return product_q, industry_q, playbook_q
+
+    if track == "playbook":
+        return None, None, hinted
+
+    if track == "hk_cde":
+        return None, industry_rewrite or hinted, None
+
+    return hinted, None, None
+
+
+def _build_intent_decision(
+    text: str,
+    *,
+    product: bool,
+    industry: bool,
+    playbook: bool,
+    capability: CapabilityTemplate | None,
+    out_of_domain: bool,
+    routing_source: str = "legacy",
+    semantic_hint: str | None = None,
+    reason_prefix: str = "",
+    use_templates: bool = True,
+) -> IntentDecision:
+    """共享 track 决策；semantic 路径用原问句召回，legacy 保留模板 sub-query。"""
+    prefix = f"{reason_prefix}_" if reason_prefix else ""
+
+    def _queries_for(track: str) -> tuple[str | None, str | None, str | None]:
+        industry_rewrite = None
+        if track == "hk_cde" and not capability:
+            industry_rewrite = rewrite_industry_overview_query(text)
+        if use_templates and capability:
+            if track == "hybrid":
+                return (
+                    capability.product_query,
+                    capability.industry_query,
+                    capability.playbook_query,
+                )
+            if track == "playbook":
+                return None, None, capability.playbook_query
+            if track == "hk_cde":
+                return None, capability.industry_query, None
+            if track == "docs":
+                return capability.product_query, None, None
+        return _retrieval_queries_from_question(
+            text,
+            capability=capability,
+            semantic_hint=semantic_hint,
+            industry_rewrite=industry_rewrite,
+            track=track,
+        )
+
+    cap_key = capability.key if capability else None
 
     if out_of_domain and not product:
         return IntentDecision(
@@ -472,101 +591,236 @@ def classify_intent(query: str) -> IntentDecision:
             has_product_signal=False,
             has_industry_signal=industry,
             has_playbook_signal=False,
-            reason="out_of_domain",
+            reason=f"{prefix}out_of_domain",
+            routing_source=routing_source,
+            semantic_hint=semantic_hint,
         )
 
     if product and industry:
-        if capability:
-            return IntentDecision(
-                track="hybrid",
-                capability=capability.key,
-                product_query=capability.product_query,
-                industry_query=capability.industry_query,
-                playbook_query=capability.playbook_query,
-                has_product_signal=True,
-                has_industry_signal=True,
-                has_playbook_signal=playbook,
-                reason=f"hybrid_capability_{capability.key}",
-            )
-        product_query, industry_query, playbook_query = _fallback_queries(text)
+        pq, iq, pbq = _queries_for("hybrid")
+        if not use_templates and not capability:
+            pq, iq, pbq = _fallback_queries(text)
+        reason = f"{prefix}hybrid_capability_{cap_key}" if cap_key else f"{prefix}hybrid_fallback"
         return IntentDecision(
             track="hybrid",
-            capability=None,
-            product_query=product_query,
-            industry_query=industry_query,
-            playbook_query=playbook_query,
+            capability=cap_key,
+            product_query=pq,
+            industry_query=iq,
+            playbook_query=pbq,
             has_product_signal=True,
             has_industry_signal=True,
             has_playbook_signal=playbook,
-            reason="hybrid_fallback",
+            reason=reason,
+            routing_source=routing_source,
+            semantic_hint=semantic_hint,
         )
 
-    # 实施手册信号优先于纯标准轨（避免「怎么配置」被当成只查 CIC 条文）
     if playbook and not product:
+        _, _, pbq = _queries_for("playbook")
         return IntentDecision(
             track="playbook",
-            capability=capability.key if capability else None,
+            capability=cap_key,
             product_query=None,
             industry_query=None,
-            playbook_query=(
-                capability.playbook_query if capability else text
-            ),
+            playbook_query=pbq or text,
             has_product_signal=False,
             has_industry_signal=industry,
             has_playbook_signal=True,
-            reason="playbook_signal",
+            reason=f"{prefix}playbook_signal",
+            routing_source=routing_source,
+            semantic_hint=semantic_hint,
         )
 
     if playbook and product and not industry:
-        # 产品 + 实施措辞但无港标词：仍走 playbook 单轨（手册已含产品路径）
+        pq, _, pbq = _queries_for("playbook")
         return IntentDecision(
             track="playbook",
-            capability=capability.key if capability else None,
-            product_query=(
-                capability.product_query if capability else text
-            ),
+            capability=cap_key,
+            product_query=pq or text,
             industry_query=None,
-            playbook_query=(
-                capability.playbook_query if capability else text
-            ),
+            playbook_query=pbq or text,
             has_product_signal=True,
             has_industry_signal=False,
             has_playbook_signal=True,
-            reason="playbook_product",
+            reason=f"{prefix}playbook_product",
+            routing_source=routing_source,
+            semantic_hint=semantic_hint,
         )
 
     if industry:
+        _, iq, _ = _queries_for("hk_cde")
         rewritten = rewrite_industry_overview_query(text)
         return IntentDecision(
             track="hk_cde",
-            capability=capability.key if capability else None,
+            capability=cap_key,
             product_query=None,
-            industry_query=(
-                capability.industry_query
-                if capability
-                else (rewritten or text)
-            ),
+            industry_query=iq or (rewritten or text),
             playbook_query=None,
             has_product_signal=False,
             has_industry_signal=True,
             has_playbook_signal=False,
             reason=(
-                "industry_overview_rewrite"
+                f"{prefix}industry_overview_rewrite"
                 if rewritten and not capability
-                else "industry_only"
+                else f"{prefix}industry_only"
             ),
+            routing_source=routing_source,
+            semantic_hint=semantic_hint,
         )
 
+    pq, _, _ = _queries_for("docs")
     return IntentDecision(
         track="docs",
-        capability=capability.key if capability else None,
-        product_query=(
-            capability.product_query if capability else text
-        ),
+        capability=cap_key,
+        product_query=pq or text,
         industry_query=None,
         playbook_query=None,
         has_product_signal=product,
         has_industry_signal=False,
         has_playbook_signal=False,
-        reason="docs_default" if not product else "product_only",
+        reason=f"{prefix}docs_default" if not product else f"{prefix}product_only",
+        routing_source=routing_source,
+        semantic_hint=semantic_hint,
     )
+
+
+def classify_intent_legacy(query: str) -> IntentDecision:
+    text = query.strip()
+    return _build_intent_decision(
+        text,
+        product=has_product_signal(text),
+        industry=has_industry_signal(text),
+        playbook=has_playbook_signal(text),
+        capability=detect_capability(text),
+        out_of_domain=has_out_of_domain_signal(text),
+        routing_source="legacy",
+        use_templates=True,
+    )
+
+
+def _merge_semantic_decision(
+    query: str,
+    legacy: IntentDecision,
+    semantic: "SemanticRouteResult",
+    *,
+    use_semantic: bool,
+) -> IntentDecision:
+    from rag.config import get_config
+    from rag.orchestrator.semantic_router import SemanticRouteResult  # noqa: F401
+
+    text = query.strip()
+    cfg = get_config().semantic_router
+    if not use_semantic or not semantic.index_available:
+        source = "legacy" if not use_semantic else "semantic_fallback"
+        reason = (
+            legacy.reason
+            if not use_semantic
+            else f"fallback_{semantic.fallback_reason or 'index'}"
+        )
+        return IntentDecision(
+            track=legacy.track,
+            capability=legacy.capability,
+            product_query=legacy.product_query,
+            industry_query=legacy.industry_query,
+            playbook_query=legacy.playbook_query,
+            has_product_signal=legacy.has_product_signal,
+            has_industry_signal=legacy.has_industry_signal,
+            has_playbook_signal=legacy.has_playbook_signal,
+            reason=reason,
+            routing_source=source,
+            semantic_hint=semantic.hint_query or None,
+        )
+
+    product = legacy.has_product_signal or semantic.product_score >= cfg.min_track_signal_sim
+    industry = legacy.has_industry_signal or semantic.industry_score >= cfg.min_track_signal_sim
+    playbook = legacy.has_playbook_signal or semantic.playbook_score >= cfg.min_track_signal_sim
+    _ = (product, industry, playbook)  # track stays on legacy signals; reserved for future track semantic
+
+    cap_template = detect_capability(text)
+    if cap_template is None and legacy.capability is None:
+        if (
+            semantic.capability_confident
+            and semantic.capability == "folder"
+            and is_folder_question(text, None)
+        ):
+            cap_template = capability_template_by_key("folder")
+    elif semantic.capability_confident and semantic.capability is None:
+        cap_template = None
+    elif semantic.capability_confident:
+        sem_cap = capability_template_by_key(semantic.capability)
+        if sem_cap is not None:
+            if cap_template is None:
+                if sem_cap.key == "folder" and not is_folder_question(text, None):
+                    cap_template = None
+                else:
+                    cap_template = sem_cap
+            else:
+                cap_template = min(
+                    (cap_template, sem_cap),
+                    key=lambda item: _CAPABILITY_PRIORITY.index(item.key),
+                )
+
+    # 裸 WIP / 概览问句：null 簇足够强时不落 folder
+    if (
+        cap_template is not None
+        and cap_template.key == "folder"
+        and semantic.capability_null_score >= cfg.min_capability_null_sim
+        and semantic.capability_null_score >= semantic.capability_score - 0.03
+    ):
+        cap_template = None
+
+    hint = semantic.hint_query if semantic.capability_confident else None
+    return _build_intent_decision(
+        text,
+        product=legacy.has_product_signal,
+        industry=legacy.has_industry_signal,
+        playbook=legacy.has_playbook_signal,
+        capability=cap_template,
+        out_of_domain=legacy.track == "out_of_domain",
+        routing_source="semantic",
+        semantic_hint=hint,
+        reason_prefix="semantic",
+        use_templates=False,
+    )
+
+
+def classify_intent(query: str, *, mode: str | None = None) -> IntentDecision:
+    """语义优先路由；shadow 模式仅记录对比，行为仍走 legacy。"""
+    from rag.config import get_config
+    from rag.orchestrator.semantic_router import get_semantic_router
+
+    legacy = classify_intent_legacy(query)
+    router_mode = (mode or get_config().semantic_router.mode).lower()
+    if router_mode == "off":
+        return legacy
+
+    semantic = get_semantic_router().route(query)
+    if router_mode == "shadow":
+        merged = _merge_semantic_decision(
+            query, legacy, semantic, use_semantic=False
+        )
+        return IntentDecision(
+            track=merged.track,
+            capability=merged.capability,
+            product_query=merged.product_query,
+            industry_query=merged.industry_query,
+            playbook_query=merged.playbook_query,
+            has_product_signal=merged.has_product_signal,
+            has_industry_signal=merged.has_industry_signal,
+            has_playbook_signal=merged.has_playbook_signal,
+            reason=legacy.reason,
+            routing_source="shadow",
+            semantic_hint=semantic.hint_query or None,
+        )
+
+    if router_mode == "on":
+        use_semantic = semantic.index_available
+        if use_semantic:
+            return _merge_semantic_decision(
+                query, legacy, semantic, use_semantic=True
+            )
+        return _merge_semantic_decision(
+            query, legacy, semantic, use_semantic=False
+        )
+
+    return legacy

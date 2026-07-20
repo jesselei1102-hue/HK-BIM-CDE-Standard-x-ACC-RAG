@@ -13,7 +13,7 @@ discipline: am_fm
 lifecycle_stage: operations
 publication_year: 2021
 software: null
-priority: normal
+priority: high
 language: en
 source_url: hk_cde://cic_amfm_case_2021/cic_amfm_case_2021_3_project_background
 ---

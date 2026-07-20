@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
+from time import perf_counter
 
 from rag.config import AppConfig, get_config
 from rag.conversation import ConversationSession, ConversationTurn
@@ -15,6 +16,7 @@ from rag.orchestrator.classify import (
     CAPABILITY_PLAYBOOK_URL_PREFIX,
     IntentDecision,
     classify_intent,
+    classify_intent_legacy,
     detect_capability,
     is_folder_question,
 )
@@ -39,7 +41,9 @@ class OrchestratorDebug:
     track_hint: str | None = None
     source_hints: list[str] = field(default_factory=list)
     rewrite_reason: str | None = None
-
+    latency_ms: dict[str, float] = field(default_factory=dict)
+    semantic_route: dict | None = None
+    routing_ab: dict | None = None
 
 @dataclass
 class OrchestratorResult:
@@ -52,6 +56,7 @@ class OrchestratorResult:
     debug: OrchestratorDebug
     retrieval: RetrievalResult | None = None
     validation_ok: bool | None = None
+    suggested_followups: list[str] = field(default_factory=list)
 
 
 class HybridOrchestrator:
@@ -87,6 +92,29 @@ class HybridOrchestrator:
             self._playbook_retriever = PlaybookHybridRetriever(self.playbook_config)
         return self._playbook_retriever
 
+    def _retrieval_query(self, question: str, decision: IntentDecision, track_query: str | None) -> str:
+        """原问句主导；行业 overview 改写或语义 hint 例外。"""
+        if track_query and "overview_rewrite" in decision.reason:
+            return track_query
+        if decision.semantic_hint and decision.semantic_hint.casefold() not in question.casefold():
+            return f"{question.strip()} ({decision.semantic_hint.strip()})"
+        if decision.routing_source in {"semantic", "semantic_fallback"} and track_query:
+            return track_query
+        return question.strip()
+
+    def _retrieval_quality_low(
+        self,
+        chunks: list,
+        *,
+        min_sim: float,
+    ) -> bool:
+        if not chunks:
+            return True
+        top_sim = getattr(chunks[0], "vector_similarity", None)
+        if top_sim is None:
+            return False
+        return float(top_sim) < min_sim
+
     def _pick_playbook_chunks(
         self,
         *,
@@ -98,27 +126,7 @@ class HybridOrchestrator:
         source_hint_urls: list[str] | None = None,
     ) -> list:
         folderish = is_folder_question(question, decision.capability)
-        if folderish:
-            from rag.orchestrator.playbook_pin import load_wip_folder_chunk
-
-            hard = load_wip_folder_chunk(self.playbook_config.storage.chunks_path)
-            if hard is not None:
-                return [hard]
-
-            wider = self.playbook_retriever.retrieve_with_debug(
-                "01_WIP 02_Shared 03_Published 04_Archive folder tree structure",
-                max(playbook_top, 6),
-                boost_url_prefix=playbook_boost
-                or CAPABILITY_PLAYBOOK_URL_PREFIX["folder"],
-                source_hint_urls=source_hint_urls,
-            ).chunks
-            # 只接受明确 WIP 目录树证据；找不到则退回正常检索
-            for chunk in wider:
-                if "2_wip" in chunk.source_url or "Central_Models" in chunk.text:
-                    return [chunk]
-            for chunk in wider:
-                if "`01_WIP`" in chunk.text and "`02_Shared`" in chunk.text:
-                    return [chunk]
+        pin_threshold = self.docs_config.semantic_router.pin_min_top1_sim
 
         result = self.playbook_retriever.retrieve_with_debug(
             playbook_query,
@@ -126,7 +134,41 @@ class HybridOrchestrator:
             boost_url_prefix=playbook_boost,
             source_hint_urls=source_hint_urls,
         )
-        return list(result.chunks)
+        chunks = list(result.chunks)
+        self._last_playbook_debug = result.debug
+
+        if not folderish:
+            return chunks
+
+        needs_pin = self._retrieval_quality_low(chunks, min_sim=pin_threshold)
+        if chunks:
+            from rag.orchestrator.playbook_pin import playbook_chunk_needs_folder_pin
+
+            needs_pin = needs_pin or playbook_chunk_needs_folder_pin(chunks[0])
+
+        if not needs_pin:
+            return chunks
+
+        from rag.orchestrator.playbook_pin import load_wip_folder_chunk
+
+        hard = load_wip_folder_chunk(self.playbook_config.storage.chunks_path)
+        if hard is not None:
+            return [hard]
+
+        wider = self.playbook_retriever.retrieve_with_debug(
+            f"{question.strip()} 01_WIP 02_Shared folder tree",
+            max(playbook_top, 6),
+            boost_url_prefix=playbook_boost
+            or CAPABILITY_PLAYBOOK_URL_PREFIX["folder"],
+            source_hint_urls=source_hint_urls,
+        ).chunks
+        for chunk in wider:
+            if "2_wip" in chunk.source_url or "Central_Models" in chunk.text:
+                return [chunk]
+        for chunk in wider:
+            if "`01_WIP`" in chunk.text and "`02_Shared`" in chunk.text:
+                return [chunk]
+        return chunks
 
     def classify(self, question: str) -> IntentDecision:
         return classify_intent(question)
@@ -150,16 +192,23 @@ class HybridOrchestrator:
             industry_top = top_k
             playbook_top = top_k
 
-        product_query = decision.product_query or question
-        industry_query = decision.industry_query or question
-        playbook_query = decision.playbook_query or question
+        product_query = self._retrieval_query(
+            question, decision, decision.product_query
+        )
+        industry_query = self._retrieval_query(
+            question, decision, decision.industry_query
+        )
+        playbook_query = self._retrieval_query(
+            question, decision, decision.playbook_query
+        )
+        pin_threshold = self.docs_config.semantic_router.pin_min_top1_sim
         playbook_boost = CAPABILITY_PLAYBOOK_URL_PREFIX.get(
             decision.capability or ""
         )
         if is_folder_question(question, decision.capability):
             playbook_boost = CAPABILITY_PLAYBOOK_URL_PREFIX["folder"]
 
-        with ThreadPoolExecutor(max_workers=2) as pool:
+        with ThreadPoolExecutor(max_workers=3) as pool:
             docs_future = pool.submit(
                 self.docs_retriever.retrieve_with_debug,
                 product_query,
@@ -172,12 +221,24 @@ class HybridOrchestrator:
                 industry_top,
                 source_hint_urls=source_hint_urls,
             )
+            playbook_future = pool.submit(
+                self._pick_playbook_chunks,
+                question=question,
+                decision=decision,
+                playbook_query=playbook_query,
+                playbook_top=playbook_top,
+                playbook_boost=playbook_boost,
+                source_hint_urls=source_hint_urls,
+            )
             docs_result = docs_future.result()
             industry_result = industry_future.result()
+            playbook_chunks = playbook_future.result()
 
         folderish = is_folder_question(question, decision.capability)
         docs_chunks = list(docs_result.chunks)
-        if folderish:
+        docs_low = self._retrieval_quality_low(docs_chunks, min_sim=pin_threshold)
+
+        if folderish and docs_low:
             from rag.orchestrator.chunk_pin import load_docs_folder_chunks
 
             pinned_docs = load_docs_folder_chunks(
@@ -186,7 +247,7 @@ class HybridOrchestrator:
             )
             if pinned_docs:
                 docs_chunks = pinned_docs
-        elif decision.capability == "naming":
+        elif decision.capability == "naming" and docs_low:
             from rag.orchestrator.chunk_pin import load_docs_naming_chunks
 
             pinned_docs = load_docs_naming_chunks(
@@ -195,7 +256,7 @@ class HybridOrchestrator:
             )
             if pinned_docs:
                 docs_chunks = pinned_docs
-        elif decision.capability == "model_viewer":
+        elif decision.capability == "model_viewer" and docs_low:
             from rag.orchestrator.chunk_pin import load_docs_model_viewer_chunks
 
             pinned_docs = load_docs_model_viewer_chunks(
@@ -209,7 +270,7 @@ class HybridOrchestrator:
             "project_create",
             "project_template",
             "workflow",
-        }:
+        } and docs_low:
             from rag.orchestrator.chunk_pin import prefer_docs_for_capability
 
             docs_chunks = prefer_docs_for_capability(
@@ -219,15 +280,9 @@ class HybridOrchestrator:
                 limit=docs_top,
             )
 
-        playbook_chunks = self._pick_playbook_chunks(
-            question=question,
-            decision=decision,
-            playbook_query=playbook_query,
-            playbook_top=playbook_top,
-            playbook_boost=playbook_boost,
-            source_hint_urls=source_hint_urls,
-        )
-        playbook_result_debug = self.playbook_retriever.last_debug
+        playbook_result_debug = getattr(
+            self, "_last_playbook_debug", None
+        ) or self.playbook_retriever.last_debug
 
         merged = merge_triple_contexts(
             docs_chunks=docs_chunks,
@@ -577,11 +632,17 @@ class HybridOrchestrator:
         )
 
         original_question = (question or "").strip()
+        latency_ms: dict[str, float] = {}
+        routing_ab: dict | None = None
+        semantic_route: dict | None = None
+        t_all = perf_counter()
+        t0 = perf_counter()
         standalone = rewrite_followup_query(
             original_question,
             session,
             config=self.docs_config,
         )
+        latency_ms["rewrite"] = (perf_counter() - t0) * 1000.0
         retrieval_question = (standalone.query or original_question).strip()
         source_hints = list(standalone.source_hints or [])
         conversation_context = ""
@@ -595,10 +656,36 @@ class HybridOrchestrator:
             debug.track_hint = standalone.track_hint
             debug.source_hints = list(source_hints)
             debug.rewrite_reason = standalone.rewrite_reason
+            merged_latency = dict(latency_ms)
+            merged_latency.update(debug.latency_ms or {})
+            if "total" not in merged_latency:
+                merged_latency["total"] = (perf_counter() - t_all) * 1000.0
+            debug.latency_ms = merged_latency
+            debug.routing_ab = routing_ab
+            debug.semantic_route = semantic_route
             return debug
 
         def _finish(result: OrchestratorResult) -> OrchestratorResult:
             _annotate(result.debug)
+            if (
+                result.track not in {"meta", "out_of_domain"}
+                and getattr(self.docs_config, "suggest_followups", True)
+            ):
+                from rag.orchestrator.suggest_followups import suggest_followups
+
+                suggestions = suggest_followups(
+                    question=original_question,
+                    answer=result.answer.answer if result.answer else None,
+                    track=result.track,
+                    capability=result.debug.intent.capability,
+                    chunks_docs=result.chunks_docs,
+                    chunks_industry=result.chunks_industry,
+                    chunks_playbook=result.chunks_playbook,
+                    merged=result.merged,
+                    limit=getattr(self.docs_config, "suggest_followups_count", 3),
+                    answer_lang=answer_lang,
+                )
+                result.suggested_followups = list(suggestions.questions)
             if (
                 record_turn
                 and session is not None
@@ -655,6 +742,31 @@ class HybridOrchestrator:
 
         # Classify / force-track against the standalone retrieval question.
         q = retrieval_question
+        from rag.orchestrator.semantic_router import get_semantic_router
+
+        semantic_result = get_semantic_router(self.docs_config).route(q)
+        legacy_decision = classify_intent_legacy(q)
+        semantic_route = {
+            "capability": semantic_result.capability,
+            "capability_confident": semantic_result.capability_confident,
+            "capability_score": semantic_result.capability_score,
+            "capability_margin": semantic_result.capability_margin,
+            "track": semantic_result.track,
+            "track_confident": semantic_result.track_confident,
+            "product_score": semantic_result.product_score,
+            "industry_score": semantic_result.industry_score,
+            "playbook_score": semantic_result.playbook_score,
+            "latency_ms": semantic_result.latency_ms,
+            "index_available": semantic_result.index_available,
+            "fallback_reason": semantic_result.fallback_reason,
+        }
+        routing_ab = {
+            "mode": self.docs_config.semantic_router.mode,
+            "semantic_track": semantic_result.track,
+            "semantic_capability": semantic_result.capability,
+            "legacy_track": legacy_decision.track,
+            "legacy_capability": legacy_decision.capability,
+        }
         if force_track == "docs":
             capability = detect_capability(q)
             decision = IntentDecision(
@@ -737,7 +849,7 @@ class HybridOrchestrator:
                     )
         else:
             decision = classify_intent(q)
-            # Soft track hint from follow-up rewriter: only when auto-route is
+            # Soft track hint from follow-up rewriter:
             # ambiguous / same-topic follow-up without clear new-domain signals.
             if (
                 standalone.is_follow_up
@@ -756,40 +868,47 @@ class HybridOrchestrator:
         }
 
         if decision.track == "hybrid":
+            t_ret = perf_counter()
             result = self.retrieve_hybrid(
                 q,
                 decision,
                 top_k=top_k,
                 source_hint_urls=source_hints or None,
             )
+            latency_ms["retrieve"] = (perf_counter() - t_ret) * 1000.0
             if no_generate:
                 return _finish(result)
-            return _finish(
-                self._generate_hybrid_with_validation(
-                    original_question,
-                    result,
-                    **gen_kwargs,
-                )
+            t_gen = perf_counter()
+            finished = self._generate_hybrid_with_validation(
+                original_question,
+                result,
+                **gen_kwargs,
             )
+            latency_ms["generate"] = (perf_counter() - t_gen) * 1000.0
+            return _finish(finished)
 
         if decision.track == "hk_cde":
+            t_ret = perf_counter()
             retrieval = self.industry_retriever.retrieve_with_debug(
                 decision.industry_query or q,
                 top_k=top_k,
                 source_hint_urls=source_hints or None,
             )
+            latency_ms["retrieve"] = (perf_counter() - t_ret) * 1000.0
             debug = OrchestratorDebug(
                 intent=decision,
                 industry_debug=retrieval.debug,
             )
             answer = None
             if not no_generate:
+                t_gen = perf_counter()
                 answer = generate_answer(
                     original_question,
                     retrieval.chunks,
                     self.industry_config,  # type: ignore[arg-type]
                     **gen_kwargs,
                 )
+                latency_ms["generate"] = (perf_counter() - t_gen) * 1000.0
                 self._attach_guidance_warning(
                     original_question,
                     answer,
@@ -813,24 +932,28 @@ class HybridOrchestrator:
             playbook_boost = CAPABILITY_PLAYBOOK_URL_PREFIX.get(
                 decision.capability or ""
             )
+            t_ret = perf_counter()
             retrieval = self.playbook_retriever.retrieve_with_debug(
                 decision.playbook_query or q,
                 top_k=top_k,
                 boost_url_prefix=playbook_boost,
                 source_hint_urls=source_hints or None,
             )
+            latency_ms["retrieve"] = (perf_counter() - t_ret) * 1000.0
             debug = OrchestratorDebug(
                 intent=decision,
                 playbook_debug=retrieval.debug,
             )
             answer = None
             if not no_generate:
+                t_gen = perf_counter()
                 answer = generate_answer(
                     original_question,
                     retrieval.chunks,
                     playbook_to_app_config(self.playbook_config),
                     **gen_kwargs,
                 )
+                latency_ms["generate"] = (perf_counter() - t_gen) * 1000.0
                 self._attach_guidance_warning(
                     original_question,
                     answer,
@@ -851,11 +974,13 @@ class HybridOrchestrator:
             )
 
         docs_query = decision.product_query or q
+        t_ret = perf_counter()
         retrieval = self.docs_retriever.retrieve_with_debug(
             docs_query,
             top_k=top_k,
             source_hint_urls=source_hints or None,
         )
+        latency_ms["retrieve"] = (perf_counter() - t_ret) * 1000.0
         docs_chunks = list(retrieval.chunks)
         if decision.capability in {
             "permissions",
@@ -906,12 +1031,14 @@ class HybridOrchestrator:
         debug = OrchestratorDebug(intent=decision, docs_debug=retrieval.debug)
         answer = None
         if not no_generate:
+            t_gen = perf_counter()
             answer = generate_answer(
                 original_question,
                 docs_chunks,
                 self.docs_config,
                 **gen_kwargs,
             )
+            latency_ms["generate"] = (perf_counter() - t_gen) * 1000.0
             self._attach_guidance_warning(
                 original_question,
                 answer,
@@ -1002,6 +1129,12 @@ def format_orchestrator_debug(debug: OrchestratorDebug) -> str:
             "source_hints: "
             + (", ".join(debug.source_hints) if debug.source_hints else "-")
         )
+    if debug.latency_ms:
+        parts = [
+            f"{key}={value:.0f}ms"
+            for key, value in sorted(debug.latency_ms.items())
+        ]
+        lines.append("latency: " + ", ".join(parts))
     if debug.docs_debug:
         lines.append("--- docs retrieval ---")
         lines.append(f"original_query: {debug.docs_debug.original_query}")

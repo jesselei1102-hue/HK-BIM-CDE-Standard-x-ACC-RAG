@@ -369,6 +369,26 @@ def _collect_result_payload(result, *, no_generate: bool) -> tuple[str, list[str
     return answer_text, source_lines, contexts
 
 
+def _render_followup_suggestions(
+    followups: list[str],
+    *,
+    key_prefix: str,
+) -> None:
+    """Render clickable follow-ups. Must be shown on every rerun so clicks register."""
+    if not followups:
+        return
+    st.markdown("**You might also ask**")
+    cols = st.columns(min(len(followups), 3))
+    for index, suggestion in enumerate(followups):
+        col = cols[index % len(cols)]
+        if col.button(
+            suggestion,
+            key=f"{key_prefix}_{index}",
+            use_container_width=True,
+        ):
+            st.session_state["_pending_question"] = suggestion
+
+
 def main() -> None:
     st.set_page_config(
         page_title=PAGE_TITLE,
@@ -435,7 +455,7 @@ def main() -> None:
         if col.button(example, use_container_width=True):
             st.session_state["_pending_question"] = example
 
-    for message in st.session_state.chat_messages:
+    for msg_index, message in enumerate(st.session_state.chat_messages):
         role = message.get("role", "assistant")
         with st.chat_message(role):
             if role == "user":
@@ -488,6 +508,10 @@ def main() -> None:
                                 chunk.text[:700]
                                 + ("…" if len(chunk.text) > 700 else "")
                             )
+                _render_followup_suggestions(
+                    list(payload.get("suggested_followups") or []),
+                    key_prefix=f"hist_followup_{msg_index}",
+                )
 
     pending = st.session_state.pop("_pending_question", None)
     prompt = st.chat_input("Ask a question or follow up…")
@@ -508,65 +532,62 @@ def main() -> None:
 
     with st.chat_message("assistant"):
         with st.status("Working on your question…", expanded=True) as status:
-            status.write("1/2 Retrieving with history-aware standalone query…")
+            status.write("Retrieving + answering (single pass)…")
             t0 = time.perf_counter()
-            # Preview must not record a turn (same user message asked twice).
-            preview = orchestrator.ask(
-                q,
-                force_track=force,
-                top_k=top_k,
-                no_generate=True,
-                answer_lang=answer_lang,
-                session=conversation,
-                record_turn=False,
-            )
-            n_src = 0
-            if preview.merged is not None:
-                n_src = len(preview.merged.tracked)
-            elif preview.track == "hk_cde":
-                n_src = len(preview.chunks_industry)
-            elif preview.track == "playbook":
-                n_src = len(preview.chunks_playbook)
-            elif preview.track == "docs":
-                n_src = len(preview.chunks_docs)
-            retrieve_s = time.perf_counter() - t0
-            rewritten = preview.debug.rewritten_query
-            if rewritten and rewritten != q:
-                status.write(f"Standalone query: {rewritten}")
-            status.write(f"Retrieved {n_src} source(s) in {retrieve_s:.1f}s.")
-
-            if no_generate:
-                result = preview
-                status.update(
-                    label=f"Done (retrieve-only · {retrieve_s:.1f}s)",
-                    state="complete",
-                )
-            else:
-                status.write(
-                    "2/2 Generating with local LLM "
-                    f"(`{docs_config.models.generation_model}`). "
-                    "Broad questions often take 20–90s; first run after idle can be slower."
-                )
-                t1 = time.perf_counter()
+            try:
                 result = orchestrator.ask(
                     q,
                     force_track=force,
                     top_k=top_k,
-                    no_generate=False,
+                    no_generate=no_generate,
                     answer_lang=answer_lang,
                     session=conversation,
-                    record_turn=True,
+                    record_turn=not no_generate,
                 )
-                gen_s = time.perf_counter() - t1
-                total = retrieve_s + gen_s
-                model = result.answer.model if result.answer else "?"
-                status.update(
-                    label=(
-                        f"Done · retrieve {retrieve_s:.1f}s · generate {gen_s:.1f}s · "
-                        f"total {total:.1f}s · {model}"
-                    ),
-                    state="complete",
+            except FileNotFoundError as exc:
+                status.update(label="Missing index", state="error")
+                st.error(
+                    f"Index or corpus missing: {exc}\n\n"
+                    "Run `bash scripts/bootstrap_indexes.sh` "
+                    "or `python -m rag.preflight` for repair commands."
                 )
+                st.session_state.chat_messages.pop()
+                return
+            except Exception as exc:  # noqa: BLE001 — surface to UI
+                status.update(label="Request failed", state="error")
+                st.error(f"Could not answer: {exc}")
+                st.session_state.chat_messages.pop()
+                return
+
+            latency = result.debug.latency_ms or {}
+            retrieve_s = latency.get("retrieve", 0.0) / 1000.0
+            generate_s = latency.get("generate", 0.0) / 1000.0
+            total_s = time.perf_counter() - t0
+            n_src = 0
+            if result.merged is not None:
+                n_src = len(result.merged.tracked)
+            elif result.track == "hk_cde":
+                n_src = len(result.chunks_industry)
+            elif result.track == "playbook":
+                n_src = len(result.chunks_playbook)
+            elif result.track == "docs":
+                n_src = len(result.chunks_docs)
+
+            rewritten = result.debug.rewritten_query
+            if rewritten and rewritten != q:
+                status.write(f"Standalone query: {rewritten}")
+            status.write(
+                f"Sources: {n_src} · retrieve {retrieve_s:.1f}s"
+                + (f" · generate {generate_s:.1f}s" if not no_generate else "")
+                + f" · total {total_s:.1f}s"
+            )
+            status.update(
+                label=(
+                    f"Done ({'retrieve-only' if no_generate else result.track}"
+                    f" · {total_s:.1f}s)"
+                ),
+                state="complete",
+            )
 
         answer_text, source_lines, contexts = _collect_result_payload(
             result, no_generate=no_generate
@@ -588,8 +609,13 @@ def main() -> None:
             "question": q,
             "result": result,
             "no_generate": no_generate,
+            "suggested_followups": list(
+                getattr(result, "suggested_followups", None) or []
+            ),
         }
     )
+    # Rerun so follow-up buttons are owned by history (required for click handling).
+    st.rerun()
 
 
 if __name__ == "__main__":

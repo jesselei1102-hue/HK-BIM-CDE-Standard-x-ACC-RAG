@@ -15,7 +15,7 @@ Canonical registry: `rag/industry_hk/source_registry.py`. Intake report: `resear
 | Standards | CIC BIM Standards General 2024, Beginner CDE Guide, DEVB Harmonisation v3, MEP 2021, UU 2021, Object Guide 2021 | `standard` / mandatory or recommended | `high` |
 | Statutory | Preparation of Statutory Plan Submissions 2020, Appendix B object summary, BD ADM-19 / ADV-34, LandsD BIM-GIS | `statutory` | `high` |
 | Terminology | CIC BIM Dictionary 2024 | `terminology` / reference | `substantive`+ |
-| Case studies | AM/FM Case Sharing 2021, Zero Carbon Park BIMIP v1.5 | `case_study` / reference | `substantive`+ |
+| Case studies | AM/FM Case Sharing 2021, Zero Carbon Park BIMIP v1.5 | `case_study` / reference | **`high`** (operational config rules; still cited as project practice, not binding) |
 | Software guides | ArchiCAD / Civil 3D / Revit / Tekla 2020 statutory appendices | `software_guide` / operational | `all` only |
 | Visual | Appendix A sample drawings | image-heavy; **not text-extracted** | excluded |
 
@@ -44,11 +44,11 @@ knowledge/industry/hk_cde/
 
 Ingest scopes (`scripts/ingest_industry_hk_cde.py --scope`):
 
-- **`high`** (production default): curated high-priority standards/statutory material; templates deferred.
-- **`substantive`**: high + useful normal sections; excludes front matter / TOC noise; **defers** `software_guide` docs. Used as routed shadow for case studies / dictionary / ZCP.
+- **`high`** (production default): curated high-priority standards/statutory material **plus** case-study project-config sources (AM/FM, ZCP); templates deferred. Case studies keep `authority_type=case_study` / `normative_weight=reference` so answers must not claim them as territory-wide mandatory rules.
+- **`substantive`**: high + useful normal sections; excludes front matter / TOC noise; **defers** `software_guide` docs. Still useful as shadow for dictionary / software guides.
 - **`all`**: unfiltered diagnostic ingest (includes software appendices).
 
-Runtime retrieval resolves source families and, for case-study / terminology / software-guide intents, merges candidates from the substantive shadow without replacing the production high collection.
+Runtime retrieval resolves source families and, for terminology / software-guide intents (and as backup for case studies), can merge candidates from the substantive shadow without replacing the production high collection.
 
 ## ZCP project-configuration reference
 

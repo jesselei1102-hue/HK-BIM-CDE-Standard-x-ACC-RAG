@@ -205,9 +205,26 @@ def main(argv: list[str] | None = None) -> int:
             json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
 
-    ok = report["section_recall_at_3"] >= 0.70
+    ok = (
+        report["section_recall_at_3"] >= 0.95
+        and report["section_recall_at_1"] >= 0.85
+        and report["document_recall_at_1"] >= 1.0
+    )
+    by_doc = report.get("by_doc") or {}
+    devb = by_doc.get("devb_harmonisation_v3") or {}
+    if devb.get("cases", 0) >= 5 and devb.get("section_recall_at_1", 0.0) < 0.60:
+        print(
+            "FAIL: DEVB Harmonisation SectionRecall@1 < 60%",
+            file=sys.stderr,
+        )
+        ok = False
+    if report["section_recall_at_1"] < 0.85:
+        print("FAIL: SectionRecall@1 < 85%", file=sys.stderr)
+    if report["section_recall_at_3"] < 0.95:
+        print("FAIL: SectionRecall@3 < 95%", file=sys.stderr)
+    if report["document_recall_at_1"] < 1.0:
+        print("FAIL: DocumentRecall@1 < 100%", file=sys.stderr)
     if not ok:
-        print("FAIL: SectionRecall@3 < 70%", file=sys.stderr)
         return 1
     print("PASS")
     return 0

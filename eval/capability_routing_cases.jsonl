@@ -1,0 +1,62 @@
+{"id": "hy_folder_en", "query": "How do I set up ACC Docs folder structure to align with HK standard", "expect_track": "hybrid", "expect_capability": "folder", "tags": ["baseline"], "conflict": false}
+{"id": "hy_wip_tree_en", "query": "Show a real WIP discipline folder tree example for HK CDE in ACC", "expect_track": "hybrid", "expect_capability": "folder", "tags": ["baseline"], "conflict": false}
+{"id": "hy_project", "query": "怎样创建一个ACC项目，符合CIC BIM Standard", "expect_track": "hybrid", "expect_capability": "project_create", "tags": ["baseline"], "conflict": false}
+{"id": "hy_workflow", "query": "怎么做一个符合ISO 19650要求的审批流", "expect_track": "hybrid", "expect_capability": "workflow", "tags": ["baseline"], "conflict": false}
+{"id": "hy_naming", "query": "如何按DEVB要求在Docs创建命名标准", "expect_track": "hybrid", "expect_capability": "naming", "tags": ["baseline"], "conflict": false}
+{"id": "hy_cic_attach", "query": "符合CIC的CDE怎么在ACC落实", "expect_track": "hybrid", "expect_capability": null, "tags": ["baseline"], "conflict": false}
+{"id": "docs_perm", "query": "设置权限", "expect_track": "docs", "expect_capability": "permissions", "tags": ["baseline"], "conflict": false}
+{"id": "docs_share", "query": "如何分享文件", "expect_track": "docs", "expect_capability": null, "tags": ["baseline"], "conflict": false}
+{"id": "ind_wip", "query": "WIP 是什么", "expect_track": "hk_cde", "expect_capability": null, "tags": ["baseline"], "conflict": false}
+{"id": "ind_pir", "query": "Project Information Requirements PIR", "expect_track": "hk_cde", "expect_capability": null, "tags": ["baseline"], "conflict": false}
+{"id": "ind_gateway", "query": "Authorisation Gateway", "expect_track": "hk_cde", "expect_capability": "workflow", "tags": ["baseline"], "conflict": false}
+{"id": "docs_create_project", "query": "如何在ACC创建项目", "expect_track": "docs", "expect_capability": "project_create", "tags": ["baseline"], "conflict": false}
+{"id": "hy_force_shape", "query": "按CIC标准配置Docs审批工作流", "expect_track": "hybrid", "expect_capability": "workflow", "tags": ["baseline"], "conflict": false}
+{"id": "hy_permissions", "query": "按港标要求在ACC配置文件夹权限", "expect_track": "hybrid", "expect_capability": "permissions", "tags": ["baseline"], "conflict": false}
+{"id": "docs_model_viewer", "query": "如何用Model Browser过滤模型属性", "expect_track": "docs", "expect_capability": "model_viewer", "tags": ["baseline"], "conflict": false}
+{"id": "rt_wip_null_en", "query": "What is WIP?", "expect_track": "hk_cde", "expect_capability": null, "tags": ["negative"], "conflict": false}
+{"id": "rt_wip_null_en2", "query": "What is WIP in Hong Kong CDE?", "expect_track": "hk_cde", "expect_capability": null, "tags": ["negative"], "conflict": false}
+{"id": "rt_wip_null_zh2", "query": "WIP 区和 Shared 是什么", "expect_track": "hk_cde", "expect_capability": null, "tags": ["negative"], "conflict": false}
+{"id": "rt_folder_wip_tree", "query": "Show a real WIP discipline folder tree example for HK CDE in ACC", "expect_track": "hybrid", "expect_capability": "folder", "tags": [], "conflict": false}
+{"id": "rt_folder_hy_en", "query": "How do I set up ACC Docs folder structure to align with HK standard", "expect_track": "hybrid", "expect_capability": "folder", "tags": [], "conflict": false}
+{"id": "rt_perm_conflict", "query": "如何设置文件夹权限", "expect_track": "docs", "expect_capability": "permissions", "tags": ["conflict"], "conflict": true}
+{"id": "rt_folder_tpl_conflict", "query": "ACC项目模板的文件夹结构怎么配", "expect_track": "playbook", "expect_capability": "project_template", "tags": ["conflict"], "conflict": true}
+{"id": "rt_ood_weather", "query": "What's the weather tomorrow for BIM", "expect_track": "out_of_domain", "expect_capability": null, "tags": ["ood"], "conflict": false}
+{"id": "rt_ood_poem", "query": "写一首关于 BIM 的诗", "expect_track": "out_of_domain", "expect_capability": null, "tags": ["ood"], "conflict": false}
+{"id": "rt_cic_overview", "query": "I want to know more about CIC Standard, can you tell me", "expect_track": "hk_cde", "expect_capability": null, "tags": [], "conflict": false}
+{"id": "rt_harmonisation", "query": "I want to know BIM harmonization guide", "expect_track": "hk_cde", "expect_capability": null, "tags": [], "conflict": false}
+{"id": "rt_gateway_en", "query": "Authorisation Gateway", "expect_track": "hk_cde", "expect_capability": "workflow", "tags": [], "conflict": false}
+{"id": "rt_playbook_tpl", "query": "项目模板怎么配置", "expect_track": "playbook", "expect_capability": "project_template", "tags": [], "conflict": false}
+{"id": "rt_hybrid_wf", "query": "How to run HK-aligned approval workflows in ACC", "expect_track": "hybrid", "expect_capability": "workflow", "tags": [], "conflict": false}
+{"id": "rt_folder_para1", "query": "Give me a discipline subfolder tree under WIP for HK CDE in ACC", "expect_track": "hybrid", "expect_capability": "folder", "tags": ["paraphrase"], "conflict": false}
+{"id": "rt_folder_para3", "query": "ACC 里 CDE 四容器文件夹怎么搭", "expect_track": "hybrid", "expect_capability": "folder", "tags": ["paraphrase"], "conflict": false}
+{"id": "rt_folder_en3", "query": "Show WIP ARC STR MEP folder example ACC", "expect_track": "hybrid", "expect_capability": "folder", "tags": ["paraphrase"], "conflict": false}
+{"id": "rt_para_perm", "query": "Manage folder permissions in Autodesk Docs", "expect_track": "docs", "expect_capability": "permissions", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_perm2", "query": "Folder permission levels", "expect_track": "docs", "expect_capability": "permissions", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_wf", "query": "Create approval workflow Reviews", "expect_track": "docs", "expect_capability": "workflow", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_create", "query": "How to create an ACC project", "expect_track": "docs", "expect_capability": "project_create", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_viewer", "query": "Filter model properties in Model Browser", "expect_track": "docs", "expect_capability": "model_viewer", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_share", "query": "How to share files in Autodesk Docs", "expect_track": "docs", "expect_capability": null, "tags": ["verified"], "conflict": false}
+{"id": "rt_para_pir", "query": "What is PIR", "expect_track": "hk_cde", "expect_capability": null, "tags": ["verified"], "conflict": false}
+{"id": "rt_para_wip", "query": "Explain Work in Progress container in HK CDE", "expect_track": "hk_cde", "expect_capability": null, "tags": ["verified"], "conflict": false}
+{"id": "rt_para_hy_perm", "query": "HK CDE folder permissions in ACC", "expect_track": "hybrid", "expect_capability": "permissions", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_hy_wf", "query": "HK ISO 19650 approval workflow in ACC Docs", "expect_track": "hybrid", "expect_capability": "workflow", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_tpl", "query": "Configure ACC HK GC project template", "expect_track": "playbook", "expect_capability": "project_template", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_ind_devb", "query": "DEVB harmonisation naming federation", "expect_track": "hk_cde", "expect_capability": null, "tags": ["verified"], "conflict": false}
+{"id": "rt_para_ind_iso", "query": "ISO 19650 information container status", "expect_track": "hk_cde", "expect_capability": null, "tags": ["verified"], "conflict": false}
+{"id": "rt_para_docs_upload", "query": "Upload linked files in Docs", "expect_track": "docs", "expect_capability": null, "tags": ["verified"], "conflict": false}
+{"id": "rt_para_hy_naming", "query": "DEVB naming standard in Docs ACC", "expect_track": "hybrid", "expect_capability": "naming", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_hy_shape", "query": "按CIC标准配置Docs审批工作流", "expect_track": "hybrid", "expect_capability": "workflow", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_hy_proj", "query": "怎样创建一个ACC项目，符合CIC BIM Standard", "expect_track": "hybrid", "expect_capability": "project_create", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_perm_zh", "query": "按港标要求在ACC配置文件夹权限", "expect_track": "hybrid", "expect_capability": "permissions", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_folder_zh", "query": "怎样配置 ACC 文件夹结构符合 CIC CDE", "expect_track": "hybrid", "expect_capability": "folder", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_gateway_iso", "query": "What is Authorisation Gateway in ISO 19650", "expect_track": "hk_cde", "expect_capability": "workflow", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_short_perm", "query": "文件夹权限", "expect_track": "docs", "expect_capability": "permissions", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_short_wf", "query": "approval workflow", "expect_track": "docs", "expect_capability": "workflow", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_ood", "query": "tax rate for 2099 quantum twin", "expect_track": "out_of_domain", "expect_capability": null, "tags": ["verified"], "conflict": false}
+{"id": "rt_para_cicbims", "query": "CICBIMS information requirements", "expect_track": "hk_cde", "expect_capability": null, "tags": ["verified"], "conflict": false}
+{"id": "rt_para_landsd", "query": "LandsD statutory submission BIM", "expect_track": "hk_cde", "expect_capability": null, "tags": ["verified"], "conflict": false}
+{"id": "rt_para_bd", "query": "Building Department statutory plan submission", "expect_track": "hk_cde", "expect_capability": null, "tags": ["verified"], "conflict": false}
+{"id": "rt_para_en_product_folder", "query": "How to create subfolders in Files tool", "expect_track": "docs", "expect_capability": "folder", "tags": ["verified"], "conflict": false}
+{"id": "rt_para_meta", "query": "Autodesk Docs supported file formats", "expect_track": "docs", "expect_capability": null, "tags": ["verified"], "conflict": false}
+{"id": "rt_para_zh_playbook", "query": "推荐默认配置 playbook", "expect_track": "playbook", "expect_capability": null, "tags": ["verified"], "conflict": false}
+{"id": "rt_para_en_cic_hy", "query": "Align ACC with CIC CDE requirements", "expect_track": "hybrid", "expect_capability": null, "tags": ["verified"], "conflict": false}

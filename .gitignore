@@ -13,6 +13,7 @@ build/
 
 # 本地 RAG 生成物（Chroma / chunks）
 .rag_data/
+.rag_data_missing_test/
 # Keep machine dumps locally; commit the human summary + vs-single snapshot
 eval/results/*
 !eval/results/.gitkeep

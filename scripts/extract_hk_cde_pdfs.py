@@ -140,7 +140,11 @@ def _priority_for_section(doc_id: str, title: str, default_priority: str = "norm
         return default_priority
     if doc_id.startswith("cic_stat_") and doc_id.endswith("_2020"):
         return "normal"
-    if doc_id in {"cic_dictionary_2024", "cic_amfm_case_2021", "cic_zcp_bimip_v15"}:
+    # Case studies carry real project-config rules → production high pool,
+    # while authority_type/normative_weight stay reference in frontmatter.
+    if doc_id in {"cic_amfm_case_2021", "cic_zcp_bimip_v15"}:
+        return "high"
+    if doc_id == "cic_dictionary_2024":
         return "normal"
     return default_priority
 

@@ -12,12 +12,43 @@ discipline: implementation
 lifecycle_stage: project
 publication_year: 2022
 software: null
-priority: normal
+priority: high
 language: en
 source_url: hk_cde://cic_zcp_bimip_v15/cic_zcp_bimip_v15_2_19_handover_procedure
 ---
 
 # 2.19. Handover Procedure
+
+## ZCP project folder structure (Figure 9 / Figure 10 transcription)
+
+Project-specific practice from CIC Zero Carbon Park BIMIP v1.5 (not the CICBIMS four-container WIP/Shared/Published tree).
+
+**Figure 9 — ZCP standardised folder structure (delivery archive):**
+
+- `01_Revit Model`
+- `02_Forge Model`
+- `03_CIC Materials`
+- `04_Revit Shared Parameter File`
+- `05_BIM Object Library`
+- `06_Equipment List`
+- `07_COBie Worksheet`
+- `08_BIM Implementation Plan`
+- `09_Technical Requirements`
+- `10_Dynamo Tools`
+- `11_BIM Interop Tool`
+- `12_COBieLite Convertor`
+
+**Figure 10 — folders designated for handover:**
+
+- `01_Revit Model`
+- `02_Forge Model`
+- `03_CIC Materials`
+- `04_Revit Shared Parameter File`
+- `05_BIM Object Library`
+- `06_Equipment List`
+- `07_COBie Worksheet`
+- `08_BIM Implementation Plan`
+- `09_Technical Requirements`
 
 Supply and Installation of Internet of Things (IoT) and Building Information Modelling (BIM) at 
 Construction Industry Council - Zero Carbon Park 
@@ -77,6 +108,23 @@ During project delivery, a ll documents including the models shall be stored and
 accordance with the following folder structure that has been agreed with the Appointing Party: 
  
 Figure 9. ZCP standardised folder structure 
+
+[Figure 9 transcription — recovered from embedded image; project practice only]
+```
+01_Revit Model
+02_Forge Model
+03_CIC Materials
+04_Revit Shared Parameter File
+05_BIM Object Library
+06_Equipment List
+07_COBie Worksheet
+08_BIM Implementation Plan
+09_Technical Requirements
+10_Dynamo Tools
+11_BIM Interop Tool
+12_COBieLite Convertor
+```
+
 Moreover, all information contained in this repository shall be in compliance with the Security 
 Information Requirement s as stipulated in section 1.11 of the BIM Implementation Plan and 
 adhere to the Security Strategy as detailed in section 2.8 of this BEP. 
@@ -85,6 +133,20 @@ At handover, the contents of the following folders will be submitted in accordan
 procedure detailed in 2.19.4 Handover medium and transmittal: 
  
 Figure 10. ZCP folders designated for handover 
+
+[Figure 10 transcription — recovered from embedded image; project practice only]
+```
+01_Revit Model
+02_Forge Model
+03_CIC Materials
+04_Revit Shared Parameter File
+05_BIM Object Library
+06_Equipment List
+07_COBie Worksheet
+08_BIM Implementation Plan
+09_Technical Requirements
+```
+
 2.19.4. Handover medium and transmittal 
 All information produced in the course of this project shall be stored on a DVD -ROM disk or 
 disks and be submitted to the Appointing Party as a part of the handover process. The disk(s) shall 

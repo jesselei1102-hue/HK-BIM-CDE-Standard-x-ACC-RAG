@@ -12,7 +12,7 @@ discipline: implementation
 lifecycle_stage: project
 publication_year: 2022
 software: null
-priority: normal
+priority: high
 language: en
 source_url: hk_cde://cic_zcp_bimip_v15/cic_zcp_bimip_v15_2_5_4_model_objects_colour_scheme
 ---

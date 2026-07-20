@@ -91,6 +91,19 @@ class RetrievalConfig:
 
 
 @dataclass(frozen=True)
+class SemanticRouterConfig:
+    mode: str = "shadow"  # shadow | on | off
+    routes_path: Path = PROJECT_ROOT / "knowledge" / "orchestrator_routes.jsonl"
+    route_top_k: int = 12
+    min_capability_sim: float = 0.52
+    min_capability_margin: float = 0.04
+    min_capability_null_sim: float = 0.50
+    min_track_signal_sim: float = 0.48
+    max_latency_ms: float = 150.0
+    pin_min_top1_sim: float = 0.55
+
+
+@dataclass(frozen=True)
 class QueryKBConfig:
     enabled: bool = True
     kb_path: Path = PROJECT_ROOT / "knowledge" / "query_kb.jsonl"
@@ -132,6 +145,18 @@ class StorageConfig:
     def kb_manifest_path(self) -> Path:
         return self.data_dir / "kb_route_manifest.json"
 
+    @property
+    def orchestrator_chroma_dir(self) -> Path:
+        return self.data_dir / "orchestrator_chroma"
+
+    @property
+    def orchestrator_collection_name(self) -> str:
+        return "orchestrator_routes"
+
+    @property
+    def orchestrator_manifest_path(self) -> Path:
+        return self.data_dir / "orchestrator_route_manifest.json"
+
 
 @dataclass(frozen=True)
 class AppConfig:
@@ -140,7 +165,10 @@ class AppConfig:
     chunks: ChunkConfig = field(default_factory=ChunkConfig)
     retrieval: RetrievalConfig = field(default_factory=RetrievalConfig)
     query_kb: QueryKBConfig = field(default_factory=QueryKBConfig)
+    semantic_router: SemanticRouterConfig = field(default_factory=SemanticRouterConfig)
     storage: StorageConfig = field(default_factory=StorageConfig)
+    suggest_followups: bool = True
+    suggest_followups_count: int = 3
 
     def validate(self) -> None:
         if not self.corpus.source_dir.is_dir():
@@ -165,6 +193,10 @@ class AppConfig:
             raise ValueError("KB_SHORT_QUERY_MAX_CHARS 必须大于 0")
         if not 0 <= self.query_kb.trigger_sim <= 1:
             raise ValueError("KB_TRIGGER_SIM 必须位于 0 到 1 之间")
+        if self.semantic_router.mode not in {"shadow", "on", "off"}:
+            raise ValueError("RAG_SEMANTIC_ROUTER 必须是 shadow、on 或 off")
+        if not 0 <= self.semantic_router.min_capability_sim <= 1:
+            raise ValueError("RAG_SEM_MIN_CAPABILITY_SIM 必须位于 0 到 1 之间")
 
 
 def get_config() -> AppConfig:
@@ -203,6 +235,20 @@ def get_config() -> AppConfig:
             nlp_rerank_enabled=_env_bool("RAG_NLP_RERANK", True),
             hybrid_prefetch=_env_int("RAG_HYBRID_PREFETCH", 12),
         ),
+        semantic_router=SemanticRouterConfig(
+            mode=os.getenv("RAG_SEMANTIC_ROUTER", "shadow").lower(),
+            routes_path=_env_path(
+                "RAG_ORCHESTRATOR_ROUTES",
+                PROJECT_ROOT / "knowledge" / "orchestrator_routes.jsonl",
+            ),
+            route_top_k=_env_int("RAG_SEM_ROUTE_TOP_K", 12),
+            min_capability_sim=_env_float("RAG_SEM_MIN_CAPABILITY_SIM", 0.52),
+            min_capability_margin=_env_float("RAG_SEM_MIN_CAPABILITY_MARGIN", 0.04),
+            min_capability_null_sim=_env_float("RAG_SEM_MIN_CAPABILITY_NULL_SIM", 0.50),
+            min_track_signal_sim=_env_float("RAG_SEM_MIN_TRACK_SIGNAL_SIM", 0.48),
+            max_latency_ms=_env_float("RAG_SEM_MAX_LATENCY_MS", 150.0),
+            pin_min_top1_sim=_env_float("RAG_SEM_PIN_MIN_TOP1_SIM", 0.55),
+        ),
         query_kb=QueryKBConfig(
             enabled=os.getenv("KB_ENABLED", "true").lower() in {"1", "true", "yes"},
             kb_path=_env_path(
@@ -223,6 +269,8 @@ def get_config() -> AppConfig:
             data_dir=_env_path("RAG_DATA_DIR", PROJECT_ROOT / ".rag_data"),
             collection_name=os.getenv("RAG_COLLECTION", "autodesk_docs"),
         ),
+        suggest_followups=_env_bool("RAG_SUGGEST_FOLLOWUPS", True),
+        suggest_followups_count=_env_int("RAG_SUGGEST_FOLLOWUPS_COUNT", 3),
     )
     config.validate()
     return config

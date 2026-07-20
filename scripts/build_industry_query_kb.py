@@ -231,6 +231,22 @@ SEEDS = [
         "authority": "CICBIMS 2024 §4.5.5",
     },
     {
+        "id": "hk_zcp_folder_structure",
+        "topic": "ZCP case study folder structure",
+        "aliases": [
+            "ZCP folder",
+            "Zero Carbon Park folder",
+            "ZCP standardised folder",
+            "ZCP 文件夹",
+            "01_Revit Model",
+            "ZCP handover folders",
+        ],
+        "canonical_query_en": "What is the Zero Carbon Park BIMIP standardised folder structure?",
+        "canonical_query_zh": "Zero Carbon Park BIMIP 的标准文件夹结构是什么？",
+        "target_section": "cic_zcp_bimip_v15/cic_zcp_bimip_v15_figures_transcription",
+        "authority": "CIC ZCP BIMIP v1.5 Figure 9/10 (transcribed)",
+    },
+    {
         "id": "hk_cloud_cde",
         "topic": "Cloud-hosted CDE",
         "aliases": ["云CDE", "cloud CDE", "私有云", "公有云"],

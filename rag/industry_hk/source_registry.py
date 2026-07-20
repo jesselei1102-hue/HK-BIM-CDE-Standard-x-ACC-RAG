@@ -191,8 +191,11 @@ SOURCE_REGISTRY: tuple[SourceSpec, ...] = (
         lifecycle_stage="operations",
         publication_year=2021,
         toc_strategy="outline",
-        default_priority="normal",
-        notes="Implementation case study; not a binding standard.",
+        default_priority="high",
+        notes=(
+            "Implementation case study with operational config rules; "
+            "authority remains reference (not territory-wide mandatory)."
+        ),
     ),
     SourceSpec(
         doc_id="cic_zcp_bimip_v15",
@@ -208,8 +211,11 @@ SOURCE_REGISTRY: tuple[SourceSpec, ...] = (
         discipline="implementation",
         publication_year=2022,
         toc_strategy="outline",
-        default_priority="normal",
-        notes="Project BIM Implementation Plan reference.",
+        default_priority="high",
+        notes=(
+            "Project BIM Implementation Plan with concrete BEP/CDE/LOIN/naming "
+            "config patterns; cite as project-specific practice, not binding standard."
+        ),
     ),
     SourceSpec(
         doc_id="cic_stat_archicad_2020",

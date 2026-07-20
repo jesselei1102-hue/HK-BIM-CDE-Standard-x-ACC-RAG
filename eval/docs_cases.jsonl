@@ -1,0 +1,5 @@
+{"id": "docs_folder_permissions", "query": "How do I set permissions on a folder so subfolders inherit access in Autodesk Docs?", "expected_url_contains": "Folder_Permissions"}
+{"id": "docs_organize_files", "query": "How can I create a project folder structure and subfolders in the Files tool?", "expected_url_contains": "Organize_Files"}
+{"id": "docs_naming_standard", "query": "How do I create a naming standard for documents in Autodesk Docs?", "expected_url_contains": "Naming"}
+{"id": "docs_reviews_workflow", "query": "How do I create an approval workflow with Action Upon Completion copy in Reviews?", "expected_url_contains": "Reviews"}
+{"id": "docs_model_browser", "query": "How do I filter RVT or IFC model properties in the Model Browser?", "expected_url_contains": "Model_Browser"}

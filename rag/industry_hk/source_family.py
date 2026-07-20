@@ -201,23 +201,75 @@ def is_section_number_title(query: str) -> bool:
     return bool(_SECTION_NUMBER_TITLE_RE.match((query or "").strip()))
 
 
+_DOC_SECTION_PREFIX_RE = re.compile(
+    r"^[^:\n]{3,90}:\s+(.+)$",
+)
+_IN_DOC_SUFFIX_RE = re.compile(
+    r"\s+in\s+(?:DEVB|CIC|BD|LandsD|Zero Carbon|AM/?FM).+$",
+    re.I,
+)
+
+
 def extract_paraphrase_title(query: str) -> str | None:
     match = _PARAPHRASE_TITLE_RE.match((query or "").strip())
     if not match:
         return None
-    return match.group(1).strip()
+    title = match.group(1).strip()
+    title = _IN_DOC_SUFFIX_RE.sub("", title).strip(" ?")
+    return title or None
+
+
+def extract_explicit_section_title(query: str) -> str | None:
+    """Pull the section title from 'DOC: Section' or requirements paraphrases."""
+    text = (query or "").strip()
+    if not text:
+        return None
+    paraphrased = extract_paraphrase_title(text)
+    if paraphrased:
+        return paraphrased
+    match = _DOC_SECTION_PREFIX_RE.match(text)
+    if match:
+        return match.group(1).strip()
+    return None
 
 
 def normalize_title(text: str) -> str:
-    return re.sub(r"\s+", " ", (text or "").strip().lower())
+    cleaned = (text or "").strip().lower()
+    cleaned = cleaned.replace("&", " and ")
+    cleaned = cleaned.replace("/", " ")
+    cleaned = cleaned.replace("—", " ").replace("–", " ").replace("-", " ")
+    return re.sub(r"\s+", " ", cleaned).strip()
+
+
+def _title_core(title: str) -> str:
+    return re.sub(r"^\d+(?:\.\d+)*\.?\s*", "", normalize_title(title)).strip()
 
 
 def exact_title_bonus(query: str, chunk_title: str) -> float:
-    """Large bonus when query is the section title or a requirements paraphrase."""
+    """Large bonus when query is the section title or a requirements paraphrase.
+
+    Prefer longer / more complete titles over short fragment pages (e.g.
+    ``Subscription/Perpetual`` over bare ``Perpetual``).
+    """
     q = normalize_title(query)
     title = normalize_title(chunk_title)
     if not q or not title:
         return 0.0
+
+    explicit = extract_explicit_section_title(query)
+    explicit_n = normalize_title(explicit) if explicit else ""
+    title_core = _title_core(chunk_title)
+    explicit_core = _title_core(explicit) if explicit else ""
+
+    if explicit_n and (title == explicit_n or title_core == explicit_core):
+        return 4.0 + min(len(title_core), 40) / 100.0
+    if explicit_core and title_core and title_core in explicit_core:
+        # Fragment title contained in the requested section — smaller bonus.
+        coverage = len(title_core) / max(len(explicit_core), 1)
+        return 1.2 * coverage
+    if explicit_core and title_core and explicit_core in title_core:
+        return 3.2 + min(len(title_core), 40) / 100.0
+
     if q == title:
         return 2.5
     paraphrased = extract_paraphrase_title(query)
@@ -225,13 +277,12 @@ def exact_title_bonus(query: str, chunk_title: str) -> float:
         return 2.5
     # Query may include a family label prefix: "Zero Carbon Park … <title>"
     if title and title in q:
-        return 2.0
+        # Longer contained titles outrank short fragments.
+        return 2.0 + min(len(title), 40) / 80.0
     if q in title and len(q) >= 12:
         return 1.5
-    # Strip leading numbering for fuzzy section match.
-    title_core = re.sub(r"^\d+(?:\.\d+)*\.?\s*", "", title).strip()
     if title_core and title_core in q:
-        return 1.8
+        return 1.8 + min(len(title_core), 40) / 100.0
     return 0.0
 
 

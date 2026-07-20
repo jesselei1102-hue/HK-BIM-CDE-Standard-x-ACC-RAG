@@ -12,7 +12,7 @@ discipline: implementation
 lifecycle_stage: project
 publication_year: 2022
 software: null
-priority: normal
+priority: high
 language: en
 source_url: hk_cde://cic_zcp_bimip_v15/cic_zcp_bimip_v15_1_10_project_information_production_methods_and_procedures
 ---

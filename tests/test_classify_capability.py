@@ -58,6 +58,22 @@ def test_industry_overview_rewrite_harmonisation() -> None:
     assert "Harmonisation" in rewritten or "harmonisation" in rewritten.lower()
 
 
+def test_industry_overview_skips_specific_devb_section() -> None:
+    from rag.orchestrator.classify import rewrite_industry_overview_query
+
+    q = "DEVB Harmonisation v3: THE WAY FORWARD"
+    assert rewrite_industry_overview_query(q) is None
+
+
+def test_exact_title_bonus_prefers_full_section() -> None:
+    from rag.industry_hk.source_family import exact_title_bonus
+
+    q = "CIC CDE Beginner Guide: 2.3.1. Subscription/Perpetual"
+    full = exact_title_bonus(q, "2.3.1. Subscription/Perpetual")
+    frag = exact_title_bonus(q, "Perpetual")
+    assert full > frag
+    assert full >= 3.0
+
 def test_folder_naming_prefers_naming_over_folder() -> None:
     cap = detect_capability("文件夹命名标准怎么配")
     assert cap is not None
@@ -99,6 +115,26 @@ def test_hybrid_folder_capability() -> None:
     assert decision.capability == "folder"
     assert is_folder_question(decision.product_query or "", decision.capability)
 
+
+def test_wip_folder_tree_triggers_folder_capability() -> None:
+    q = "Show a real WIP discipline folder tree example for HK CDE in ACC"
+    cap = detect_capability(q)
+    assert cap is not None
+    assert cap.key == "folder"
+    decision = classify_intent(q)
+    assert decision.track == "hybrid"
+    assert decision.capability == "folder"
+    assert "2_wip" in (decision.playbook_query or "").lower() or "01_WIP" in (
+        decision.playbook_query or ""
+    )
+
+
+def test_bare_wip_glossary_still_not_folder() -> None:
+    q = "What is WIP in Hong Kong CDE?"
+    assert detect_capability(q) is None
+    decision = classify_intent(q)
+    assert decision.capability is None
+    assert not is_folder_question(q, decision.capability)
 
 def test_hk_aligned_workflow_routes_hybrid() -> None:
     q = "How to run HK-aligned approval workflows in ACC"
