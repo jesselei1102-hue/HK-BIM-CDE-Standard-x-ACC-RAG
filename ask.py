@@ -8,6 +8,7 @@ import os
 import sys
 
 from rag.config import get_config
+from rag.conversation import ConversationSession
 from rag.generation import format_sources, format_token_usage
 from rag.industry_hk.config import get_industry_hk_config
 from rag.orchestrator.merge import format_hybrid_sources
@@ -23,8 +24,12 @@ def _print_answer(
     show_context: bool,
     contexts,
     token_line: str | None = None,
+    *,
+    rewritten_query: str | None = None,
 ) -> None:
     print(f"\n问题：{question}")
+    if rewritten_query and rewritten_query.strip() != question.strip():
+        print(f"检索问题：{rewritten_query}")
     print("\n回答：")
     print(answer_text)
     if token_line:
@@ -63,6 +68,8 @@ def ask_once(
     no_generate: bool,
     show_retrieval_debug: bool,
     answer_lang: str,
+    session: ConversationSession | None = None,
+    record_turn: bool = True,
 ) -> int:
     force = None if corpus == "auto" else corpus
     result = orchestrator.ask(
@@ -71,9 +78,16 @@ def ask_once(
         top_k=top_k,
         no_generate=no_generate,
         answer_lang=answer_lang,
+        session=session,
+        record_turn=record_turn,
     )
 
     print(f"轨道：{result.track}")
+    if result.debug.is_follow_up:
+        print(
+            f"追问改写：{result.debug.rewritten_query or '-'} "
+            f"({result.debug.rewrite_reason or '-'})"
+        )
     if result.validation_ok is not None:
         print(f"validation: {'ok' if result.validation_ok else 'failed'}")
     if result.answer is not None and result.answer.model:
@@ -126,6 +140,7 @@ def ask_once(
         show_context=show_context or no_generate,
         contexts=contexts,
         token_line=token_line,
+        rewritten_query=result.debug.rewritten_query,
     )
     return 0
 
@@ -206,9 +221,12 @@ def main(argv: list[str] | None = None) -> int:
             no_generate=args.no_generate,
             show_retrieval_debug=args.show_retrieval_debug,
             answer_lang=args.lang,
+            session=None,
+            record_turn=False,
         )
 
-    print("进入交互模式，输入空行或 exit 退出。")
+    session = ConversationSession()
+    print("进入交互模式（支持多轮追问）。输入空行或 exit 退出；/clear 清空会话。")
     while True:
         try:
             question = input("\n> ").strip()
@@ -217,6 +235,10 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if not question or question.lower() in {"exit", "quit", "q"}:
             return 0
+        if question.lower() in {"/clear", "clear", "/reset", "reset"}:
+            session.clear()
+            print("已清空会话历史。下一问将作为独立首轮。")
+            continue
         ask_once(
             orchestrator,
             question,
@@ -226,6 +248,8 @@ def main(argv: list[str] | None = None) -> int:
             no_generate=args.no_generate,
             show_retrieval_debug=args.show_retrieval_debug,
             answer_lang=args.lang,
+            session=session,
+            record_turn=not args.no_generate,
         )
 
 

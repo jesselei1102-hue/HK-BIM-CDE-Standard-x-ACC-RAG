@@ -1,13 +1,19 @@
 ---
-source_file: output/HK Standard/CIC BIM Standards General 2024/CIC BIM Standards General
-  (Version 2024).pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC BIM Standards General 2024/CIC
+  BIM Standards General (Version 2024).pdf
 doc_id: cicbims_2024
 section_id: cicbims_2024_5_4_information_management_workflow_for_construction_stage
 title: 5.4 Information Management Workflow for Construction Stage
 page_start: 146
 page_end: 148
 authority: CICBIMS 2024 §5.4
-priority: normal
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2024
+software: null
+priority: high
 language: en
 source_url: hk_cde://cicbims_2024/cicbims_2024_5_4_information_management_workflow_for_construction_stage
 ---

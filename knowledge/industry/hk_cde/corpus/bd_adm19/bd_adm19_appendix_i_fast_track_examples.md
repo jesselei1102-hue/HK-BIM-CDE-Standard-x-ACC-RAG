@@ -6,6 +6,10 @@ title: Appendix I — Fast Track Examples
 page_start: 34
 page_end: 34
 authority: BD PNAP ADM-19 §Appendix I — Fast Track Examples
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
 priority: normal
 language: en
 source_url: hk_cde://bd_adm19/bd_adm19_appendix_i_fast_track_examples

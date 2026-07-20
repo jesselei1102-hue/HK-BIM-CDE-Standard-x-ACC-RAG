@@ -178,7 +178,7 @@ def build_route_records(
             rewrite_zh = title if _is_chinese(title) else f"{title} 怎么操作"
             rewrite_en = title if not _is_chinese(title) else f"How do I use {title}"
             add(
-                text=title,
+                text=f"{page.get('doc_id') or guid}: {title}",
                 source_type="page_title",
                 entry_id=entry_id,
                 target_title=title,

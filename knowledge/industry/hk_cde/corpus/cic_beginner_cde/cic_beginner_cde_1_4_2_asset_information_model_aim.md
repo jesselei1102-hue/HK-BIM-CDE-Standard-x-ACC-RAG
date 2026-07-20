@@ -1,11 +1,17 @@
 ---
-source_file: output/HK Standard/CIC Beginner Guide-Adoption of CDE.pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC Beginner Guide-Adoption of CDE.pdf
 doc_id: cic_beginner_cde
 section_id: cic_beginner_cde_1_4_2_asset_information_model_aim
 title: 1.4.2. Asset Information Model (AIM)
 page_start: 15
 page_end: 16
 authority: CIC CDE Beginner Guide §1.4.2.
+authority_type: standard
+normative_weight: recommended
+discipline: general
+lifecycle_stage: project
+publication_year: 2021
+software: null
 priority: high
 language: en
 source_url: hk_cde://cic_beginner_cde/cic_beginner_cde_1_4_2_asset_information_model_aim

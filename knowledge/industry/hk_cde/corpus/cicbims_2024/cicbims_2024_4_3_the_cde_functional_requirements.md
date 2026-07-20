@@ -1,12 +1,18 @@
 ---
-source_file: output/HK Standard/CIC BIM Standards General 2024/CIC BIM Standards General
-  (Version 2024).pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC BIM Standards General 2024/CIC
+  BIM Standards General (Version 2024).pdf
 doc_id: cicbims_2024
 section_id: cicbims_2024_4_3_the_cde_functional_requirements
 title: 4.3 The CDE Functional Requirements
 page_start: 115
 page_end: 117
 authority: CICBIMS 2024 §4.3
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2024
+software: null
 priority: high
 language: en
 source_url: hk_cde://cicbims_2024/cicbims_2024_4_3_the_cde_functional_requirements

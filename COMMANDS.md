@@ -38,9 +38,11 @@ python ask.py "怎么按港标在 ACC 配置文件夹结构"
 # 能力说明（不检索）
 python ask.py "你可以做什么"
 
-# 交互模式（不传问题）
+# 交互模式（不传问题）——支持多轮追问
 python ask.py
 # 输入问题；空行 / exit / quit / q 退出
+# /clear 清空会话历史（下一问作为独立首轮）
+# 追问时：历史只用于理解指代；每轮重新检索；事实只来自本轮来源
 ```
 
 ### 1.0 Streamlit 演示界面
@@ -51,8 +53,17 @@ pip install -r requirements.txt   # 需含 streamlit
 streamlit run streamlit_demo.py
 ```
 
-浏览器打开后：English UI；侧栏默认 Answer language = `en`；点示例或输入问题 → Ask。  
-hybrid 答案按四段卡片展示，右侧列出 HK / Playbook / Docs 来源。
+浏览器打开后：English UI；侧栏可选 Answer language；支持多轮聊天追问。  
+点示例或输入问题；侧栏 **New conversation** 清空会话。  
+hybrid 答案按四段卡片展示；每轮展示独立检索问题与本轮来源。  
+证据边界：历史答案不可信，仅用于指代；每轮重新检索。  
+
+评测多轮改写与重检索：
+
+```bash
+python scripts/eval_conversation.py
+pytest tests/test_conversation.py -q
+```
 
 ---
 
@@ -207,6 +218,9 @@ python scripts/eval_playbook_acc_hk.py --cases eval/playbook_acc_hk_cases.jsonl
 
 python scripts/eval_query_kb.py
 python scripts/eval_query_kb.py --cases eval/query_kb_cases.jsonl
+
+python scripts/eval_conversation.py   # 多轮追问改写 + 重检索证据边界
+python scripts/eval_conversation.py --cases eval/conversation_cases.jsonl
 ```
 
 结果摘要：[`eval/RESULTS.md`](eval/RESULTS.md)  

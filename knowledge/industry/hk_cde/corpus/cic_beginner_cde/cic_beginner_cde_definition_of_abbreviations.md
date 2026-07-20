@@ -1,11 +1,17 @@
 ---
-source_file: output/HK Standard/CIC Beginner Guide-Adoption of CDE.pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC Beginner Guide-Adoption of CDE.pdf
 doc_id: cic_beginner_cde
 section_id: cic_beginner_cde_definition_of_abbreviations
 title: Definition of Abbreviations
 page_start: 6
 page_end: 6
 authority: CIC CDE Beginner Guide §Definition
+authority_type: standard
+normative_weight: recommended
+discipline: general
+lifecycle_stage: project
+publication_year: 2021
+software: null
 priority: high
 language: en
 source_url: hk_cde://cic_beginner_cde/cic_beginner_cde_definition_of_abbreviations

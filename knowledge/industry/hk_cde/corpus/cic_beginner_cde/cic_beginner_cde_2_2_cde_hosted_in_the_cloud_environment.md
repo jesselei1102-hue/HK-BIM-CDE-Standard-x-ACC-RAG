@@ -1,11 +1,17 @@
 ---
-source_file: output/HK Standard/CIC Beginner Guide-Adoption of CDE.pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC Beginner Guide-Adoption of CDE.pdf
 doc_id: cic_beginner_cde
 section_id: cic_beginner_cde_2_2_cde_hosted_in_the_cloud_environment
 title: 2.2. CDE hosted in the cloud environment
 page_start: 30
 page_end: 30
 authority: CIC CDE Beginner Guide §2.2.
+authority_type: standard
+normative_weight: recommended
+discipline: general
+lifecycle_stage: project
+publication_year: 2021
+software: null
 priority: high
 language: en
 source_url: hk_cde://cic_beginner_cde/cic_beginner_cde_2_2_cde_hosted_in_the_cloud_environment

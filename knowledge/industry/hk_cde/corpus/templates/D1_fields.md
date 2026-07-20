@@ -1,10 +1,12 @@
 ---
+authority_type: template
+normative_weight: reference
 source_file: output/HK Standard/CIC BIM Standards General 2024/D1_CIC BIM_OIR_Template.docx
 doc_id: template_d1
 section_id: d1_fields
 title: Appendix D1 Field Reference (OIR)
 authority: CICBIMS 2024 Appendix D1
-priority: high
+priority: normal
 language: en
 ---
 

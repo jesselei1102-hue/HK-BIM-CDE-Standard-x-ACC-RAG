@@ -7,7 +7,13 @@ title: Appendix XII - Sample Project Close-out Checklist (v2)
 page_start: 149
 page_end: 151
 authority: DEVB BIM Harmonisation v3.0 §Appendix
-priority: normal
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2023
+software: null
+priority: high
 language: en
 source_url: hk_cde://devb_harmonisation_v3/devb_harmonisation_v3_appendix_xii_sample_project_close_out_checklist_v2
 ---

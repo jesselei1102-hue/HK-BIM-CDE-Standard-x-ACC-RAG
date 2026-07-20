@@ -1,13 +1,19 @@
 ---
-source_file: output/HK Standard/CIC BIM Standards General 2024/CIC BIM Standards General
-  (Version 2024).pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC BIM Standards General 2024/CIC
+  BIM Standards General (Version 2024).pdf
 doc_id: cicbims_2024
 section_id: cicbims_2024_la_3_7_field_6_type_characteristic
 title: 'LA.3.7 Field 6: Type / (Characteristic)'
 page_start: 189
 page_end: 189
 authority: CICBIMS 2024 §LA.3.7
-priority: normal
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2024
+software: null
+priority: high
 language: en
 source_url: hk_cde://cicbims_2024/cicbims_2024_la_3_7_field_6_type_characteristic
 ---

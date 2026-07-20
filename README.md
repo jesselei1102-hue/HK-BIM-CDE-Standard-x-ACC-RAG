@@ -20,7 +20,7 @@ The three tracks are **physically isolated** (separate Chroma collections / chun
 
 | Track | ID | What it covers | Corpus / index |
 |-------|------|----------------|----------------|
-| **1. Standards** | `hk_cde` | Hong Kong industry standards: CIC BIM Standards, CDE Beginner Guide, DEVB Harmonisation, BD ADM-19 / ADV-34, LandsD BIM-GIS, plus chapter Markdown and alias routing | `knowledge/industry/hk_cde/` → `.rag_data/industry_hk_cde/` |
+| **1. Standards** | `hk_cde` | Hong Kong industry standards (expanded CIC BIM corpus: General, MEP, UU, Object Guide, Statutory Plans, Dictionary, AM/FM & ZCP case studies, software appendices, BD ADM-19 / ADV-34, LandsD BIM-GIS) with chapter Markdown, authority metadata and alias routing. Production ingest scope=`high`; optional shadow `substantive` | `knowledge/industry/hk_cde/` → `.rag_data/industry_hk_cde/` |
 | **2. Playbook** | `playbook` | ACC × HK implementation handbook: four-container CDE, naming, permissions, approvals, design collaboration, information requirements, and ACC Project Template (GC / Buildings) guidance | `knowledge/playbook/acc_hk_bim/` → `.rag_data/playbook_acc_hk/` |
 | **3. Product (Docs)** | `docs` | Autodesk Docs / ACC official help: folder organization, Naming Standard, permissions, Workflow, Project Template, Model Browser, and related product steps | crawled help → ingest → `.rag_data/` (docs main store) |
 
@@ -66,11 +66,18 @@ flowchart LR
 
 Entry point: `ask.py` / Streamlit → `HybridOrchestrator` (`rag/orchestrator/pipeline.py`).
 
+Multi-turn (REPL / Streamlit session memory only): recent turns rewrite the
+follow-up into a **standalone retrieval query**, then classify + retrieve again.
+Prior answers are untrusted context for wording only — facts come from this-turn chunks.
+
 ```mermaid
 flowchart TD
   Q[User question] --> META{Capabilities help?}
   META -->|yes| HELP[capabilities_help<br/>no retrieve / no LLM]
-  META -->|no| CL[classify_intent<br/>capability + track signals]
+  META -->|no| HIST{Session history?}
+  HIST -->|yes follow-up| RW[rewrite_followup_query<br/>standalone query]
+  HIST -->|no / standalone| CL
+  RW --> CL[classify_intent<br/>capability + track signals]
 
   CL --> CORPUS{--corpus}
   CORPUS -->|docs / hk_cde / playbook| SINGLE[Single-track retrieve<br/>+ capability rewrite / soft prefer]
@@ -97,6 +104,19 @@ flowchart TD
   GEN --> OUT
   HELP --> OUT
 ```
+
+### Multi-turn follow-ups (session memory)
+
+Interactive CLI (`python ask.py` with no question) and Streamlit keep an in-memory `ConversationSession` (not persisted across process restarts).
+
+| Step | Behavior |
+|------|----------|
+| Rewrite | Recent ≤4 turns → standalone retrieval query (`rag/orchestrator/followup.py`) |
+| Retrieve | Always re-run classify + RAG this turn; prior URLs are soft hints only (no hard lock) |
+| Generate | Prior answers sit in `<conversation_context_untrusted>`; **facts only from this-turn chunks** |
+| Reset | CLI `/clear`; Streamlit **New conversation** |
+
+History answers may be wrong: they resolve deixis (“那子文件夹呢？”) only and must not be cited as evidence. Eval: `python scripts/eval_conversation.py`.
 
 ### Retrieval path per track
 
@@ -233,12 +253,17 @@ ollama pull qwen3-embedding:0.6b
 ### Ask questions
 
 ```bash
-./start                                          # interactive; corpus=auto
+./start                                          # interactive multi-turn; corpus=auto
 python ask.py "How should Hong Kong CDE folders be set up?"
 python ask.py "file naming standard"
 python ask.py "what can you do"
 python ask.py "How to run HK-aligned approval workflows in ACC"
 python ask.py "How do I view and filter BIM model properties in ACC against HK BIM review needs?"
+
+# Interactive multi-turn REPL (session memory only; /clear resets)
+python ask.py
+# > 如何设置文件夹权限？
+# > 那子文件夹呢？   # rewritten + re-retrieved; prior answer is not evidence
 
 # Retrieval only + path debug
 python ask.py --no-generate --show-retrieval-debug "permissions on folders"
@@ -259,10 +284,14 @@ Full CLI reference: [COMMANDS.md](COMMANDS.md).
 python ingest.py --rebuild
 python scripts/build_query_kb.py
 
-# Hong Kong standards store
-python scripts/ingest_industry_hk_cde.py --rebuild
+# Hong Kong standards store (production = high scope)
+python scripts/inventory_hk_sources.py
+python scripts/extract_hk_cde_pdfs.py
+python scripts/extract_hk_bd_landsd.py
+python scripts/ingest_industry_hk_cde.py --scope high --rebuild
 python scripts/build_industry_query_kb.py
 python scripts/build_industry_kb_index.py --rebuild
+# Optional A/B: python scripts/compare_hk_indexes.py
 
 # Playbook store
 python scripts/ingest_playbook_acc_hk.py --rebuild

@@ -1,10 +1,12 @@
 ---
+authority_type: template
+normative_weight: reference
 source_file: output/HK Standard/CIC BIM Standards General 2024/D4_CIC BIM_SIR_Template.docx
 doc_id: template_d4
 section_id: d4_fields
 title: Appendix D4 Field Reference (SIR)
 authority: CICBIMS 2024 Appendix D4
-priority: high
+priority: normal
 language: en
 ---
 

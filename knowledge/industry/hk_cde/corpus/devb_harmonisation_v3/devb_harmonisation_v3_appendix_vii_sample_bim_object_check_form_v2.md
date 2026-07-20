@@ -7,7 +7,13 @@ title: Appendix VII - Sample BIM Object Check Form (v2)
 page_start: 113
 page_end: 116
 authority: DEVB BIM Harmonisation v3.0 §Appendix
-priority: normal
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2023
+software: null
+priority: high
 language: en
 source_url: hk_cde://devb_harmonisation_v3/devb_harmonisation_v3_appendix_vii_sample_bim_object_check_form_v2
 ---

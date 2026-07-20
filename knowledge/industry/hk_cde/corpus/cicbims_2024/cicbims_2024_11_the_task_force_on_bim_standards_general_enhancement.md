@@ -1,13 +1,19 @@
 ---
-source_file: output/HK Standard/CIC BIM Standards General 2024/CIC BIM Standards General
-  (Version 2024).pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC BIM Standards General 2024/CIC
+  BIM Standards General (Version 2024).pdf
 doc_id: cicbims_2024
 section_id: cicbims_2024_11_the_task_force_on_bim_standards_general_enhancement
 title: 11. The Task Force on BIM Standards - General Enhancement
 page_start: 217
 page_end: 217
 authority: CICBIMS 2024 §11.
-priority: normal
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2024
+software: null
+priority: high
 language: en
 source_url: hk_cde://cicbims_2024/cicbims_2024_11_the_task_force_on_bim_standards_general_enhancement
 ---

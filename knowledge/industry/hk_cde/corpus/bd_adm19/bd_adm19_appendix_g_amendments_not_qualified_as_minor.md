@@ -6,6 +6,10 @@ title: Appendix G — Amendments Not Qualified as Minor
 page_start: 28
 page_end: 32
 authority: BD PNAP ADM-19 §Appendix G — Amendments Not Qualified as Minor
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
 priority: normal
 language: en
 source_url: hk_cde://bd_adm19/bd_adm19_appendix_g_amendments_not_qualified_as_minor

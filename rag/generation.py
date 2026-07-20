@@ -19,22 +19,53 @@ from .orchestrator.merge import MergedContexts, format_partitioned_context
 from .retrieval import RetrievedChunk, format_context
 
 
-SYSTEM_PROMPT = """你是 Autodesk Docs 帮助文档助手。
+_GUIDANCE_STRUCTURE = """输出结构（按问题复杂度自适应，篇幅服从解决问题所需信息量）：
+1. 直接结论：先回答用户问的是什么。
+2. 怎么做 / 关键要求：给出可照做的编号步骤、检查项、前置条件与预期结果；资料中的菜单路径、夹名、字段名、阈值、限制必须写出来。
+3. 适用范围与例外：说明适用对象、不适用情形、权限/角色前提；若资料不足则明确写缺口，禁止编造。
+4. 不要为了长而长：单一事实、定义、明确数值题可短答；配置、排障、实施、落地题必须展开到用户能采取下一步行动。"""
+
+_MULTI_TURN_RULES = """多轮证据边界（必须遵守）：
+1. 若出现 <conversation_context_untrusted>，其中内容仅用于理解指代与语气，不得作为事实依据，也不得引用其中说法。
+2. 事实、步骤、数字、菜单路径只能来自本轮编号资料；引用编号不可跨轮复用。
+3. 若本轮资料与历史回答冲突，以本轮资料为准，并写「更正：上一轮……；本轮资料显示……[n]」。
+4. 本轮资料不足以支撑时，只回复无法确认；禁止复用历史答案凑答。"""
+
+
+SYSTEM_PROMPT = f"""你是 Autodesk Docs 帮助文档助手。
 规则：
 1. 只根据编号资料回答；资料写了什么就答什么，禁止用自己的先验知识覆盖资料。
-2. 资料里有明确数字、限制或步骤时，直接摘录并回答。
+2. 资料里有明确数字、限制、菜单路径或步骤时，必须完整写出，不要只给一句概述。
 3. 资料与问题无关，或无法支持结论时，只回复：根据现有资料无法确认。
 4. 用提问语言作答；关键事实后标注 [1] 或 [2]。
-5. 回答简洁，通常 2–5 句，不要复述整段资料，也不要输出思考过程。"""
+5. {_GUIDANCE_STRUCTURE}
+6. {_MULTI_TURN_RULES}
+7. 不要输出思考过程。"""
 
 
-PLAYBOOK_SYSTEM_PROMPT = """你是 ACC × 港标实施手册助手。
+HK_SYSTEM_PROMPT = f"""你是香港 BIM/CDE 标准助手。
+规则：
+1. 只根据编号资料回答；禁止编造未出现的条款。
+2. 若资料标注 authority_type 为 case_study / terminology / software_guide，或 normative_weight 为 reference / operational：
+   - 必须明确写成“案例参考 / 术语说明 / 操作指引”，不得表述为全港强制标准或法律要求。
+3. Zero Carbon Park BIM Implementation Plan 仅是真实项目做法示例，不得写成所有香港项目必须照搬。
+4. 资料与问题无关，或当前索引未纳入该来源时，只回复：根据现有资料无法确认。
+5. 用提问语言作答；关键事实后标注 [1] 或 [2]。
+6. {_GUIDANCE_STRUCTURE}
+7. {_MULTI_TURN_RULES}
+8. 不要输出思考过程。"""
+
+
+PLAYBOOK_SYSTEM_PROMPT = f"""你是 ACC × 港标实施手册助手。
 规则：
 1. 只根据编号资料回答；资料是组织推荐配置，不是 CIC/DEVB 官方模板。
 2. 资料写了什么就答什么；涉及缺口或须写入 BEP 的事项要明确写出。
-3. 资料与问题无关，或无法支持结论时，只回复：根据现有资料无法确认。
-4. 用提问语言作答；关键事实后标注 [1] 或 [2]。
-5. 回答简洁，通常 3–8 句，不要复述整段资料，也不要输出思考过程。"""
+3. 资料里有目录树、夹名、命名规则、审批角色或配置步骤时，必须逐项写清，让用户能照做。
+4. 资料与问题无关，或无法支持结论时，只回复：根据现有资料无法确认。
+5. 用提问语言作答；关键事实后标注 [1] 或 [2]。
+6. {_GUIDANCE_STRUCTURE}
+7. {_MULTI_TURN_RULES}
+8. 不要输出思考过程。"""
 
 
 def _hybrid_system_prompt(lang: str) -> str:
@@ -48,13 +79,15 @@ Rules:
    ## {h[1]}
    ## {h[2]}
    ## {h[3]}
-3. Style:
-   - 2–5 short bullets or numbered steps per section; no essay, no long HK vs Playbook vs Docs comparison.
-   - Quote folder names and menu paths when present (e.g. 01_WIP, Docs → Files).
+3. Style — solve the user's problem; length follows complexity:
+   - Expand each section with as many actionable bullets/numbered steps as the materials support.
+   - Include folder names, menu paths, roles, limits, and verification checks when present.
+   - In {h[3]}, map Standards → Playbook practice → Docs UI steps when materials allow; state Gaps explicitly when they do not.
    - Never start a section with "cannot confirm" and then analyse with citations—if you cite, answer directly.
    - Only write one "Cannot confirm from available materials." line when that section has no usable sources.
+   - Do not pad with generic BIM advice; stop once the next action is clear.
 4. Citation ownership: {h[0]}→HK; {h[1]}→Playbook; {h[2]}→Docs.
-5. {h[3]}: at most 3 bullets + one "Gap: …" sentence.
+5. Multi-turn evidence boundary: untrusted conversation context is for deixis only; facts come only from this-turn numbered materials. If current evidence conflicts with prior answers, correct explicitly. Never reuse prior answers when evidence is missing.
 6. Do not output thinking."""
     return f"""你是三源助手：香港 BIM/CDE 标准、ACC×港标实施手册、Autodesk Docs 产品帮助。
 规则：
@@ -64,13 +97,15 @@ Rules:
    ## {h[1]}
    ## {h[2]}
    ## {h[3]}
-3. 写法（必须遵守）：
-   - 每段 2–5 条短 bullet 或编号步骤；禁止论文体、禁止「HK vs Playbook vs Docs」三方长对照。
-   - 资料里有目录树、夹名、菜单路径就必须直接写出来（如 01_WIP、Docs → Files）。
+3. 写法——以解决用户问题为准，篇幅随复杂度变化：
+   - 每段按资料能支持的程度展开可执行 bullet / 编号步骤，不要人为限制条数。
+   - 资料里有目录树、夹名、菜单路径、角色、限制、验证方式就必须写出来。
+   - {h[3]} 尽量写清「标准要求 → 本组织做法 → Docs 操作」的对应；无法对应时明确写「缺口：…」，禁止硬编映射。
    - 禁止在一段里先写「根据现有资料无法确认」再引用 [1][2] 展开分析——有引用就说明能答，直接答。
    - 只有该段完全没有可用编号资料时，才写一句「根据现有资料无法确认」。
+   - 不要灌水；信息足够让用户采取下一步后即可结束。
 4. 编号归属：{h[0]}→HK；{h[1]}→Playbook；{h[2]}→Docs。
-5. {h[3]}：最多 3 条 bullet + 1 句「缺口：…」。
+5. 多轮证据边界：若有 <conversation_context_untrusted>，仅用于理解指代；事实只能来自本轮编号资料。与历史冲突时明确更正；本轮无证据时不得复用历史答案。
 6. 不要输出思考过程。"""
 
 
@@ -78,18 +113,36 @@ def _hybrid_few_shot(lang: str) -> str:
     h = hybrid_section_headers(lang)  # type: ignore[arg-type]
     if lang == "en":
         return f"""
-Example ({h[1]} when materials include a folder tree):
+Example (folder setup when materials include a tree):
+## {h[0]}
+- CDE information should move through WIP → Shared → Published → Archive with defined review gates [1]
 ## {h[1]}
 - Under Project Files create: `01_WIP`, `02_Shared`, `03_Published`, `04_Archive` [2]
 - Under WIP use discipline subfolders (ARC/STR/MEP…), then Models/Drawings [2]
 - Enforce Naming Standard on Shared/Published; WIP may stay flexible [2]
+- Confirm reviewers/approvers exist before enabling publish/review workflows [2]
+## {h[2]}
+- Docs → Files → create the top-level folders, then set folder permissions by role [3]
+- Enable Naming Standard on Shared/Published folders after the structure exists [3]
+## {h[3]}
+- Standards require state control; Playbook supplies the ACC folder tree; Docs provides the UI steps [1][2][3]
+- Gap: if BEP naming fields are not listed in materials, do not invent them.
 """
     return f"""
-示例（{h[1]}段，资料含目录树时）：
+示例（资料含目录树的文件夹配置）：
+## {h[0]}
+- CDE 信息应按 WIP → Shared → Published → Archive 流转，并设置审阅/发布关口 [1]
 ## {h[1]}
 - 在 Project Files 下建顶层夹：`01_WIP`、`02_Shared`、`03_Published`、`04_Archive` [2]
 - WIP 下按专业分子夹（ARC/STR/MEP…），其下 Models/Drawings 等 [2]
 - Shared/Published 启用 Naming Standard；WIP 内可不强制 [2]
+- 启用发布/审阅前确认审批角色已配置 [2]
+## {h[2]}
+- Docs → Files 创建顶层夹，并按角色设置文件夹权限 [3]
+- 结构建好后，在 Shared/Published 启用 Naming Standard [3]
+## {h[3]}
+- 标准要求状态管控；Playbook 给出 ACC 目录树；Docs 给出界面操作 [1][2][3]
+- 缺口：若资料未列出 BEP 命名字段，不要自行编造。
 """
 
 
@@ -146,24 +199,45 @@ def format_token_usage(answer: Answer) -> str:
 
 
 def build_user_prompt(
-    question: str, chunks: list[RetrievedChunk], *, answer_lang: str = "auto"
+    question: str,
+    chunks: list[RetrievedChunk],
+    *,
+    answer_lang: str = "auto",
+    rewritten_query: str | None = None,
+    conversation_context: str | None = None,
 ) -> str:
     if not chunks:
         return (
             f"问题：{question}\n\n"
             "当前没有检索到相关资料。请直接说明根据现有资料无法确认。"
         )
+    rewritten_line = ""
+    if rewritten_query and rewritten_query.strip() != question.strip():
+        rewritten_line = f"独立检索问题：{rewritten_query.strip()}\n"
+    history_block = ""
+    if conversation_context and conversation_context.strip():
+        history_block = f"{conversation_context.strip()}\n\n"
     return (
-        f"问题：{question}\n\n"
+        f"问题：{question}\n"
+        f"{rewritten_line}"
         f"{language_instruction(resolve_answer_language(question, answer_lang))}\n\n"
-        "资料：\n"
+        f"{history_block}"
+        "本轮资料（唯一可引用证据）：\n"
         f"{format_context(chunks)}\n\n"
-        "能答则给简洁步骤并标注编号；完全无关才说根据现有资料无法确认。"
+        "请按「结论 → 怎么做/关键要求 → 适用范围与例外 → 资料缺口」输出。"
+        "篇幅服从解决问题所需信息量：不要因追求简短而省略关键步骤、前置条件、验证方法或限制；"
+        "也不要灌水。关键事实标注 [n]；完全无关才说根据现有资料无法确认。"
+        "若本轮资料与不可信历史冲突，以本轮为准并明确更正。"
     )
 
 
 def build_hybrid_user_prompt(
-    question: str, merged: MergedContexts, *, answer_lang: str = "auto"
+    question: str,
+    merged: MergedContexts,
+    *,
+    answer_lang: str = "auto",
+    rewritten_query: str | None = None,
+    conversation_context: str | None = None,
 ) -> str:
     lang = resolve_answer_language(question, answer_lang)
     h = hybrid_section_headers(lang)
@@ -192,14 +266,35 @@ def build_hybrid_user_prompt(
         if lang == "en"
         else f"四段标题必须原样使用：## {h[0]} / ## {h[1]} / ## {h[2]} / ## {h[3]}"
     )
+    closing = (
+        "Write all four sections. Expand enough for the user to take the next action; "
+        "include paths/folder names/conditions when present. "
+        "Do not open a section with 'cannot confirm' and then analyse. "
+        "Facts only from this-turn numbered materials."
+        if lang == "en"
+        else (
+            "请按四段输出；每段展开到用户能采取下一步为止；"
+            "资料中有路径/夹名/条件就必须写出；"
+            "禁止段首「无法确认」后又长篇分析；"
+            "事实只能来自本轮编号资料。"
+        )
+    )
+    rewritten_line = ""
+    if rewritten_query and rewritten_query.strip() != question.strip():
+        rewritten_line = f"独立检索问题：{rewritten_query.strip()}\n"
+    history_block = ""
+    if conversation_context and conversation_context.strip():
+        history_block = f"{conversation_context.strip()}\n\n"
     return (
-        f"问题：{question}\n\n"
+        f"问题：{question}\n"
+        f"{rewritten_line}"
         f"{language_instruction(lang)}\n"
         f"{header_rule}\n\n"
+        f"{history_block}"
         f"{hk_note}；{playbook_note}；{docs_note}\n\n"
         f"{format_partitioned_context(merged)}\n\n"
         f"{_hybrid_few_shot(lang)}\n"
-        "请按四段输出；每段短、可照着做；禁止段首「无法确认」后又长篇分析。"
+        f"{closing}"
     )
 
 
@@ -211,9 +306,13 @@ def _should_refuse(chunks: list[RetrievedChunk], minimum_similarity: float) -> b
         for chunk in chunks
         if chunk.vector_similarity is not None
     ]
-    if not similarities:
-        return True
-    return max(similarities) < minimum_similarity
+    if similarities:
+        return max(similarities) < minimum_similarity
+    # Industry hybrid / family-shadow paths often expose fused RRF scores only.
+    # Do not refuse solely because vector_similarity was not populated.
+    if any(chunk.score is not None and float(chunk.score) > 0 for chunk in chunks):
+        return False
+    return True
 
 
 def _extract_content(response: object) -> str:
@@ -236,6 +335,8 @@ def generate_answer(
     *,
     system_prompt: str | None = None,
     answer_lang: str = "auto",
+    rewritten_query: str | None = None,
+    conversation_context: str | None = None,
 ) -> Answer:
     app_config = config or get_config()
     if _should_refuse(chunks, app_config.retrieval.minimum_vector_similarity):
@@ -251,6 +352,13 @@ def generate_answer(
     product = getattr(getattr(app_config, "corpus", None), "product", "")
     if system_prompt is None and product == "playbook_acc_hk":
         prompt = PLAYBOOK_SYSTEM_PROMPT
+    elif system_prompt is None and product == "hk_cde":
+        prompt = HK_SYSTEM_PROMPT
+    # Also switch when retrieved chunks are clearly HK industry URLs.
+    elif system_prompt is None and any(
+        (chunk.source_url or "").startswith("hk_cde://") for chunk in chunks
+    ):
+        prompt = HK_SYSTEM_PROMPT
     lang_line = language_instruction(resolve_answer_language(question, answer_lang))
     prompt = f"{prompt}\n\n{lang_line}"
 
@@ -264,12 +372,21 @@ def generate_answer(
         model=app_config.models.generation_model,
         messages=[
             {"role": "system", "content": prompt},
-            {"role": "user", "content": build_user_prompt(question, chunks, answer_lang=answer_lang)},
+            {
+                "role": "user",
+                "content": build_user_prompt(
+                    question,
+                    chunks,
+                    answer_lang=answer_lang,
+                    rewritten_query=rewritten_query,
+                    conversation_context=conversation_context,
+                ),
+            },
         ],
         think=False,
         options={
             "temperature": 0.0,
-            "num_predict": 400,
+            "num_predict": 900,
         },
     )
     prompt_tokens, completion_tokens = _ollama_token_counts(response)
@@ -290,6 +407,8 @@ def generate_hybrid_answer(
     config: AppConfig | None = None,
     *,
     answer_lang: str = "auto",
+    rewritten_query: str | None = None,
+    conversation_context: str | None = None,
 ) -> Answer:
     app_config = config or get_config()
     lang = resolve_answer_language(question, answer_lang)
@@ -356,14 +475,18 @@ def generate_hybrid_answer(
             {
                 "role": "user",
                 "content": build_hybrid_user_prompt(
-                    question, merged, answer_lang=answer_lang
+                    question,
+                    merged,
+                    answer_lang=answer_lang,
+                    rewritten_query=rewritten_query,
+                    conversation_context=conversation_context,
                 ),
             },
         ],
         think=False,
         options={
             "temperature": 0.0,
-            "num_predict": 900,
+            "num_predict": 1800,
         },
     )
     prompt_tokens, completion_tokens = _ollama_token_counts(response)

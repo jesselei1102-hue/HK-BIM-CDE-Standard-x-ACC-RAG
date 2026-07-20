@@ -1,13 +1,19 @@
 ---
-source_file: output/HK Standard/CIC BIM Standards General 2024/CIC BIM Standards General
-  (Version 2024).pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC BIM Standards General 2024/CIC
+  BIM Standards General (Version 2024).pdf
 doc_id: cicbims_2024
 section_id: cicbims_2024_3_6_14_delivery_team_risk_register
 title: 3.6.14 Delivery Team Risk Register
 page_start: 93
 page_end: 93
 authority: CICBIMS 2024 §3.6.14
-priority: normal
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2024
+software: null
+priority: high
 language: en
 source_url: hk_cde://cicbims_2024/cicbims_2024_3_6_14_delivery_team_risk_register
 ---

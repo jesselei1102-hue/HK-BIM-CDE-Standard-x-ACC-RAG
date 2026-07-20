@@ -1,10 +1,12 @@
 ---
+authority_type: template
+normative_weight: reference
 source_file: output/HK Standard/CIC BIM Standards General 2024/D2_CIC BIM_AIR_Template.docx
 doc_id: template_d2
 section_id: d2_fields
 title: Appendix D2 Field Reference (AIR)
 authority: CICBIMS 2024 Appendix D2
-priority: high
+priority: normal
 language: en
 ---
 

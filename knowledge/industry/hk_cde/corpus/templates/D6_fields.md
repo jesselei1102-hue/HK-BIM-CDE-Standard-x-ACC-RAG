@@ -1,10 +1,12 @@
 ---
+authority_type: template
+normative_weight: reference
 source_file: output/HK Standard/CIC BIM Standards General 2024/D6_CIC Pre-Appointment BIM Execution Plan_Template.docx
 doc_id: template_d6
 section_id: d6_fields
 title: Appendix D6 Field Reference (Pre-Appointment BEP)
 authority: CICBIMS 2024 Appendix D6
-priority: high
+priority: normal
 language: en
 ---
 

@@ -1,13 +1,19 @@
 ---
-source_file: output/HK Standard/CIC BIM Standards General 2024/CIC BIM Standards General
-  (Version 2024).pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC BIM Standards General 2024/CIC
+  BIM Standards General (Version 2024).pdf
 doc_id: cicbims_2024
 section_id: cicbims_2024_annex_1_hong_kong_local_annex_of_iso_19650_2_2018
 title: Annex 1 Hong Kong ‘Local Annex’ of ISO 19650-2:2018
 page_start: 185
 page_end: 185
 authority: CICBIMS 2024 §Annex
-priority: normal
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2024
+software: null
+priority: high
 language: en
 source_url: hk_cde://cicbims_2024/cicbims_2024_annex_1_hong_kong_local_annex_of_iso_19650_2_2018
 ---

@@ -23,4 +23,4 @@
 {"id": "ind_docs_folder", "query": "创建文件夹", "expect_section_contains": "", "expect_track": "docs", "lang": "zh"}
 {"id": "ind_docs_share", "query": "分享文件", "expect_section_contains": "", "expect_track": "docs", "lang": "zh"}
 {"id": "ind_harmonisation", "query": "DEVB Harmonisation", "expect_section_contains": "harmonisation", "expect_track": "industry", "lang": "en"}
-{"id": "ind_loin", "query": "Level of Information Need", "expect_section_contains": "loin", "expect_track": "industry", "lang": "en"}
+{"id": "ind_loin", "query": "Level of Information Need", "expect_section_contains": "level_of_information_need", "expect_track": "industry", "lang": "en"}

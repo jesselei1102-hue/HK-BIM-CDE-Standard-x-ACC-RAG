@@ -27,6 +27,50 @@ from .query_kb import KBRouter, RouteCandidate, RouteDecision
 
 TOKEN_RE = re.compile(r"[\w\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]+", re.UNICODE)
 
+# Soft boost for prior-turn URLs that already appear in this-round candidates.
+# Never inject missing URLs from the store (no hard lock).
+SOURCE_HINT_SOFT_BOOST = 0.12
+SOURCE_HINT_MAX_HITS = 3
+
+
+def _url_matches_hint(url: str, hint: str) -> bool:
+    if not url or not hint:
+        return False
+    if url == hint:
+        return True
+    if hint in url or url in hint:
+        return True
+    return url.startswith(hint.rstrip("/") + "/") or hint.startswith(
+        url.rstrip("/") + "/"
+    )
+
+
+def apply_source_hint_soft_boost(
+    rrf_scores: dict[str, float],
+    chunks_by_id: dict[str, dict[str, Any]],
+    source_hint_urls: list[str] | None,
+    *,
+    boost: float = SOURCE_HINT_SOFT_BOOST,
+    max_hits: int = SOURCE_HINT_MAX_HITS,
+) -> list[str]:
+    """Boost only candidates already present in rrf_scores. Returns matched URLs."""
+    if not source_hint_urls or not rrf_scores:
+        return []
+    hits: list[str] = []
+    for chunk_id in list(rrf_scores.keys()):
+        if len(hits) >= max_hits:
+            break
+        chunk = chunks_by_id.get(chunk_id)
+        if chunk is None:
+            continue
+        url = str(chunk.get("source_url") or "")
+        if not any(_url_matches_hint(url, hint) for hint in source_hint_urls):
+            continue
+        rrf_scores[chunk_id] = rrf_scores.get(chunk_id, 0.0) + boost
+        if url not in hits:
+            hits.append(url)
+    return hits
+
 
 @dataclass(frozen=True)
 class RetrievedChunk:
@@ -60,6 +104,8 @@ class RetrievalDebugInfo:
     rewritten_top1_sim: float | None = None
     adopted_path: str = "original"  # original | kb_rewrite | kb_boost
     target_url_boosted: bool = False
+    source_hint_urls: list[str] = field(default_factory=list)
+    source_hint_hits: list[str] = field(default_factory=list)
     nlp_coarse_enabled: bool = False
     nlp_rerank_enabled: bool = False
     nlp_keywords: list[str] = field(default_factory=list)
@@ -207,6 +253,7 @@ class HybridRetriever:
         top_k: int,
         *,
         boost_target_url: str | None = None,
+        source_hint_urls: list[str] | None = None,
         debug: RetrievalDebugInfo | None = None,
     ) -> list[RetrievedChunk]:
         analysis = analyze_query(query)
@@ -223,11 +270,24 @@ class HybridRetriever:
             )
             allowed_ids = set(coarse_ids) if coarse_ids else None
 
+        # Ensure KB / capability target URLs stay in the coarse pool so boost works.
+        if boost_target_url and allowed_ids is not None:
+            for chunk_id, chunk in self.chunks_by_id.items():
+                url = chunk["source_url"]
+                if url == boost_target_url or url.startswith(
+                    boost_target_url.rstrip("/") + "/"
+                ):
+                    allowed_ids.add(chunk_id)
+                    if chunk_id not in coarse_ids:
+                        coarse_ids.append(chunk_id)
+
         if debug is not None:
             debug.nlp_coarse_enabled = cfg.nlp_coarse_enabled
             debug.nlp_rerank_enabled = cfg.nlp_rerank_enabled
             debug.nlp_keywords = list(analysis.keywords)
             debug.nlp_coarse_pool_size = len(coarse_ids)
+            if source_hint_urls:
+                debug.source_hint_urls = list(source_hint_urls)
 
         prefetch = max(top_k, cfg.hybrid_prefetch)
         vector_n = max(cfg.vector_candidates, prefetch)
@@ -273,17 +333,22 @@ class HybridRetriever:
 
         if boost_target_url:
             boost = self.config.query_kb.target_url_boost
-            pool_items = (
-                ((cid, self.chunks_by_id[cid]) for cid in allowed_ids if cid in self.chunks_by_id)
-                if allowed_ids is not None
-                else self.chunks_by_id.items()
-            )
-            for chunk_id, chunk in pool_items:
+            # Always scan the full chunk store for the target — not just the coarse pool.
+            for chunk_id, chunk in self.chunks_by_id.items():
                 url = chunk["source_url"]
                 if url == boost_target_url or url.startswith(
                     boost_target_url.rstrip("/") + "/"
                 ):
                     rrf_scores[chunk_id] = rrf_scores.get(chunk_id, 0.0) + boost
+
+        # Prior-turn source hints: soft boost only if already a candidate this round.
+        hint_hits = apply_source_hint_soft_boost(
+            rrf_scores,
+            self.chunks_by_id,
+            source_hint_urls,
+        )
+        if debug is not None:
+            debug.source_hint_hits = hint_hits
 
         ordered = sorted(rrf_scores.items(), key=lambda item: item[1], reverse=True)
         selected: list[RetrievedChunk] = []
@@ -337,6 +402,7 @@ class HybridRetriever:
         top_k: int | None = None,
         *,
         boost_url_prefix: str | None = None,
+        source_hint_urls: list[str] | None = None,
     ) -> RetrievalResult:
         query = query.strip()
         if not query:
@@ -349,6 +415,7 @@ class HybridRetriever:
             query,
             limit,
             boost_target_url=boost_url_prefix,
+            source_hint_urls=source_hint_urls,
             debug=debug,
         )
         original_sim = (
@@ -381,7 +448,12 @@ class HybridRetriever:
         rewritten = route_decision.rewritten_query
         debug.rewritten_query = rewritten
 
-        rewritten_chunks = self._retrieve_internal(rewritten, limit, debug=debug)
+        rewritten_chunks = self._retrieve_internal(
+            rewritten,
+            limit,
+            source_hint_urls=source_hint_urls,
+            debug=debug,
+        )
         rewritten_sim = (
             rewritten_chunks[0].vector_similarity if rewritten_chunks else None
         )
@@ -402,25 +474,37 @@ class HybridRetriever:
                     adopt_rewrite = True
 
         if adopt_rewrite and rewritten_chunks:
-            if rewritten_chunks[0].source_url == target_url:
+            pinned_rewrite = self._pin_target_url(rewritten_chunks, target_url)
+            if pinned_rewrite and pinned_rewrite[0].source_url == target_url:
                 debug.adopted_path = "kb_rewrite"
                 debug.context_token_estimate = sum(
-                    item.token_count for item in rewritten_chunks
+                    item.token_count for item in pinned_rewrite
                 )
                 self.last_debug = debug
-                return RetrievalResult(chunks=rewritten_chunks, debug=debug)
+                return RetrievalResult(chunks=pinned_rewrite, debug=debug)
 
         boosted_chunks = self._retrieve_internal(
             query,
             limit,
             boost_target_url=target_url,
+            source_hint_urls=source_hint_urls,
             debug=debug,
         )
         if boosted_chunks:
+            pinned = self._pin_target_url(boosted_chunks, target_url)
+            # Exact alias / high-confidence route: hard-pin target even if boost
+            # alone left it at rank 2+.
+            if route_decision.reason == "exact_term" or (
+                route_decision.similarity is not None
+                and route_decision.similarity >= 0.95
+            ):
+                hard = self._load_target_chunk(target_url)
+                if hard is not None:
+                    pinned = self._merge_pin_front(pinned or boosted_chunks, hard)
             debug.adopted_path = "kb_boost"
             debug.target_url_boosted = True
             self.last_debug = debug
-            return RetrievalResult(chunks=boosted_chunks, debug=debug)
+            return RetrievalResult(chunks=pinned or boosted_chunks, debug=debug)
 
         if adopt_rewrite and rewritten_chunks:
             debug.adopted_path = "kb_rewrite"
@@ -430,6 +514,59 @@ class HybridRetriever:
         debug.adopted_path = "original"
         self.last_debug = debug
         return RetrievalResult(chunks=original_chunks, debug=debug)
+
+    def _load_target_chunk(self, target_url: str) -> RetrievedChunk | None:
+        if not target_url:
+            return None
+        for chunk in self.chunks_by_id.values():
+            url = chunk["source_url"]
+            if url == target_url or url.startswith(target_url.rstrip("/") + "/"):
+                return RetrievedChunk(
+                    chunk_id=chunk["chunk_id"],
+                    title=chunk["title"],
+                    source_url=chunk["source_url"],
+                    source_file=chunk["source_file"],
+                    page_index=int(chunk["page_index"]),
+                    line_start=int(chunk["line_start"]),
+                    product=chunk["product"],
+                    chunk_index=int(chunk["chunk_index"]),
+                    chunk_count=int(chunk["chunk_count"]),
+                    token_count=int(chunk["token_count"]),
+                    text=chunk["text"],
+                    score=10.0,
+                    vector_similarity=0.99,
+                )
+        return None
+
+    @staticmethod
+    def _merge_pin_front(
+        chunks: list[RetrievedChunk], pinned: RetrievedChunk
+    ) -> list[RetrievedChunk]:
+        merged = [pinned]
+        seen = {pinned.chunk_id, pinned.source_url}
+        for chunk in chunks:
+            if chunk.chunk_id in seen or chunk.source_url in seen:
+                continue
+            merged.append(chunk)
+            seen.add(chunk.chunk_id)
+            seen.add(chunk.source_url)
+        return merged
+
+    def _pin_target_url(
+        self, chunks: list[RetrievedChunk], target_url: str
+    ) -> list[RetrievedChunk]:
+        if not chunks or not target_url:
+            return chunks
+        for index, chunk in enumerate(chunks):
+            url = chunk.source_url
+            if url == target_url or url.startswith(target_url.rstrip("/") + "/"):
+                if index == 0:
+                    return chunks
+                return [chunk, *[item for i, item in enumerate(chunks) if i != index]]
+        hard = self._load_target_chunk(target_url)
+        if hard is None:
+            return chunks
+        return self._merge_pin_front(chunks, hard)
 
     def retrieve(
         self,

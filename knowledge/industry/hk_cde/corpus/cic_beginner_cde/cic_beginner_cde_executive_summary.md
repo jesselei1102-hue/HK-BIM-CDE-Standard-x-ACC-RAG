@@ -1,11 +1,17 @@
 ---
-source_file: output/HK Standard/CIC Beginner Guide-Adoption of CDE.pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC Beginner Guide-Adoption of CDE.pdf
 doc_id: cic_beginner_cde
 section_id: cic_beginner_cde_executive_summary
 title: Executive Summary
 page_start: 7
 page_end: 7
 authority: CIC CDE Beginner Guide §Executive
+authority_type: standard
+normative_weight: recommended
+discipline: general
+lifecycle_stage: project
+publication_year: 2021
+software: null
 priority: high
 language: en
 source_url: hk_cde://cic_beginner_cde/cic_beginner_cde_executive_summary

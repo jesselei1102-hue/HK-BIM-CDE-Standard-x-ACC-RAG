@@ -1,0 +1,131 @@
+---
+source_file: output/HK Standard/CIC BIM Standard/CIC BIM Standards for Preparation
+  of Statutory Plan Submissions Dec2020/CIC BIM Standards for Preparation of Statutory
+  Plan Submissions Dec2020.pdf
+doc_id: cic_statutory_plans_2020
+section_id: cic_statutory_plans_2020_appendix_a
+title: Appendix A
+page_start: 51
+page_end: 54
+authority: CIC Statutory Plan Submissions 2020 §Appendix
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
+publication_year: 2020
+software: null
+priority: high
+language: en
+source_url: hk_cde://cic_statutory_plans_2020/cic_statutory_plans_2020_appendix_a
+---
+
+# Appendix A
+
+39 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Appendix A 
+Sample Drawings 
+-Software 1 
+-Software 2 
+ 
+ 
+ 
+ 
+(Disclaimer: The sample drawings shown on this Standards  are for reference only . They 
+consist of 2D representation of 3D Objects and manual input of essential 2D annotation for 
+the completion of drawing. Sample drawings are provided to demonstrate how the Standard 
+templates and User Guides should be used to build 3D models for generation of 2D 
+submission plans. The Sample drawings do not represent the complete set of submission 
+drawings required for BA’s approval under the BO.  Essential information/details for 
+submission of statutory plans should refer to relevant Code of Practice, PNAPs including but 
+not limited to PNAPs ADM-8, ADM-9, ADM19 and ADV-33 and Circular Letters issued by BA, 
+and complied with BOs and subsidiary regulations.)
+
+40 
+ 
+List of Sample Drawings  
+Drawing number Drawing title 
+S001 GENERAL NOTES FOR SUPERSTRUCTURE 
+S002 TYP FLOOR FRAMING PLAN 
+S003 BEAM R.C. SCHEDULE 
+S004 BEAM R.C. DETAIL 
+S005 COLUMN R.C. DETAIL 
+S006 WALL R.C. DETAIL (1 OF 2) 
+S007 WALL R.C. DETAIL (Schedule) 
+S008 WALL R.C. DETAIL (2 OF 2) 
+S009 SLAB R.C. DETAIL 
+S010 STAIRCASE R.C. DETAIL 
+S011 WATER TANK R.C. DETAIL 
+R001 STEEL STRUCTURE BLOCK PLAN AND GENERAL NOTES 
+R002 STEEL STRUCTURE FLOOR PLAN 
+R003 STEEL STRUCTURE DETAIL 
+R004 STEEL STRUCTURAL SECTIONS 
+C001 CURTAIN WALL GENERAL NOTES 
+C002 CURTAIN WALL LAYOUT PART PLAN 
+C003 CURTAIN WALL CAST-IN LAYOUT PART 
+ C004 EMBED DETAIL 
+C005 CURTAIN WALL ELEVATIONS AND SECTIONS 
+P001 GENERAL NOTES FOR FOUNDATION 
+P002 PILING LAYOUT PLAN 
+P003 PILING SECTION A & B 
+P004 PILING SECTION C 
+P005 COLUMN WALL LOADING PLAN 
+P006 COLUMN WALL LOADING SCHEDULE 
+P007 LOADING INTENSITY PLAN 
+P008 PILE LOAD SCHEDULE 
+P009 FOUNDATION MONITORING PLAN
+
+41 
+ 
+Drawing number Drawing title 
+P010 PILE CAP REINFORCEMENT LAYOUT PLAN (1 OF 2) 
+P010A PILE CAP REINFORCEMENT LAYOUT PLAN (2 OF 2) 
+P011 COLUMN AND WALL STARTER DETAILS 
+P012 TIE BEAM DETAILS & SCHEUDLE 
+P013 PILE CAP LAYOUT PLAN 
+P014 GENERAL NOTES FOR PILE CAP 
+D001 GENERAL NOTES FOR DEMOLITION 
+D002 DEMOLITION PLAN - EXISTING G/F, 1/F FRAMING PLAN 
+D003 DEMOLITION DETAILS (BY HAND HELD TOOLS) 
+D004 DETAIL FOR DEMOLITION WORKS (1/2) 
+D005 DETAIL FOR DEMOLITION WORKS (2/2) 
+H001 HOARDING LAYOUT PLAN 
+H002 HOARDING TYPICAL DETAILS 
+E001 EXCAVATION & LATERAL SUPPORT GENERAL NOTES 
+E002 EXCAVATION & LATERAL SUPPORT LAYOUT PLAN 
+E003 EXCAVATION & LATERAL SUPPORT SECTIONS (1 OF 2) 
+E004 EXCAVATION & LATERAL SUPPORT SECTIONS (2 OF 2) 
+E005 EXCAVATION & LATERAL SUPPORT CONSTRUCTION 
+SEQUENCE (1 OF 2) 
+E006 EXCAVATION & LATERAL SUPPORT CONSTRUCTION 
+SEQUENCE (2 OF 2) 
+E007 EXCAVATION & LATERAL SUPPORT ELEVATION 
+E008 EXCAVATION & LATERAL SUPPORT WORKS MONITORING 
+PLAN 
+E009 EXCAVATION & LATERAL SUPPORT WORKS PUMPING TEST 
+SETTING OUT PLAN 
+G001 PROPOSED GROUND INVESTIGATION PLAN 
+ T001 SITE FORMATION BLOCK PLAN 
+T002 SITE FORMATION LAYOUT PLAN 
+T003 SITE FORMATION SECTIONS 
+M001 GENERAL NOTES FOR DRAINAGE 
+M002 SCHEMATIC DIAGRAM OF DRAINAGE SYSTEM
+
+42 
+ 
+Drawing number Drawing title 
+M003 DRAINAGE LAYOUT PLAN FOR TYPICAL FLOOR (NEW 
+APPROACH) 
+M003A DRAINAGE LAYOUT PLAN FOR TYPICAL FLOOR (TRADITIONAL 
+STYLE) 
+M004 DRAINAGE INSTALLATION DETAILS 
+M005 DRAINAGE SCHEDULES

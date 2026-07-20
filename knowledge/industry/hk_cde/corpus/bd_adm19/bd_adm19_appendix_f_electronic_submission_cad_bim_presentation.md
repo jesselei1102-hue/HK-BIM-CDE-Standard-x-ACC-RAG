@@ -6,6 +6,10 @@ title: Appendix F — Electronic Submission / CAD-BIM Presentation
 page_start: 19
 page_end: 27
 authority: BD PNAP ADM-19 §Appendix F — Electronic Submission / CAD-BIM Presentation
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
 priority: high
 language: en
 source_url: hk_cde://bd_adm19/bd_adm19_appendix_f_electronic_submission_cad_bim_presentation

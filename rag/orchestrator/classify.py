@@ -17,7 +17,7 @@ _INDUSTRY_PATTERNS = (
     re.compile(r"(?<![A-Za-z])OIR(?![A-Za-z])", re.I),
     re.compile(r"(?<![A-Za-z])AIR(?![A-Za-z])", re.I),
     re.compile(r"(?<![A-Za-z])EIR(?![A-Za-z])", re.I),
-    re.compile(r"Gateway", re.I),
+    re.compile(r"Gateway|网关|網關", re.I),
     re.compile(r"Harmonisation|Harmonization", re.I),
     re.compile(r"工务"),
     re.compile(r"信息容器"),
@@ -29,9 +29,22 @@ _INDUSTRY_PATTERNS = (
     re.compile(r"ADM-?\s*19|ADV-?\s*34", re.I),
     re.compile(r"屋宇署|地政总署|地政總署"),
     re.compile(r"法定提交|法定图则|法定圖則|GBP"),
+    re.compile(r"statutory\s+plan|statutory\s+user\s+guide|Building\s+Department", re.I),
     re.compile(r"BIM\s*(and|&)?\s*GIS|BIM-GIS", re.I),
     re.compile(r"进行中"),
     re.compile(r"发布区|共享区|归档"),
+    re.compile(r"PAS\s*128|underground\s+utilit|地下管线|地下管線", re.I),
+    re.compile(r"\bMEP\b|机电|機械電氣", re.I),
+    re.compile(r"BIM\s*object|BIM\s*对象|BIM\s*物件", re.I),
+    re.compile(r"BIM\s*Dictionary|术语表|詞典|词典", re.I),
+    re.compile(r"AM/?FM|case\s*sharing|Zero\s*Carbon\s*Park|(?<![A-Za-z])ZCP(?![A-Za-z])", re.I),
+    re.compile(
+        r"(?:Revit|ArchiCAD|Archi\s*CAD|Civil\s*3D|Tekla).{0,40}"
+        r"(?:statutory|user\s*guide|submission)|"
+        r"(?:statutory|user\s*guide|submission).{0,40}"
+        r"(?:Revit|ArchiCAD|Archi\s*CAD|Civil\s*3D|Tekla)",
+        re.I,
+    ),
     re.compile(
         r"港标|港標|"
         r"香港标准|香港標準|"
@@ -44,6 +57,12 @@ _INDUSTRY_PATTERNS = (
         r"BIM\s*standard|BIM\s*标准|BIM\s*標準",
         re.I,
     ),
+)
+
+_OUT_OF_DOMAIN_PATTERNS = (
+    re.compile(r"\bweather\b|天气|天氣|tomorrow\s+for\s+BIM", re.I),
+    re.compile(r"\bpoem\b|写一首|寫一首|作诗|作詩", re.I),
+    re.compile(r"tax\s+rate\s+for\s+2099|quantum\s+twin|ZZ-99", re.I),
 )
 
 _PRODUCT_PATTERNS = (
@@ -267,7 +286,7 @@ _CAPABILITY_PRIORITY: tuple[str, ...] = (
 
 @dataclass(frozen=True)
 class IntentDecision:
-    track: str  # docs | hk_cde | playbook | hybrid
+    track: str  # docs | hk_cde | playbook | hybrid | out_of_domain
     capability: str | None
     product_query: str | None
     industry_query: str | None
@@ -297,6 +316,13 @@ def has_playbook_signal(query: str) -> bool:
     if not text:
         return False
     return any(pattern.search(text) for pattern in _PLAYBOOK_PATTERNS)
+
+
+def has_out_of_domain_signal(query: str) -> bool:
+    text = query.strip()
+    if not text:
+        return False
+    return any(pattern.search(text) for pattern in _OUT_OF_DOMAIN_PATTERNS)
 
 
 def detect_capability(query: str) -> CapabilityTemplate | None:
@@ -434,6 +460,20 @@ def classify_intent(query: str) -> IntentDecision:
     industry = has_industry_signal(text)
     playbook = has_playbook_signal(text)
     capability = detect_capability(text)
+    out_of_domain = has_out_of_domain_signal(text)
+
+    if out_of_domain and not product:
+        return IntentDecision(
+            track="out_of_domain",
+            capability=None,
+            product_query=None,
+            industry_query=None,
+            playbook_query=None,
+            has_product_signal=False,
+            has_industry_signal=industry,
+            has_playbook_signal=False,
+            reason="out_of_domain",
+        )
 
     if product and industry:
         if capability:

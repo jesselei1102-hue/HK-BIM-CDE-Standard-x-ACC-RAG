@@ -6,6 +6,10 @@ title: BIM Submissions — General Guidelines
 page_start: 1
 page_end: 2
 authority: BD PNAP ADV-34 §BIM Submissions — General Guidelines
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
 priority: high
 language: en
 source_url: hk_cde://bd_adv34/bd_adv34_bim_submissions_general_guidelines

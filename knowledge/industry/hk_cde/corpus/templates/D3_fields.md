@@ -1,10 +1,12 @@
 ---
+authority_type: template
+normative_weight: reference
 source_file: output/HK Standard/CIC BIM Standards General 2024/D3_CIC BIM_PIR_Template.docx
 doc_id: template_d3
 section_id: d3_fields
 title: Appendix D3 Field Reference (PIR)
 authority: CICBIMS 2024 Appendix D3
-priority: high
+priority: normal
 language: en
 ---
 

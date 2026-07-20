@@ -6,6 +6,10 @@ title: Enquiry and Feedback
 page_start: 13
 page_end: 14
 authority: LandsD BIM-GIS Guidelines Jun 2023 §Enquiry and Feedback
+authority_type: statutory
+normative_weight: mandatory
+discipline: gis
+lifecycle_stage: statutory
 priority: normal
 language: en
 source_url: hk_cde://landsd_bim_gis/landsd_bim_gis_enquiry_and_feedback

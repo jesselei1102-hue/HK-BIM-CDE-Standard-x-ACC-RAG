@@ -16,6 +16,7 @@ import streamlit as st
 
 from rag.answer_language import HYBRID_SECTION_HEADERS, resolve_answer_language
 from rag.config import get_config
+from rag.conversation import ConversationSession
 from rag.generation import format_sources
 from rag.industry_hk.config import get_industry_hk_config
 from rag.orchestrator.merge import format_hybrid_sources
@@ -378,6 +379,11 @@ def main() -> None:
     _inject_css()
 
     docs_config = get_config()
+    if "conversation" not in st.session_state:
+        st.session_state.conversation = ConversationSession()
+    if "chat_messages" not in st.session_state:
+        st.session_state.chat_messages = []
+
     with st.sidebar:
         st.markdown("### Controls")
         corpus = st.selectbox(
@@ -396,55 +402,123 @@ def main() -> None:
         no_generate = st.checkbox("Retrieve only (no LLM)", value=False)
         show_debug = st.checkbox("Show retrieval debug", value=False)
         show_context = st.checkbox("Show chunk snippets", value=False)
+        if st.button("New conversation", use_container_width=True):
+            st.session_state.conversation = ConversationSession()
+            st.session_state.chat_messages = []
+            st.rerun()
         st.markdown("---")
         st.caption(
             f"LLM · `{docs_config.models.generation_model}`  \n"
-            f"Embed · `{docs_config.models.embedding_model}`"
+            f"Embed · `{docs_config.models.embedding_model}`  \n"
+            f"Turns · `{len(st.session_state.conversation.turns)}` (session memory only)"
         )
         if corpus == "hybrid":
             lang_key = answer_lang if answer_lang in HYBRID_SECTION_HEADERS else "en"
             expected = HYBRID_SECTION_HEADERS[lang_key]
             st.caption("Hybrid sections: " + " · ".join(expected))
+        st.caption(
+            "Follow-ups re-retrieve every turn. Prior answers are untrusted context only."
+        )
 
     st.markdown('<div class="hero-kicker">Local grounded RAG</div>', unsafe_allow_html=True)
     st.markdown(f'<div class="hero-title">{PAGE_TITLE}</div>', unsafe_allow_html=True)
     st.markdown(
         '<div class="hero-sub">'
         "Three-track grounding: Hong Kong BIM/CDE standards · ACC×HK playbook · Autodesk Docs. "
-        "Ask a question — hybrid mode returns four aligned sections with sources."
+        "Multi-turn follow-ups rewrite the question, then re-retrieve this turn's evidence."
         "</div>",
         unsafe_allow_html=True,
     )
 
-    if "question" not in st.session_state:
-        st.session_state.question = EXAMPLES[0]
-
     example_cols = st.columns(len(EXAMPLES))
     for col, example in zip(example_cols, EXAMPLES):
         if col.button(example, use_container_width=True):
-            st.session_state.question = example
+            st.session_state["_pending_question"] = example
 
-    question = st.text_area(
-        "Question",
-        height=88,
-        key="question",
-        placeholder="e.g. How to set up ACC folders to HK CDE standards",
-    )
-    ask = st.button("Ask", type="primary", use_container_width=False)
+    for message in st.session_state.chat_messages:
+        role = message.get("role", "assistant")
+        with st.chat_message(role):
+            if role == "user":
+                st.markdown(message.get("content", ""))
+            else:
+                payload = message
+                result = payload.get("result")
+                q = payload.get("question", "")
+                no_gen = payload.get("no_generate", False)
+                answer_text, source_lines, contexts = _collect_result_payload(
+                    result, no_generate=no_gen
+                )
+                rewritten = getattr(result.debug, "rewritten_query", None)
+                if rewritten and rewritten != q:
+                    st.caption(f"Standalone retrieval query · {rewritten}")
+                _render_meta(result, answer_lang, q)
+                if result.track == "hybrid" and not no_gen:
+                    _render_hybrid_sections(answer_text)
+                else:
+                    st.markdown(answer_text)
+                with st.expander("Sources", expanded=False):
+                    _render_sources(source_lines)
+                warnings = result.debug.validation_warnings or []
+                if warnings:
+                    with st.expander(f"Validation notes ({len(warnings)})"):
+                        for w in warnings:
+                            st.text(w)
+                if show_debug:
+                    with st.expander("Orchestrator debug", expanded=False):
+                        st.code(
+                            format_orchestrator_debug(result.debug), language="text"
+                        )
+                if show_context and contexts:
+                    with st.expander(
+                        f"Retrieved chunks ({len(contexts)})", expanded=False
+                    ):
+                        for index, chunk in enumerate(contexts, start=1):
+                            sim = (
+                                f"{chunk.vector_similarity:.3f}"
+                                if chunk.vector_similarity is not None
+                                else "-"
+                            )
+                            st.markdown(
+                                f"**[{index}]** score=`{chunk.score:.4f}` "
+                                f"sim=`{sim}`  \n"
+                                f"{chunk.title}  \n"
+                                f"`{chunk.source_url}`"
+                            )
+                            st.text(
+                                chunk.text[:700]
+                                + ("…" if len(chunk.text) > 700 else "")
+                            )
 
-    if ask and question.strip():
-        orchestrator = get_orchestrator()
-        force = None if corpus == "auto" else corpus
-        q = question.strip()
+    pending = st.session_state.pop("_pending_question", None)
+    prompt = st.chat_input("Ask a question or follow up…")
+    user_text = pending or prompt
+    if not user_text:
+        if not st.session_state.chat_messages:
+            st.info("Pick an example or type a question to start a multi-turn session.")
+        return
+
+    q = user_text.strip()
+    st.session_state.chat_messages.append({"role": "user", "content": q})
+    with st.chat_message("user"):
+        st.markdown(q)
+
+    orchestrator = get_orchestrator()
+    force = None if corpus == "auto" else corpus
+    conversation: ConversationSession = st.session_state.conversation
+
+    with st.chat_message("assistant"):
         with st.status("Working on your question…", expanded=True) as status:
-            status.write("1/2 Retrieving HK · Playbook · Docs sources…")
+            status.write("1/2 Retrieving with history-aware standalone query…")
             t0 = time.perf_counter()
+            # Preview must not record a turn (same user message asked twice).
             preview = orchestrator.ask(
                 q,
                 force_track=force,
                 top_k=top_k,
                 no_generate=True,
                 answer_lang=answer_lang,
+                session=conversation,
+                record_turn=False,
             )
             n_src = 0
             if preview.merged is not None:
@@ -456,6 +530,9 @@ def main() -> None:
             elif preview.track == "docs":
                 n_src = len(preview.chunks_docs)
             retrieve_s = time.perf_counter() - t0
+            rewritten = preview.debug.rewritten_query
+            if rewritten and rewritten != q:
+                status.write(f"Standalone query: {rewritten}")
             status.write(f"Retrieved {n_src} source(s) in {retrieve_s:.1f}s.")
 
             if no_generate:
@@ -477,67 +554,42 @@ def main() -> None:
                     top_k=top_k,
                     no_generate=False,
                     answer_lang=answer_lang,
+                    session=conversation,
+                    record_turn=True,
                 )
                 gen_s = time.perf_counter() - t1
                 total = retrieve_s + gen_s
                 model = result.answer.model if result.answer else "?"
                 status.update(
-                    label=f"Done · retrieve {retrieve_s:.1f}s · generate {gen_s:.1f}s · total {total:.1f}s · {model}",
+                    label=(
+                        f"Done · retrieve {retrieve_s:.1f}s · generate {gen_s:.1f}s · "
+                        f"total {total:.1f}s · {model}"
+                    ),
                     state="complete",
                 )
 
-        st.session_state["last_result"] = result
-        st.session_state["last_question"] = q
-        st.session_state["last_no_generate"] = no_generate
-
-    result = st.session_state.get("last_result")
-    if result is None:
-        st.info("Pick an example or type a question, then click Ask.")
-        return
-
-    q = st.session_state.get("last_question", "")
-    no_gen = st.session_state.get("last_no_generate", False)
-    answer_text, source_lines, contexts = _collect_result_payload(result, no_generate=no_gen)
-
-    st.markdown(f"**Q** · {q}")
-    _render_meta(result, answer_lang, q)
-
-    left, right = st.columns([1.55, 1], gap="large")
-    with left:
-        st.subheader("Answer")
-        if result.track == "hybrid" and not no_gen:
+        answer_text, source_lines, contexts = _collect_result_payload(
+            result, no_generate=no_generate
+        )
+        rewritten = getattr(result.debug, "rewritten_query", None)
+        if rewritten and rewritten != q:
+            st.caption(f"Standalone retrieval query · {rewritten}")
+        _render_meta(result, answer_lang, q)
+        if result.track == "hybrid" and not no_generate:
             _render_hybrid_sections(answer_text)
         else:
             st.markdown(answer_text)
+        with st.expander("Sources", expanded=True):
+            _render_sources(source_lines)
 
-        warnings = result.debug.validation_warnings or []
-        if warnings:
-            with st.expander(f"Validation notes ({len(warnings)})"):
-                for w in warnings:
-                    st.text(w)
-
-    with right:
-        st.subheader("Sources")
-        _render_sources(source_lines)
-
-    if show_debug:
-        with st.expander("Orchestrator debug", expanded=False):
-            st.code(format_orchestrator_debug(result.debug), language="text")
-
-    if show_context and contexts:
-        with st.expander(f"Retrieved chunks ({len(contexts)})", expanded=False):
-            for index, chunk in enumerate(contexts, start=1):
-                sim = (
-                    f"{chunk.vector_similarity:.3f}"
-                    if chunk.vector_similarity is not None
-                    else "-"
-                )
-                st.markdown(
-                    f"**[{index}]** score=`{chunk.score:.4f}` sim=`{sim}`  \n"
-                    f"{chunk.title}  \n"
-                    f"`{chunk.source_url}`"
-                )
-                st.text(chunk.text[:700] + ("…" if len(chunk.text) > 700 else ""))
+    st.session_state.chat_messages.append(
+        {
+            "role": "assistant",
+            "question": q,
+            "result": result,
+            "no_generate": no_generate,
+        }
+    )
 
 
 if __name__ == "__main__":

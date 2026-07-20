@@ -6,6 +6,10 @@ title: Staged Submission of Essential Information on GBP
 page_start: 3
 page_end: 3
 authority: BD PNAP ADM-19 §Staged Submission of Essential Information on GBP
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
 priority: high
 language: en
 source_url: hk_cde://bd_adm19/bd_adm19_staged_submission_of_essential_information_on_gbp

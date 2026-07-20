@@ -18,6 +18,87 @@ _SECTION_FLEX = (
 _CITATION_RE = re.compile(r"\[(\d+)\]")
 _GAP_RE = re.compile(r"缺口|Gap\s*[:：]", re.I)
 
+_HOWTO_QUESTION_RE = re.compile(
+    r"(如何|怎么|怎樣|怎样|配置|设置|設定|建立|创建|启用|啟用|权限|權限|"
+    r"文件夹|資料夾|审批|審批|落地|实施|實施|排障|不能|失败|失敗|"
+    r"how\s+to|configure|set\s+up|setup|create|enable|permission|"
+    r"folder|workflow|implement|troubleshoot|fix|cannot|fail)",
+    re.I,
+)
+_FACTOID_QUESTION_RE = re.compile(
+    r"(是什么|是什麼|什么是|什麼是|定义|定義|meaning of|what\s+is|"
+    r"最大|上限|limit|size|多大|多少|which\s+browsers?)",
+    re.I,
+)
+_ACTIONABLE_RE = re.compile(
+    r"(?m)^(?:\s*[-*•]|\s*\d+[.)、])\s+|"
+    r"步骤|步驟|前置|条件|條件|验证|驗證|检查|檢查|确认|確認|"
+    r"→|->|Docs\s*[→>]|Files|Project Files|01_WIP|Shared|Published|"
+    r"click|select|create|enable|set|open|navigate|"
+    r"打开|開啟|进入|進入|点击|點擊|选择|選擇|创建|启用|啟用",
+    re.I,
+)
+_REFUSAL_RE = re.compile(
+    r"根据现有资料无法确认|根據現有資料無法確認|Cannot confirm from available materials",
+    re.I,
+)
+
+
+def looks_like_howto_question(question: str) -> bool:
+    text = question or ""
+    if _FACTOID_QUESTION_RE.search(text) and not _HOWTO_QUESTION_RE.search(text):
+        return False
+    return bool(_HOWTO_QUESTION_RE.search(text))
+
+
+def has_actionable_guidance(answer: str) -> bool:
+    text = answer or ""
+    if not text.strip() or _REFUSAL_RE.fullmatch(text.strip()):
+        return False
+    if _ACTIONABLE_RE.search(text):
+        return True
+    # Hybrid answers with multiple structured sections and citations count.
+    if text.count("## ") >= 3 and _CITATION_RE.search(text):
+        return True
+    return False
+
+
+def check_answer_guidance(
+    question: str,
+    answer: str,
+    *,
+    require_howto: bool | None = None,
+) -> ValidationIssue | None:
+    """Soft check: howto/config answers should include actionable guidance.
+
+    Length is only an auxiliary signal; fixed target length is not required.
+    """
+    text = (answer or "").strip()
+    if not text:
+        return None
+    if _REFUSAL_RE.search(text) and len(text) < 120:
+        return None
+    needs_howto = (
+        looks_like_howto_question(question)
+        if require_howto is None
+        else require_howto
+    )
+    if not needs_howto:
+        return None
+    if has_actionable_guidance(text):
+        return None
+    # Auxiliary: extremely short howto answers almost never solve the task.
+    char_hint = f"（当前约 {len(text)} 字）" if len(text) < 160 else ""
+    return ValidationIssue(
+        code="insufficient_guidance",
+        message=(
+            "操作/配置/实施类问题缺少可执行步骤、条件或验证方式"
+            f"{char_hint}"
+        ),
+        severity="soft",
+    )
+
+
 # 能力 → 产品 Docs 页应匹配的关键词（title+url+text 前缀）
 _CAPABILITY_DOCS_KEYWORDS: dict[str, tuple[str, ...]] = {
     "folder": (
@@ -211,6 +292,7 @@ def validate_hybrid_answer(
     merged: MergedContexts,
     *,
     capability: str | None = None,
+    question: str | None = None,
 ) -> ValidationResult:
     issues: list[ValidationIssue] = []
     sections = _split_sections(answer)
@@ -263,6 +345,34 @@ def validate_hybrid_answer(
                 code="product_wrong_track",
                 message=f"产品操作段引用了非 Docs 编号：{bad_prod}",
                 severity="hard",
+            )
+        )
+
+    # Soft authority guard: case-study / software-guide chunks must not be
+    # phrased as mandatory territory-wide requirements in Standards section.
+    hk_blob = "\n".join(
+        chunk.text[:500] for chunk in (merged.industry_chunks or [])
+    ).lower()
+    std_text = sections.get("standards") or ""
+    if any(
+        token in hk_blob
+        for token in (
+            "authority_type: case_study",
+            "authority_type: terminology",
+            "authority_type: software_guide",
+            "normative_weight: reference",
+            "normative_weight: operational",
+        )
+    ) and re.search(
+        r"mandatory|binding standard|所有香港项目必须|必须照搬",
+        std_text,
+        re.I,
+    ):
+        issues.append(
+            ValidationIssue(
+                code="authority_overclaim",
+                message="标准要求段把案例/术语/软件指南写成了强制要求",
+                severity="soft",
             )
         )
 
@@ -325,6 +435,14 @@ def validate_hybrid_answer(
                     severity="soft",
                 )
             )
+
+    guidance = check_answer_guidance(
+        question or "",
+        answer,
+        require_howto=True if capability else None,
+    )
+    if guidance is not None:
+        issues.append(guidance)
 
     hard = [item for item in issues if item.severity == "hard"]
     return ValidationResult(ok=not hard, issues=issues)

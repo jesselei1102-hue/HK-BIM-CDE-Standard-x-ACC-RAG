@@ -7,7 +7,13 @@ title: BIM OBJECT FILES
 page_start: 15
 page_end: 25
 authority: DEVB BIM Harmonisation v3.0 §BIM
-priority: normal
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2023
+software: null
+priority: high
 language: en
 source_url: hk_cde://devb_harmonisation_v3/devb_harmonisation_v3_bim_object_files
 ---

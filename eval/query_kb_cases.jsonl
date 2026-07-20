@@ -14,7 +14,7 @@
 {"short_query": "活动日志", "expected_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Project_Activity_Log", "should_trigger_kb": true}
 {"short_query": "如何设置文件夹权限", "expected_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Folder_Permissions", "should_trigger_kb": false}
 {"short_query": "Autodesk Docs 中单个文件最大可以多大？", "expected_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Product_Limitations", "should_trigger_kb": false}
-{"short_query": "What browsers are supported for Autodesk Construction Cloud?", "expected_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=System_Requirements_ACC", "should_trigger_kb": false}
+{"short_query": "What browsers are supported for Autodesk Construction Cloud?", "expected_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=System_Requirements_ACC", "should_trigger_kb": true}
 {"short_query": "如何在 Docs 里创建 transmittal？", "expected_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Create_Transmittal", "acceptable_urls": ["https://help.autodesk.com/view/DOCS/ENU/?guid=Transmittals"], "should_trigger_kb": false}
 {"short_query": "approval workflow", "expected_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Reviews_Create_Edit", "should_trigger_kb": true}
 {"short_query": "transmittal", "expected_url": "https://help.autodesk.com/view/DOCS/ENU/?guid=Create_Transmittal", "should_trigger_kb": true}

@@ -7,6 +7,12 @@ title: Appendix IX - Sample Project-Specific Codes for Naming (v3.0)
 page_start: 130
 page_end: 141
 authority: DEVB BIM Harmonisation v3.0 §Appendix
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2023
+software: null
 priority: high
 language: en
 source_url: hk_cde://devb_harmonisation_v3/devb_harmonisation_v3_appendix_ix_sample_project_specific_codes_for_naming_v3_0

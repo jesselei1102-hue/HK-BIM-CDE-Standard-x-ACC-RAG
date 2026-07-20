@@ -1,6 +1,6 @@
 # Eval Results
 
-Generated: `2026-07-14T07:02:18.881957+00:00`
+Generated: `2026-07-19T16:39:27.311096+00:00`
 
 Baseline proof that **hybrid** covers Docs + HK CDE + Playbook on cross-domain cases, while forced single-track modes cannot.
 
@@ -10,9 +10,11 @@ Baseline proof that **hybrid** covers Docs + HK CDE + Playbook on cross-domain c
 |-------|--------|------|
 | `query_kb` | **PASS** | 0 |
 | `hk_cde` | **PASS** | 0 |
+| `hk_cde_coverage` | **PASS** | 0 |
+| `hk_cde_requirements` | **PASS** | 0 |
+| `hk_zcp` | **PASS** | 0 |
 | `playbook` | **PASS** | 0 |
 | `hybrid` | **PASS** | 0 |
-| `hybrid_vs_single` | **PASS** | 0 |
 
 ## Hybrid vs single-track (hybrid expect cases)
 
@@ -81,7 +83,7 @@ Cases: **6** (`eval/hybrid_cases.jsonl`)
 [OK] [KB✓] 上传
        expected: https://help.autodesk.com/view/DOCS/ENU/?guid=Upload_files
        got:      https://help.autodesk.com/view/DOCS/ENU/?guid=Upload_files
-       path:     kb_boost sim=0.5032068490982056 kb=upload_files
+       path:     kb_rewrite sim=0.5032068490982056 kb=upload_files
 [OK] [KB✓] 标记
        expected: https://help.autodesk.com/view/DOCS/ENU/?guid=Markups_Files_Docs
        got:      https://help.autodesk.com/view/DOCS/ENU/?guid=Markups_Files_Docs
@@ -93,7 +95,7 @@ Cases: **6** (`eval/hybrid_cases.jsonl`)
 [OK] [KB✓] 活动日志
        expected: https://help.autodesk.com/view/DOCS/ENU/?guid=Project_Activity_Log
        got:      https://help.autodesk.com/view/DOCS/ENU/?guid=Project_Activity_Log
-       path:     kb_boost sim=0.502344012260437 kb=activity_log
+       path:     kb_rewrite sim=0.502344012260437 kb=activity_log
 [OK] [KB✓] 如何设置文件夹权限
        expected: https://help.autodesk.com/view/DOCS/ENU/?guid=Folder_Permissions
        got:      https://help.autodesk.com/view/DOCS/ENU/?guid=Folder_Permissions
@@ -105,7 +107,7 @@ Cases: **6** (`eval/hybrid_cases.jsonl`)
 [OK] [KB✓] What browsers are supported for Autodesk Construction Cloud?
        expected: https://help.autodesk.com/view/DOCS/ENU/?guid=System_Requirements_ACC
        got:      https://help.autodesk.com/view/DOCS/ENU/?guid=System_Requirements_ACC
-       path:     original sim=0.7171584367752075 kb=-
+       path:     kb_boost sim=0.82891845703125 kb=supported_browsers
 [OK] [KB✓] 如何在 Docs 里创建 transmittal？
        expected: https://help.autodesk.com/view/DOCS/ENU/?guid=Create_Transmittal
        got:      https://help.autodesk.com/view/DOCS/ENU/?guid=Transmittals
@@ -117,7 +119,7 @@ Cases: **6** (`eval/hybrid_cases.jsonl`)
 [OK] [KB✓] transmittal
        expected: https://help.autodesk.com/view/DOCS/ENU/?guid=Create_Transmittal
        got:      https://help.autodesk.com/view/DOCS/ENU/?guid=Create_Transmittal
-       path:     kb_boost sim=0.5843551754951477 kb=create_transmittal
+       path:     kb_rewrite sim=0.6101997494697571 kb=create_transmittal
 ------------------------------------------------------------------------
 ShortQueryRecall@1: 20/20 (100.0%)
 KB触发准确率:       20/20 (100.0%)
@@ -129,9 +131,54 @@ KB触发准确率:       20/20 (100.0%)
 ```
 HK CDE Eval
   cases: 26
-  SectionRecall@1: 95.7% (22/23)
-  industry route accuracy: 82.6% (19/23)
+  SectionRecall@1: 100.0% (23/23)
+  industry route accuracy: 87.0% (20/23)
   docs false positive (industry steal): 0
+PASS
+```
+
+### `hk_cde_coverage`
+
+```
+HK CDE Coverage Eval
+  cases: 100 (in_scope=100, out_of_scope=0)
+  SectionRecall@1: 77.0% (77/100)
+  SectionRecall@3: 91.0% (91/100)
+  DocumentRecall@1: 100.0% (100/100)
+  DocumentRecall@3: 100.0% (100/100)
+  [bd_adm19] n=10 R@1=100.0% R@3=100.0% Doc@1=100.0%
+  [bd_adv34] n=2 R@1=100.0% R@3=100.0% Doc@1=100.0%
+  [cic_beginner_cde] n=20 R@1=90.0% R@3=100.0% Doc@1=100.0%
+  [cic_mep_2021] n=20 R@1=95.0% R@3=95.0% Doc@1=100.0%
+  [cic_object_guide_2021] n=9 R@1=77.8% R@3=77.8% Doc@1=100.0%
+  [cic_uu_2021] n=22 R@1=77.3% R@3=77.3% Doc@1=100.0%
+  [devb_harmonisation_v3] n=17 R@1=23.5% R@3=94.1% Doc@1=100.0%
+PASS
+```
+
+### `hk_cde_requirements`
+
+```
+HK CDE Requirements Eval
+  requirement cases: 40
+  source accuracy: 97.5% (39/40)
+  section accuracy: 95.0% (38/40)
+  key-fact retention: 97.5%
+  modality retention: 100.0%
+  authority retrieval accuracy: 100.0% (0/0; out_of_scope=4)
+  authority generation accuracy: 100.0% (0/0)
+  authority confusion accuracy: 100.0% (0/0; skipped_not_in_index=0)
+  negative route accuracy: 100.0%
+  out-of-domain accuracy: 100.0%
+PASS
+```
+
+### `hk_zcp`
+
+```
+HK ZCP Project-Config Eval
+  cases: 10
+  SectionRecall@3: 100.0% (10/10)
 PASS
 ```
 
@@ -150,27 +197,12 @@ PASS
 
 ```
 Hybrid Orchestrator Eval
-  cases: 12
-  intent accuracy: 100.0% (12/12)
-  DualRecall: 100.0% (6/6)
-  TripleRecall(+playbook): 100.0% (6/6)
+  cases: 14
+  intent accuracy: 100.0% (14/14)
+  capability accuracy: 100.0% (14/14)
+  DualRecall: 100.0% (7/7)
+  TripleRecall(+playbook): 100.0% (7/7)
   false hybrid (pure-track stolen): 0
-PASS
-```
-
-### `hybrid_vs_single`
-
-```
-Hybrid vs Single-Track Coverage
-  hybrid expect cases: 6
-  mode           docs   hk_cde   playbook  DualRecall  TripleRecall
-  docs       5/ 6 0/ 6 0/   6       0.0%         0.0%
-  hk_cde     0/ 6 6/ 6 0/   6       0.0%         0.0%
-  playbook   0/ 6 0/ 6 6/   6       0.0%         0.0%
-  hybrid     6/ 6 6/ 6 6/   6     100.0%       100.0%
-
-  Verdict: hybrid TripleRecall 100.0% vs best single-track 0.0%; hybrid DualRecall 100.0% vs best single-track 0.0%
-  wrote eval/results/hybrid_vs_single.json
 PASS
 ```
 

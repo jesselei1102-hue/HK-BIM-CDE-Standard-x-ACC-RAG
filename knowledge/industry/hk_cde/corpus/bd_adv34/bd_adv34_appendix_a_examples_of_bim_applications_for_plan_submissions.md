@@ -6,6 +6,10 @@ title: Appendix A — Examples of BIM Applications for Plan Submissions
 page_start: 3
 page_end: 4
 authority: BD PNAP ADV-34 §Appendix A — Examples of BIM Applications for Plan Submissions
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
 priority: high
 language: en
 source_url: hk_cde://bd_adv34/bd_adv34_appendix_a_examples_of_bim_applications_for_plan_submissions

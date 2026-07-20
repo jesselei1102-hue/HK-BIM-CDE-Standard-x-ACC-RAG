@@ -6,6 +6,10 @@ title: Chapter 1 — Introduction
 page_start: 4
 page_end: 6
 authority: LandsD BIM-GIS Guidelines Jun 2023 §Chapter 1 — Introduction
+authority_type: statutory
+normative_weight: mandatory
+discipline: gis
+lifecycle_stage: statutory
 priority: high
 language: en
 source_url: hk_cde://landsd_bim_gis/landsd_bim_gis_chapter_1_introduction

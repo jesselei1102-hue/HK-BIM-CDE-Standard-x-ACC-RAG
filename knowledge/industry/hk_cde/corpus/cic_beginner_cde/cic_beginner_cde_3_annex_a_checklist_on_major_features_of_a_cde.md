@@ -1,11 +1,17 @@
 ---
-source_file: output/HK Standard/CIC Beginner Guide-Adoption of CDE.pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC Beginner Guide-Adoption of CDE.pdf
 doc_id: cic_beginner_cde
 section_id: cic_beginner_cde_3_annex_a_checklist_on_major_features_of_a_cde
 title: 3. Annex A – Checklist on major features of a CDE
 page_start: 40
 page_end: 45
 authority: CIC CDE Beginner Guide §3.
+authority_type: standard
+normative_weight: recommended
+discipline: general
+lifecycle_stage: project
+publication_year: 2021
+software: null
 priority: high
 language: en
 source_url: hk_cde://cic_beginner_cde/cic_beginner_cde_3_annex_a_checklist_on_major_features_of_a_cde

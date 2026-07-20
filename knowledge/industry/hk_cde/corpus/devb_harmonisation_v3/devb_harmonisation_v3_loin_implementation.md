@@ -7,7 +7,13 @@ title: LOIN IMPLEMENTATION
 page_start: 33
 page_end: 37
 authority: DEVB BIM Harmonisation v3.0 §LOIN
-priority: normal
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2023
+software: null
+priority: high
 language: en
 source_url: hk_cde://devb_harmonisation_v3/devb_harmonisation_v3_loin_implementation
 ---

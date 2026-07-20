@@ -7,6 +7,10 @@ page_start: 7
 page_end: 10
 authority: LandsD BIM-GIS Guidelines Jun 2023 §Chapter 2 — High Level Requirements
   on BIM Modelling
+authority_type: statutory
+normative_weight: mandatory
+discipline: gis
+lifecycle_stage: statutory
 priority: high
 language: en
 source_url: hk_cde://landsd_bim_gis/landsd_bim_gis_chapter_2_high_level_requirements_on_bim_modelling

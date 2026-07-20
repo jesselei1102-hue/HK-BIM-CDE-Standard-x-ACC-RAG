@@ -1,11 +1,17 @@
 ---
-source_file: output/HK Standard/CIC Beginner Guide-Adoption of CDE.pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC Beginner Guide-Adoption of CDE.pdf
 doc_id: cic_beginner_cde
 section_id: cic_beginner_cde_the_need_for_open_data_and_open_cde_for_the_handover_of_cde
 title: The need for open data and open CDE for the handover of CDE
 page_start: 20
 page_end: 20
 authority: CIC CDE Beginner Guide §The
+authority_type: standard
+normative_weight: recommended
+discipline: general
+lifecycle_stage: project
+publication_year: 2021
+software: null
 priority: high
 language: en
 source_url: hk_cde://cic_beginner_cde/cic_beginner_cde_the_need_for_open_data_and_open_cde_for_the_handover_of_cde

@@ -6,6 +6,10 @@ title: Appendix D — ELS Works
 page_start: 17
 page_end: 17
 authority: BD PNAP ADM-19 §Appendix D — ELS Works
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
 priority: normal
 language: en
 source_url: hk_cde://bd_adm19/bd_adm19_appendix_d_els_works

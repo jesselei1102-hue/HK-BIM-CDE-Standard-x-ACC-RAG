@@ -7,6 +7,12 @@ title: INFORMATION REQUIREMENTS AND EXCHANGE
 page_start: 12
 page_end: 14
 authority: DEVB BIM Harmonisation v3.0 §INFORMATION
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2023
+software: null
 priority: high
 language: en
 source_url: hk_cde://devb_harmonisation_v3/devb_harmonisation_v3_information_requirements_and_exchange

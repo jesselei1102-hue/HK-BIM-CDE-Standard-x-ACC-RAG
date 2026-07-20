@@ -1,10 +1,12 @@
 ---
+authority_type: template
+normative_weight: reference
 source_file: output/HK Standard/CIC BIM Standards General 2024/D9_CIC Project Member Resume.docx
 doc_id: template_d9
 section_id: d9_fields
 title: Appendix D9 Field Reference (Project Member Resume)
 authority: CICBIMS 2024 Appendix D9
-priority: high
+priority: normal
 language: en
 ---
 

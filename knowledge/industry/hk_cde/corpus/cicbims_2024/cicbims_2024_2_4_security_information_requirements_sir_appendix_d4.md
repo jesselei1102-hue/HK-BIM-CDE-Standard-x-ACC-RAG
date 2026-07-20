@@ -1,12 +1,18 @@
 ---
-source_file: output/HK Standard/CIC BIM Standards General 2024/CIC BIM Standards General
-  (Version 2024).pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC BIM Standards General 2024/CIC
+  BIM Standards General (Version 2024).pdf
 doc_id: cicbims_2024
 section_id: cicbims_2024_2_4_security_information_requirements_sir_appendix_d4
 title: 2.4 Security Information Requirements (SIR) (Appendix D4)
 page_start: 37
 page_end: 38
 authority: CICBIMS 2024 §2.4
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2024
+software: null
 priority: high
 language: en
 source_url: hk_cde://cicbims_2024/cicbims_2024_2_4_security_information_requirements_sir_appendix_d4
