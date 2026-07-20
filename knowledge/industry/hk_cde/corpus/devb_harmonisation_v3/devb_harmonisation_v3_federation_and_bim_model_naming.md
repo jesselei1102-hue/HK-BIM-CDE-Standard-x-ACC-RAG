@@ -7,6 +7,12 @@ title: FEDERATION AND BIM MODEL NAMING
 page_start: 26
 page_end: 32
 authority: DEVB BIM Harmonisation v3.0 §FEDERATION
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2023
+software: null
 priority: high
 language: en
 source_url: hk_cde://devb_harmonisation_v3/devb_harmonisation_v3_federation_and_bim_model_naming

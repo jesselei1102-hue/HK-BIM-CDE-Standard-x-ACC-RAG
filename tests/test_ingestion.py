@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from rag.config import CorpusConfig, PROJECT_ROOT
 from rag.ingestion import load_corpus
 
@@ -66,9 +68,11 @@ Navigation only.
 
 
 def test_docs_corpus_page_counts() -> None:
-    report = load_corpus(
-        CorpusConfig(source_dir=PROJECT_ROOT / "output" / "DOCS")
-    )
+    source_dir = PROJECT_ROOT / "output" / "DOCS"
+    if not source_dir.is_dir():
+        pytest.skip("requires local output/DOCS corpus")
+
+    report = load_corpus(CorpusConfig(source_dir=source_dir))
 
     assert report.scanned_files == 6
     assert report.total_pages == 550

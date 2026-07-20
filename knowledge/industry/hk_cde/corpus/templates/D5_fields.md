@@ -1,10 +1,12 @@
 ---
+authority_type: template
+normative_weight: reference
 source_file: output/HK Standard/CIC BIM Standards General 2024/D5_CIC Pre-Appointment Implementation Plan_Template.docx
 doc_id: template_d5
 section_id: d5_fields
 title: Appendix D5 Field Reference (Pre-Appointment IP)
 authority: CICBIMS 2024 Appendix D5
-priority: high
+priority: normal
 language: en
 ---
 

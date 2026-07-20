@@ -51,6 +51,7 @@ class RouteDecision:
 
 def normalize_query(text: str) -> str:
     text = unicodedata.normalize("NFKC", text.strip())
+    text = re.sub(r"[?？!！。．.]+$", "", text)
     text = re.sub(r"\s+", "", text)
     return text.lower()
 
@@ -174,6 +175,21 @@ class KBRouter:
                     similarity=candidate.similarity,
                     reason="exact_term",
                 )
+            entry = self.entries_by_id.get(candidate.entry_id)
+            if entry:
+                for canonical in (entry.canonical_query_en, entry.canonical_query_zh):
+                    if canonical and normalize_query(canonical) == normalized:
+                        return RouteDecision(
+                            entry_id=candidate.entry_id,
+                            target_title=candidate.target_title,
+                            target_url=candidate.target_url,
+                            target_guid=candidate.target_guid,
+                            rewritten_query=rewrite_from_candidate(query, candidate),
+                            matched_term=canonical,
+                            source_type=candidate.source_type,
+                            similarity=1.0,
+                            reason="exact_term",
+                        )
 
         best = candidates[0]
         if best.similarity < self.kb_config.min_route_sim:
@@ -199,31 +215,83 @@ class KBRouter:
     ) -> bool:
         if not self.enabled:
             return False
-        if len(normalize_query(query)) > self.kb_config.short_query_max_chars:
-            return False
 
         normalized = normalize_query(query)
-        question_prefixes = ("如何", "怎么", "怎样", "what", "how", "when", "where")
-        if any(normalized.startswith(prefix) for prefix in question_prefixes):
-            if len(query.strip()) > self.kb_config.short_query_max_chars:
-                return False
+        exact_alias_hit = any(
+            alias_norm == normalized for alias_norm, _entry, _raw in self._alias_index
+        )
+        canonical_hit = False
+        for entry in self.entries:
+            for candidate in (entry.canonical_query_en, entry.canonical_query_zh):
+                if candidate and normalize_query(candidate) == normalized:
+                    canonical_hit = True
+                    break
+            if canonical_hit:
+                break
 
+        # Search first so high-confidence long canonical matches can bypass length gate.
         candidates = self.search_candidates(query)
+        if not candidates and (exact_alias_hit or canonical_hit):
+            candidates = self._alias_candidates(query)
+            if not candidates:
+                for entry in self.entries:
+                    for candidate in (entry.canonical_query_en, entry.canonical_query_zh):
+                        if candidate and normalize_query(candidate) == normalized:
+                            candidates = [
+                                RouteCandidate(
+                                    entry_id=entry.id,
+                                    target_title=entry.target_title,
+                                    target_url=entry.target_url,
+                                    target_guid=entry.target_guid,
+                                    matched_term=candidate,
+                                    source_type="kb_title",
+                                    similarity=1.0,
+                                    rewrite_query_zh=entry.canonical_query_zh,
+                                    rewrite_query_en=entry.canonical_query_en,
+                                )
+                            ]
+                            break
+                    if candidates:
+                        break
         if not candidates:
+            return False
+
+        high_conf = any(
+            c.similarity >= 0.95
+            and c.source_type in {"kb_canonical", "kb_alias", "kb_title"}
+            for c in candidates
+        )
+        # Only exact alias/canonical may bypass the short-query length gate.
+        # High vector similarity alone must not rewrite long how-to questions.
+        if (
+            not exact_alias_hit
+            and not canonical_hit
+            and len(normalized) > self.kb_config.short_query_max_chars
+        ):
+            return False
+
+        question_prefixes = ("如何", "怎么", "怎样", "what", "how", "when", "where")
+        if (
+            not exact_alias_hit
+            and not canonical_hit
+            and any(normalized.startswith(prefix) for prefix in question_prefixes)
+            and len(query.strip()) > self.kb_config.short_query_max_chars
+        ):
             return False
 
         decision = self.controlled_rewrite(query, candidates)
         if decision is None:
             return False
 
-        if top1_sim is not None and top1_sim >= self.kb_config.trigger_sim:
-            if not top1_url or top1_url == decision.target_url:
-                return False
+        # Correct a wrong top-1 URL even on long/high-confidence queries.
         if top1_url and top1_url != decision.target_url:
             return True
         if top1_sim is not None and top1_sim < self.kb_config.trigger_sim:
             return True
-        return False
+        # Already strong and on-target (or no URL to correct): skip KB.
+        if top1_sim is not None and top1_sim >= self.kb_config.trigger_sim:
+            return False
+        return bool(exact_alias_hit or canonical_hit)
 
     def route(self, query: str) -> tuple[list[RouteCandidate], RouteDecision | None]:
         candidates = self.search_candidates(query)

@@ -1,6 +1,6 @@
-# 源文件说明
+# Source files
 
-本目录不复制大体积 PDF。源材料位于项目根目录：
+This directory does **not** copy large PDFs. Source materials live under the repo root:
 
 ```text
 output/HK Standard/
@@ -13,7 +13,7 @@ output/HK Standard/
     LandsD_LandsD_BIM_and_GIS_Data_Integration_Guidelines_Jun2023.pdf
 ```
 
-`BD_LandsD/` 同步自 `ACC Project Template/ACC Template/specification/` 中有价值的法定/地政 PDF（不含站点 HTML 镜像与工具 zip）。
+`BD_LandsD/` is synced from valuable statutory / LandsD PDFs under `ACC Project Template/ACC Template/specification/` (excludes site HTML mirrors and tool zips).
 
-重建抽取请参阅 [`README.md`](../README.md)。  
-补充抽取：`python scripts/extract_hk_bd_landsd.py`
+See [`README.md`](../README.md) for rebuild / extract steps.  
+Supplement extract: `python scripts/extract_hk_bd_landsd.py`

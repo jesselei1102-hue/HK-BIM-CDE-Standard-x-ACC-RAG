@@ -1,12 +1,18 @@
 ---
-source_file: output/HK Standard/CIC Beginner Guide-Adoption of CDE.pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC Beginner Guide-Adoption of CDE.pdf
 doc_id: cic_beginner_cde
 section_id: cic_beginner_cde_front_matter
 title: Front Matter
 page_start: 1
 page_end: 4
 authority: CIC CDE Beginner Guide §Front
-priority: high
+authority_type: standard
+normative_weight: recommended
+discipline: general
+lifecycle_stage: project
+publication_year: 2021
+software: null
+priority: normal
 language: en
 source_url: hk_cde://cic_beginner_cde/cic_beginner_cde_front_matter
 ---

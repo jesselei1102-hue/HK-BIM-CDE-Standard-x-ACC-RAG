@@ -92,7 +92,7 @@ Project Files/
 | 原則 | 實現方式 | 缺口 |
 |------|----------|------|
 | 跨團隊可見 | 所有專業 View + Download | — |
-| 只有通過審核的文件可進入 | **人工遷夾紀律**：Document Controller 將已審核文件從 WIP 複製到 Shared | ACC **不會** 在 Workflow Approve 後自動遷移文件；須人工操作或 API 腳本 |
+| 只有通過審核的文件可進入 | Workflow **Action Upon Completion → Copy approved files** 至 Shared；源文件清理另訂紀律 | 是 **copy** 非 move；目標須同 top-level；見 `05_workflow.md` |
 | 命名規範強制 | 啟用 Naming Standard | — |
 | 每次進入都有記錄 | Version History + 審批工作流記錄 | — |
 
@@ -100,14 +100,16 @@ Project Files/
 
 ```
 1. Designer 在 WIP 完成文件
-2. Designer 通知 BIM Coordinator 文件已就緒
-3. BIM Coordinator 審查（可在 WIP 內做 Review）
-4. 審查通過 → Document Controller 手動複製文件到 02_Shared/{Discipline}/
-5. Document Controller 更新文件 Custom Attribute: Status = S1/S2
-6. （可選）在 02_Shared 夾的 Auto-trigger Review 再次確認命名合規
+2. Designer 發起 Internal Review（或通知 BIM Coordinator）
+3. BIM Coordinator / Design Lead 按 Workflow 審批
+4. Workflow Action Upon Completion：Copy approved files → 02_Shared/{Discipline}/
+5. Workflow Action Upon Completion：Update attributes（如 Status = S1/S2）
+6. Document Controller 按 BEP 清理/歸檔 WIP 源文件（copy ≠ move）
+7. （可選）在 02_Shared 夾的 Auto-trigger Review 再次確認命名合規
 ```
 
-> ⚠️ **不可寫成「Approve 後自動複製到 Shared」**——ACC Docs Approval Workflow 完成後的 action 僅限通知，**不含自動遷夾**。如需自動化，須用 ACC API/Webhook 二次開發。
+> ✅ Docs：**Action Upon Completion** 可在 Approve 後 **自動複製**已批准文件到 Shared，並 **更新屬性**（見 `Reviews_Create_Edit`）。  
+> ⚠️ 注意：是 **copy** 不是 move；目標夾須與源文件在同一 top-level folder；源文件清理仍屬操作紀律。詳見 `05_workflow.md`。
 
 ---
 
@@ -213,9 +215,8 @@ Project Files/
 
 ### 7.1 狀態維護規則
 
-> **關鍵缺口**：ACC Approval Workflow 完成後 **不會自動更新** Custom Attribute。  
-> Status Code 由 Document Controller **手動更新**——這是操作紀律，不是系統自動行為。  
-> 如需自動化，可通過 ACC API + Webhook 實現（二次開發）。
+> ✅ Docs：Approval Workflow 的 **Action Upon Completion → Update attributes** 可在 Review 完成時自動更新/新增屬性（含 Required by approver、Auto-increment）。  
+> ⚠️ BEP 仍須定義：哪些 Workflow 開啟該選項、寫入哪些屬性值、更新目標夾還是源+目標夾。未配置時才需 Document Controller 手動維護。詳見 `05_workflow.md`。
 
 ---
 
@@ -238,8 +239,8 @@ Project Files/
 
 | 事項 | 缺口說明 | BEP 章節建議 |
 |------|----------|-------------|
-| 容器遷移操作 | ACC 無自動遷夾；須約定由誰在何時操作 | §4 CDE Workflow |
-| Status Attribute 維護 | 非系統自動；須約定 Document Controller 職責 | §4 CDE Workflow |
+| 容器遷移操作 | Workflow 可 **Copy approved files**；BEP 須約定目標夾、When 條件、及源文件清理（copy ≠ move） | §4 CDE Workflow |
+| Status Attribute 維護 | Workflow 可 **Update attributes**；BEP 須約定屬性清單與 Required by approver | §4 CDE Workflow |
 | WIP 命名自由度 | 須明確到什麼程度可不合規（如內部草稿 vs 提交審核版） | §3 Naming |
 | 狀態表達雙軌 | 容器狀態 = 夾位置 + Attribute；須約定以何為準 | §4 CDE Workflow |
 | Archive 鎖定 | ACC 無自動鎖定；須約定權限設置紀律 | §4 CDE Workflow |

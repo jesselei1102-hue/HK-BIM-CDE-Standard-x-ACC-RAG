@@ -4,10 +4,12 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 
 from rag.config import get_config
-from rag.generation import format_sources
+from rag.conversation import ConversationSession
+from rag.generation import format_sources, format_token_usage
 from rag.industry_hk.config import get_industry_hk_config
 from rag.orchestrator.merge import format_hybrid_sources
 from rag.orchestrator.pipeline import HybridOrchestrator, format_orchestrator_debug
@@ -15,15 +17,33 @@ from rag.playbook_acc_hk.config import get_playbook_config
 from rag.retrieval import format_retrieval_debug
 
 
-def _print_answer(question: str, answer_text: str, source_lines: list[str], show_context: bool, contexts) -> None:
+def _print_answer(
+    question: str,
+    answer_text: str,
+    source_lines: list[str],
+    show_context: bool,
+    contexts,
+    token_line: str | None = None,
+    *,
+    rewritten_query: str | None = None,
+    suggested_followups: list[str] | None = None,
+) -> None:
     print(f"\n问题：{question}")
+    if rewritten_query and rewritten_query.strip() != question.strip():
+        print(f"检索问题：{rewritten_query}")
     print("\n回答：")
     print(answer_text)
+    if token_line:
+        print(f"\n{token_line}")
     print("\n来源：")
     if source_lines:
         print("\n".join(source_lines))
     else:
         print("(无)")
+    if suggested_followups:
+        print("\n你可以继续问：")
+        for index, item in enumerate(suggested_followups, start=1):
+            print(f"  {index}. {item}")
 
     if show_context and contexts:
         print("\n检索上下文：")
@@ -53,6 +73,8 @@ def ask_once(
     no_generate: bool,
     show_retrieval_debug: bool,
     answer_lang: str,
+    session: ConversationSession | None = None,
+    record_turn: bool = True,
 ) -> int:
     force = None if corpus == "auto" else corpus
     result = orchestrator.ask(
@@ -61,9 +83,16 @@ def ask_once(
         top_k=top_k,
         no_generate=no_generate,
         answer_lang=answer_lang,
+        session=session,
+        record_turn=record_turn,
     )
 
     print(f"轨道：{result.track}")
+    if result.debug.is_follow_up:
+        print(
+            f"追问改写：{result.debug.rewritten_query or '-'} "
+            f"({result.debug.rewrite_reason or '-'})"
+        )
     if result.validation_ok is not None:
         print(f"validation: {'ok' if result.validation_ok else 'failed'}")
     if result.answer is not None and result.answer.model:
@@ -103,8 +132,11 @@ def ask_once(
 
     if no_generate:
         answer_text = "(仅检索模式，未调用生成模型)"
+        context_tokens = sum(int(getattr(c, "token_count", 0) or 0) for c in contexts)
+        token_line = f"Token：上下文 {context_tokens} | 提示 - | 生成 -"
     else:
         answer_text = result.answer.answer if result.answer else "(无回答)"
+        token_line = format_token_usage(result.answer) if result.answer else None
 
     _print_answer(
         question,
@@ -112,6 +144,9 @@ def ask_once(
         source_lines,
         show_context=show_context or no_generate,
         contexts=contexts,
+        token_line=token_line,
+        rewritten_query=result.debug.rewritten_query,
+        suggested_followups=list(result.suggested_followups or []),
     )
     return 0
 
@@ -124,13 +159,23 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--corpus",
         choices=["auto", "docs", "hk_cde", "playbook", "hybrid"],
-        default="hybrid",
-        help="语料轨：默认 hybrid=强制三轨；auto=编排分流；docs/hk_cde/playbook=单轨",
+        default="auto",
+        help="语料轨：默认 auto=编排分流；hybrid=强制三轨；docs/hk_cde/playbook=单轨",
     )
     parser.add_argument("--top-k", type=int, default=None, help="每轨返回多少个上下文")
     parser.add_argument("--show-context", action="store_true")
     parser.add_argument("--no-generate", action="store_true")
     parser.add_argument("--show-retrieval-debug", action="store_true")
+    parser.add_argument(
+        "--no-nlp-coarse",
+        action="store_true",
+        help="关闭 BM25 NLP 粗筛（默认开启）",
+    )
+    parser.add_argument(
+        "--no-nlp-rerank",
+        action="store_true",
+        help="关闭 NLP 特征精排（默认开启）",
+    )
     parser.add_argument(
         "--lang",
         choices=["auto", "en", "zh-Hans", "zh-Hant"],
@@ -139,13 +184,20 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
+    if args.no_nlp_coarse:
+        os.environ["RAG_NLP_COARSE"] = "false"
+    if args.no_nlp_rerank:
+        os.environ["RAG_NLP_RERANK"] = "false"
+
     docs_config = get_config()
     industry_config = get_industry_hk_config()
     playbook_config = get_playbook_config()
     print(
         f"模型：{docs_config.models.generation_model} | "
         f"Embedding：{docs_config.models.embedding_model} | "
-        f"corpus={args.corpus} | lang={args.lang}"
+        f"corpus={args.corpus} | lang={args.lang} | "
+        f"nlp_coarse={docs_config.retrieval.nlp_coarse_enabled} | "
+        f"nlp_rerank={docs_config.retrieval.nlp_rerank_enabled}"
     )
     if args.corpus in {"hybrid", "auto"}:
         pb_chunks = playbook_config.storage.chunks_path
@@ -175,9 +227,12 @@ def main(argv: list[str] | None = None) -> int:
             no_generate=args.no_generate,
             show_retrieval_debug=args.show_retrieval_debug,
             answer_lang=args.lang,
+            session=None,
+            record_turn=False,
         )
 
-    print("进入交互模式，输入空行或 exit 退出。")
+    session = ConversationSession()
+    print("进入交互模式（支持多轮追问）。输入空行或 exit 退出；/clear 清空会话。")
     while True:
         try:
             question = input("\n> ").strip()
@@ -186,6 +241,10 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if not question or question.lower() in {"exit", "quit", "q"}:
             return 0
+        if question.lower() in {"/clear", "clear", "/reset", "reset"}:
+            session.clear()
+            print("已清空会话历史。下一问将作为独立首轮。")
+            continue
         ask_once(
             orchestrator,
             question,
@@ -195,6 +254,8 @@ def main(argv: list[str] | None = None) -> int:
             no_generate=args.no_generate,
             show_retrieval_debug=args.show_retrieval_debug,
             answer_lang=args.lang,
+            session=session,
+            record_turn=not args.no_generate,
         )
 
 

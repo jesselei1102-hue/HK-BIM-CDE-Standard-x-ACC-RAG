@@ -16,10 +16,60 @@ import ollama
 from rank_bm25 import BM25Okapi
 
 from .config import AppConfig, get_config
+from .nlp_coarse import (
+    analyze_query,
+    coarse_candidate_ids,
+    rerank_chunks,
+    trim_chunks_by_token_budget,
+)
 from .query_kb import KBRouter, RouteCandidate, RouteDecision
 
 
 TOKEN_RE = re.compile(r"[\w\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]+", re.UNICODE)
+
+# Soft boost for prior-turn URLs that already appear in this-round candidates.
+# Never inject missing URLs from the store (no hard lock).
+SOURCE_HINT_SOFT_BOOST = 0.12
+SOURCE_HINT_MAX_HITS = 3
+
+
+def _url_matches_hint(url: str, hint: str) -> bool:
+    if not url or not hint:
+        return False
+    if url == hint:
+        return True
+    if hint in url or url in hint:
+        return True
+    return url.startswith(hint.rstrip("/") + "/") or hint.startswith(
+        url.rstrip("/") + "/"
+    )
+
+
+def apply_source_hint_soft_boost(
+    rrf_scores: dict[str, float],
+    chunks_by_id: dict[str, dict[str, Any]],
+    source_hint_urls: list[str] | None,
+    *,
+    boost: float = SOURCE_HINT_SOFT_BOOST,
+    max_hits: int = SOURCE_HINT_MAX_HITS,
+) -> list[str]:
+    """Boost only candidates already present in rrf_scores. Returns matched URLs."""
+    if not source_hint_urls or not rrf_scores:
+        return []
+    hits: list[str] = []
+    for chunk_id in list(rrf_scores.keys()):
+        if len(hits) >= max_hits:
+            break
+        chunk = chunks_by_id.get(chunk_id)
+        if chunk is None:
+            continue
+        url = str(chunk.get("source_url") or "")
+        if not any(_url_matches_hint(url, hint) for hint in source_hint_urls):
+            continue
+        rrf_scores[chunk_id] = rrf_scores.get(chunk_id, 0.0) + boost
+        if url not in hits:
+            hits.append(url)
+    return hits
 
 
 @dataclass(frozen=True)
@@ -54,6 +104,13 @@ class RetrievalDebugInfo:
     rewritten_top1_sim: float | None = None
     adopted_path: str = "original"  # original | kb_rewrite | kb_boost
     target_url_boosted: bool = False
+    source_hint_urls: list[str] = field(default_factory=list)
+    source_hint_hits: list[str] = field(default_factory=list)
+    nlp_coarse_enabled: bool = False
+    nlp_rerank_enabled: bool = False
+    nlp_keywords: list[str] = field(default_factory=list)
+    nlp_coarse_pool_size: int = 0
+    context_token_estimate: int = 0
 
 
 @dataclass
@@ -122,21 +179,35 @@ class HybridRetriever:
         )
         return response.embeddings[0]
 
-    def _vector_hits(self, query: str) -> list[tuple[str, float, int]]:
+    def _vector_hits(
+        self,
+        query: str,
+        *,
+        n_results: int | None = None,
+        allowed_ids: set[str] | None = None,
+    ) -> list[tuple[str, float, int]]:
+        fetch = n_results or self.config.retrieval.vector_candidates
+        # 粗筛后在更大候选中过滤，避免被池外噪声占满 Top-N。
+        if allowed_ids is not None:
+            fetch = max(fetch, min(len(allowed_ids), fetch * 3))
         embedding = self._embed_query(query)
         result = self._collection.query(
             query_embeddings=[embedding],
-            n_results=self.config.retrieval.vector_candidates,
+            n_results=min(fetch, max(len(self.chunk_ids), 1)),
             include=["distances"],
         )
         ids = result["ids"][0]
         distances = result["distances"][0]
         hits: list[tuple[str, float, int]] = []
         for rank, (chunk_id, distance) in enumerate(zip(ids, distances), start=1):
+            if allowed_ids is not None and chunk_id not in allowed_ids:
+                continue
             similarity = 1.0 - float(distance)
             if similarity < self.config.retrieval.minimum_vector_similarity:
                 continue
-            hits.append((chunk_id, similarity, rank))
+            hits.append((chunk_id, similarity, len(hits) + 1))
+            if len(hits) >= (n_results or self.config.retrieval.vector_candidates):
+                break
         return hits
 
     def _raw_top_vector_sim(self, query: str) -> float | None:
@@ -150,18 +221,30 @@ class HybridRetriever:
             return None
         return 1.0 - float(result["distances"][0][0])
 
-    def _lexical_hits(self, query: str) -> list[tuple[str, float, int]]:
-        scores = self._bm25.get_scores(tokenize(query))
+    def _lexical_hits(
+        self,
+        query: str,
+        *,
+        allowed_ids: set[str] | None = None,
+        analysis_keywords: list[str] | None = None,
+    ) -> list[tuple[str, float, int]]:
+        terms = analysis_keywords or tokenize(query)
+        scores = self._bm25.get_scores(terms)
         ranked = sorted(
             enumerate(scores),
             key=lambda item: item[1],
             reverse=True,
-        )[: self.config.retrieval.lexical_candidates]
+        )
         hits: list[tuple[str, float, int]] = []
-        for rank, (index, score) in enumerate(ranked, start=1):
+        for index, score in ranked:
             if score <= 0:
                 continue
-            hits.append((self.chunk_ids[index], float(score), rank))
+            chunk_id = self.chunk_ids[index]
+            if allowed_ids is not None and chunk_id not in allowed_ids:
+                continue
+            hits.append((chunk_id, float(score), len(hits) + 1))
+            if len(hits) >= self.config.retrieval.lexical_candidates:
+                break
         return hits
 
     def _retrieve_internal(
@@ -170,36 +253,87 @@ class HybridRetriever:
         top_k: int,
         *,
         boost_target_url: str | None = None,
+        source_hint_urls: list[str] | None = None,
+        debug: RetrievalDebugInfo | None = None,
     ) -> list[RetrievedChunk]:
-        vector_hits = self._vector_hits(query)
-        lexical_hits = self._lexical_hits(query)
+        analysis = analyze_query(query)
+        cfg = self.config.retrieval
+        allowed_ids: set[str] | None = None
+        coarse_ids: list[str] = []
+
+        if cfg.nlp_coarse_enabled:
+            coarse_ids = coarse_candidate_ids(
+                self._bm25,
+                self.chunk_ids,
+                analysis,
+                top_n=cfg.nlp_coarse_candidates,
+            )
+            allowed_ids = set(coarse_ids) if coarse_ids else None
+
+        # Ensure KB / capability target URLs stay in the coarse pool so boost works.
+        if boost_target_url and allowed_ids is not None:
+            for chunk_id, chunk in self.chunks_by_id.items():
+                url = chunk["source_url"]
+                if url == boost_target_url or url.startswith(
+                    boost_target_url.rstrip("/") + "/"
+                ):
+                    allowed_ids.add(chunk_id)
+                    if chunk_id not in coarse_ids:
+                        coarse_ids.append(chunk_id)
+
+        if debug is not None:
+            debug.nlp_coarse_enabled = cfg.nlp_coarse_enabled
+            debug.nlp_rerank_enabled = cfg.nlp_rerank_enabled
+            debug.nlp_keywords = list(analysis.keywords)
+            debug.nlp_coarse_pool_size = len(coarse_ids)
+            if source_hint_urls:
+                debug.source_hint_urls = list(source_hint_urls)
+
+        prefetch = max(top_k, cfg.hybrid_prefetch)
+        vector_n = max(cfg.vector_candidates, prefetch)
+        vector_hits = self._vector_hits(
+            query,
+            n_results=vector_n,
+            allowed_ids=allowed_ids,
+        )
+        # 粗筛过严导致向量空时回退全库，避免漏召回。
+        if not vector_hits and allowed_ids is not None:
+            vector_hits = self._vector_hits(query, n_results=vector_n)
+            if debug is not None:
+                debug.nlp_coarse_pool_size = 0
+
+        lexical_hits = self._lexical_hits(
+            query,
+            allowed_ids=allowed_ids,
+            analysis_keywords=analysis.keywords or analysis.tokens,
+        )
 
         rrf_scores: dict[str, float] = {}
         vector_meta: dict[str, tuple[float, int]] = {}
         lexical_meta: dict[str, int] = {}
 
-        cjk_chars = len(re.findall(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]", query))
-        if cjk_chars / max(len(query), 1) >= 0.25:
+        if analysis.is_cjk_heavy:
             vector_weight = 5.0
-            lexical_weight = 0.0
+            lexical_weight = 1.0 if cfg.nlp_coarse_enabled else 0.0
         else:
             vector_weight = 2.0
             lexical_weight = 1.0
 
         for chunk_id, similarity, rank in vector_hits:
             rrf_scores[chunk_id] = rrf_scores.get(chunk_id, 0.0) + vector_weight / (
-                self.config.retrieval.rrf_k + rank
+                cfg.rrf_k + rank
             )
             vector_meta[chunk_id] = (similarity, rank)
 
         for chunk_id, _score, rank in lexical_hits:
             rrf_scores[chunk_id] = rrf_scores.get(chunk_id, 0.0) + lexical_weight / (
-                self.config.retrieval.rrf_k + rank
+                cfg.rrf_k + rank
             )
             lexical_meta[chunk_id] = rank
 
         if boost_target_url:
             boost = self.config.query_kb.target_url_boost
+            # Always scan the full chunk store for the target — not just the coarse pool.
             for chunk_id, chunk in self.chunks_by_id.items():
                 url = chunk["source_url"]
                 if url == boost_target_url or url.startswith(
@@ -207,19 +341,23 @@ class HybridRetriever:
                 ):
                     rrf_scores[chunk_id] = rrf_scores.get(chunk_id, 0.0) + boost
 
+        # Prior-turn source hints: soft boost only if already a candidate this round.
+        hint_hits = apply_source_hint_soft_boost(
+            rrf_scores,
+            self.chunks_by_id,
+            source_hint_urls,
+        )
+        if debug is not None:
+            debug.source_hint_hits = hint_hits
+
         ordered = sorted(rrf_scores.items(), key=lambda item: item[1], reverse=True)
         selected: list[RetrievedChunk] = []
         used_pages: set[str] = set()
-        context_tokens = 0
 
         for chunk_id, score in ordered:
             chunk = self.chunks_by_id[chunk_id]
             page_key = chunk["source_url"]
             if page_key in used_pages:
-                continue
-
-            token_count = int(chunk["token_count"])
-            if selected and context_tokens + token_count > self.config.retrieval.maximum_context_tokens:
                 continue
 
             vector_similarity, vector_rank = vector_meta.get(chunk_id, (None, None))
@@ -234,7 +372,7 @@ class HybridRetriever:
                     product=chunk["product"],
                     chunk_index=int(chunk["chunk_index"]),
                     chunk_count=int(chunk["chunk_count"]),
-                    token_count=token_count,
+                    token_count=int(chunk["token_count"]),
                     text=chunk["text"],
                     score=score,
                     vector_similarity=vector_similarity,
@@ -243,10 +381,19 @@ class HybridRetriever:
                 )
             )
             used_pages.add(page_key)
-            context_tokens += token_count
-            if len(selected) >= top_k:
+            if len(selected) >= prefetch:
                 break
 
+        if cfg.nlp_rerank_enabled and selected:
+            selected = rerank_chunks(selected, analysis)
+
+        selected = trim_chunks_by_token_budget(
+            selected,
+            top_k=top_k,
+            max_tokens=cfg.maximum_context_tokens,
+        )
+        if debug is not None:
+            debug.context_token_estimate = sum(item.token_count for item in selected)
         return selected
 
     def retrieve_with_debug(
@@ -255,6 +402,7 @@ class HybridRetriever:
         top_k: int | None = None,
         *,
         boost_url_prefix: str | None = None,
+        source_hint_urls: list[str] | None = None,
     ) -> RetrievalResult:
         query = query.strip()
         if not query:
@@ -264,7 +412,11 @@ class HybridRetriever:
         debug = RetrievalDebugInfo(original_query=query)
 
         original_chunks = self._retrieve_internal(
-            query, limit, boost_target_url=boost_url_prefix
+            query,
+            limit,
+            boost_target_url=boost_url_prefix,
+            source_hint_urls=source_hint_urls,
+            debug=debug,
         )
         original_sim = (
             original_chunks[0].vector_similarity if original_chunks else None
@@ -296,7 +448,12 @@ class HybridRetriever:
         rewritten = route_decision.rewritten_query
         debug.rewritten_query = rewritten
 
-        rewritten_chunks = self._retrieve_internal(rewritten, limit)
+        rewritten_chunks = self._retrieve_internal(
+            rewritten,
+            limit,
+            source_hint_urls=source_hint_urls,
+            debug=debug,
+        )
         rewritten_sim = (
             rewritten_chunks[0].vector_similarity if rewritten_chunks else None
         )
@@ -317,21 +474,37 @@ class HybridRetriever:
                     adopt_rewrite = True
 
         if adopt_rewrite and rewritten_chunks:
-            if rewritten_chunks[0].source_url == target_url:
+            pinned_rewrite = self._pin_target_url(rewritten_chunks, target_url)
+            if pinned_rewrite and pinned_rewrite[0].source_url == target_url:
                 debug.adopted_path = "kb_rewrite"
+                debug.context_token_estimate = sum(
+                    item.token_count for item in pinned_rewrite
+                )
                 self.last_debug = debug
-                return RetrievalResult(chunks=rewritten_chunks, debug=debug)
+                return RetrievalResult(chunks=pinned_rewrite, debug=debug)
 
         boosted_chunks = self._retrieve_internal(
             query,
             limit,
             boost_target_url=target_url,
+            source_hint_urls=source_hint_urls,
+            debug=debug,
         )
         if boosted_chunks:
+            pinned = self._pin_target_url(boosted_chunks, target_url)
+            # Exact alias / high-confidence route: hard-pin target even if boost
+            # alone left it at rank 2+.
+            if route_decision.reason == "exact_term" or (
+                route_decision.similarity is not None
+                and route_decision.similarity >= 0.95
+            ):
+                hard = self._load_target_chunk(target_url)
+                if hard is not None:
+                    pinned = self._merge_pin_front(pinned or boosted_chunks, hard)
             debug.adopted_path = "kb_boost"
             debug.target_url_boosted = True
             self.last_debug = debug
-            return RetrievalResult(chunks=boosted_chunks, debug=debug)
+            return RetrievalResult(chunks=pinned or boosted_chunks, debug=debug)
 
         if adopt_rewrite and rewritten_chunks:
             debug.adopted_path = "kb_rewrite"
@@ -341,6 +514,59 @@ class HybridRetriever:
         debug.adopted_path = "original"
         self.last_debug = debug
         return RetrievalResult(chunks=original_chunks, debug=debug)
+
+    def _load_target_chunk(self, target_url: str) -> RetrievedChunk | None:
+        if not target_url:
+            return None
+        for chunk in self.chunks_by_id.values():
+            url = chunk["source_url"]
+            if url == target_url or url.startswith(target_url.rstrip("/") + "/"):
+                return RetrievedChunk(
+                    chunk_id=chunk["chunk_id"],
+                    title=chunk["title"],
+                    source_url=chunk["source_url"],
+                    source_file=chunk["source_file"],
+                    page_index=int(chunk["page_index"]),
+                    line_start=int(chunk["line_start"]),
+                    product=chunk["product"],
+                    chunk_index=int(chunk["chunk_index"]),
+                    chunk_count=int(chunk["chunk_count"]),
+                    token_count=int(chunk["token_count"]),
+                    text=chunk["text"],
+                    score=10.0,
+                    vector_similarity=0.99,
+                )
+        return None
+
+    @staticmethod
+    def _merge_pin_front(
+        chunks: list[RetrievedChunk], pinned: RetrievedChunk
+    ) -> list[RetrievedChunk]:
+        merged = [pinned]
+        seen = {pinned.chunk_id, pinned.source_url}
+        for chunk in chunks:
+            if chunk.chunk_id in seen or chunk.source_url in seen:
+                continue
+            merged.append(chunk)
+            seen.add(chunk.chunk_id)
+            seen.add(chunk.source_url)
+        return merged
+
+    def _pin_target_url(
+        self, chunks: list[RetrievedChunk], target_url: str
+    ) -> list[RetrievedChunk]:
+        if not chunks or not target_url:
+            return chunks
+        for index, chunk in enumerate(chunks):
+            url = chunk.source_url
+            if url == target_url or url.startswith(target_url.rstrip("/") + "/"):
+                if index == 0:
+                    return chunks
+                return [chunk, *[item for i, item in enumerate(chunks) if i != index]]
+        hard = self._load_target_chunk(target_url)
+        if hard is None:
+            return chunks
+        return self._merge_pin_front(chunks, hard)
 
     def retrieve(
         self,
@@ -376,6 +602,10 @@ def format_retrieval_debug(debug: RetrievalDebugInfo) -> str:
         f"rewritten_top1_sim: {debug.rewritten_top1_sim}",
         f"adopted_path: {debug.adopted_path}",
         f"target_url_boosted: {debug.target_url_boosted}",
+        f"nlp_coarse: {debug.nlp_coarse_enabled} pool={debug.nlp_coarse_pool_size}",
+        f"nlp_rerank: {debug.nlp_rerank_enabled}",
+        f"nlp_keywords: {', '.join(debug.nlp_keywords) or '-'}",
+        f"context_token_estimate: {debug.context_token_estimate}",
     ]
     if debug.kb_candidates:
         lines.append("kb_top_candidates:")

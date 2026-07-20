@@ -104,6 +104,12 @@ def _render_md(
         "page_start": page_start,
         "page_end": page_end,
         "authority": f"{spec['authority_prefix']} §{section_title}",
+        "authority_type": "statutory",
+        "normative_weight": "mandatory",
+        "discipline": (
+            "gis" if doc_id.startswith("landsd") else "statutory_submission"
+        ),
+        "lifecycle_stage": "statutory",
         "priority": priority,
         "language": "en",
         "source_url": section_url(doc_id, section_id),

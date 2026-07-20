@@ -8,6 +8,12 @@ title: Appendix XIV - Guidelines for Submission of Design and As-built BIM Model
 page_start: 156
 page_end: 169
 authority: DEVB BIM Harmonisation v3.0 §Appendix
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2023
+software: null
 priority: high
 language: en
 source_url: hk_cde://devb_harmonisation_v3/devb_harmonisation_v3_appendix_xiv_guidelines_for_submission_of_design_and_as_bu

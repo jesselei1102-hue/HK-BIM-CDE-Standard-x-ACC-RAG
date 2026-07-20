@@ -14,10 +14,17 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 SUITE = [
     ("query_kb", ["scripts/eval_query_kb.py"]),
+    ("conversation", ["scripts/eval_conversation.py"]),
+    ("generation_gate", ["scripts/eval_generation_gate.py"]),
+    ("docs", ["scripts/eval_docs.py"]),
     ("hk_cde", ["scripts/eval_hk_cde.py"]),
+    ("hk_cde_coverage", ["scripts/eval_hk_cde_coverage.py"]),
+    ("hk_cde_requirements", ["scripts/eval_hk_requirements.py", "--skip-generation"]),
+    ("hk_zcp", ["scripts/eval_hk_zcp.py"]),
     ("playbook", ["scripts/eval_playbook_acc_hk.py"]),
     ("hybrid", ["scripts/eval_hybrid.py"]),
     ("hybrid_vs_single", ["scripts/eval_hybrid_vs_single.py"]),
+    ("capability_routing", ["scripts/eval_capability_routing.py"]),
 ]
 
 

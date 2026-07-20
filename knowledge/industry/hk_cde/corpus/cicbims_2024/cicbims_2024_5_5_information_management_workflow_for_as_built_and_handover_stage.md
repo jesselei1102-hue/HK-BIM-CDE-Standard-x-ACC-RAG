@@ -1,13 +1,19 @@
 ---
-source_file: output/HK Standard/CIC BIM Standards General 2024/CIC BIM Standards General
-  (Version 2024).pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC BIM Standards General 2024/CIC
+  BIM Standards General (Version 2024).pdf
 doc_id: cicbims_2024
 section_id: cicbims_2024_5_5_information_management_workflow_for_as_built_and_handover_stage
 title: 5.5 Information Management Workflow for As-Built and Handover Stage
 page_start: 149
 page_end: 152
 authority: CICBIMS 2024 §5.5
-priority: normal
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2024
+software: null
+priority: high
 language: en
 source_url: hk_cde://cicbims_2024/cicbims_2024_5_5_information_management_workflow_for_as_built_and_handover_stage
 ---

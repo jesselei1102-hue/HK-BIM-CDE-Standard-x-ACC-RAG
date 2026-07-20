@@ -7,6 +7,12 @@ title: Front Matter
 page_start: 1
 page_end: 1
 authority: DEVB BIM Harmonisation v3.0 §Front
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2023
+software: null
 priority: normal
 language: en
 source_url: hk_cde://devb_harmonisation_v3/devb_harmonisation_v3_front_matter

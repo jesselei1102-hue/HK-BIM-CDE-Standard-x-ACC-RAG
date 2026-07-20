@@ -71,10 +71,26 @@ HIGH_KEYWORDS = (
 )
 
 
-def _priority_for_section(doc_id: str, title: str) -> str:
+NOISE_TITLE_TOKENS = (
+    "front matter",
+    "foreword",
+    "preface",
+    "acknowledgement",
+    "acknowledgment",
+    "table of contents",
+    "contents",
+    "document revision",
+    "disclaimer",
+    "member list",
+)
+
+
+def _priority_for_section(doc_id: str, title: str, default_priority: str = "normal") -> str:
+    lowered = title.lower().strip()
+    if any(token in lowered for token in NOISE_TITLE_TOKENS):
+        return "normal"
     if doc_id == "cic_beginner_cde":
         return "high"
-    lowered = title.lower()
     if doc_id == "cicbims_2024":
         if lowered.startswith("4.") or "common data environment" in lowered:
             return "high"
@@ -100,7 +116,37 @@ def _priority_for_section(doc_id: str, title: str) -> str:
             )
         ):
             return "high"
-    return "normal"
+    if doc_id in {
+        "cic_mep_2021",
+        "cic_uu_2021",
+        "cic_object_guide_2021",
+        "cic_statutory_plans_2020",
+    }:
+        if any(
+            token in lowered
+            for token in (
+                "loin",
+                "lod",
+                "requirement",
+                "responsibility",
+                "submission",
+                "model",
+                "object",
+                "naming",
+                "information",
+            )
+        ):
+            return "high"
+        return default_priority
+    if doc_id.startswith("cic_stat_") and doc_id.endswith("_2020"):
+        return "normal"
+    # Case studies carry real project-config rules → production high pool,
+    # while authority_type/normative_weight stay reference in frontmatter.
+    if doc_id in {"cic_amfm_case_2021", "cic_zcp_bimip_v15"}:
+        return "high"
+    if doc_id == "cic_dictionary_2024":
+        return "normal"
+    return default_priority
 
 
 def _load_toc_override(doc_id: str) -> list[tuple[int, str]] | None:
@@ -148,8 +194,19 @@ def _build_sections(reader: PdfReader, spec: dict) -> list[SectionSpec]:
     else:
         raise ValueError(f"未知 toc_strategy: {strategy}")
 
+    default_priority = str(spec.get("default_priority", "normal"))
     if not entries:
-        raise RuntimeError(f"{doc_id} 未能解析章节结构")
+        # Fallback: whole-document section so intake never silently drops a PDF.
+        return [
+            SectionSpec(
+                section_id=f"{doc_id}_full_document",
+                title=spec.get("authority_prefix", doc_id),
+                page_start=1,
+                page_end=page_count,
+                level=1,
+                priority=default_priority,
+            )
+        ]
 
     sections = sections_from_page_starts(
         entries,
@@ -174,7 +231,9 @@ def _build_sections(reader: PdfReader, spec: dict) -> list[SectionSpec]:
             page_start=section.page_start,
             page_end=section.page_end,
             level=section.level,
-            priority=_priority_for_section(doc_id, section.title),
+            priority=_priority_for_section(
+                doc_id, section.title, default_priority=default_priority
+            ),
         )
         for section in sections
     ]
@@ -209,7 +268,16 @@ def _render_section_md(
         "title": section.title,
         "page_start": section.page_start,
         "page_end": section.page_end,
-        "authority": f"{spec['authority_prefix']} §{section.title.split()[0] if section.title else section.section_id}",
+        "authority": (
+            f"{spec['authority_prefix']} §"
+            f"{section.title.split()[0] if section.title else section.section_id}"
+        ),
+        "authority_type": spec.get("authority_type", "standard"),
+        "normative_weight": spec.get("normative_weight", "recommended"),
+        "discipline": spec.get("discipline", "general"),
+        "lifecycle_stage": spec.get("lifecycle_stage", "project"),
+        "publication_year": spec.get("publication_year"),
+        "software": spec.get("software"),
         "priority": section.priority,
         "language": "en",
         "source_url": section_url(doc_id, section.section_id),
@@ -297,6 +365,9 @@ def extract_pdf(spec: dict) -> dict:
                 "section_id": section.section_id,
                 "title": section.title,
                 "authority": f"{spec['authority_prefix']} {section.title}",
+                "authority_type": spec.get("authority_type", "standard"),
+                "normative_weight": spec.get("normative_weight", "recommended"),
+                "discipline": spec.get("discipline", "general"),
                 "page_start": section.page_start,
                 "page_end": section.page_end,
                 "priority": section.priority,
@@ -373,6 +444,12 @@ def main(argv: list[str] | None = None) -> int:
                 "page_count": page_count,
                 "mtime": stat.st_mtime,
                 "kind": "pdf",
+                "authority_type": spec.get("authority_type", "standard"),
+                "normative_weight": spec.get("normative_weight", "recommended"),
+                "discipline": spec.get("discipline", "general"),
+                "lifecycle_stage": spec.get("lifecycle_stage", "project"),
+                "publication_year": spec.get("publication_year"),
+                "software": spec.get("software"),
             }
         )
 

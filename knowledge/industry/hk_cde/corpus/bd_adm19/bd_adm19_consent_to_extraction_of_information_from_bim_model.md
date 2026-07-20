@@ -6,6 +6,10 @@ title: Consent to Extraction of Information from BIM Model
 page_start: 5
 page_end: 5
 authority: BD PNAP ADM-19 §Consent to Extraction of Information from BIM Model
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
 priority: high
 language: en
 source_url: hk_cde://bd_adm19/bd_adm19_consent_to_extraction_of_information_from_bim_model

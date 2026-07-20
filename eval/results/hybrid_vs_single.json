@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-07-14T07:02:51.874841+00:00",
+  "generated_at": "2026-07-20T06:09:11.214292+00:00",
   "cases_file": "eval/hybrid_cases.jsonl",
-  "hybrid_case_count": 6,
+  "hybrid_case_count": 7,
   "modes": {
     "docs": {
       "mode": "docs",
-      "cases": 6,
+      "cases": 7,
       "dual_hits": 0,
       "triple_hits": 0,
-      "docs_hits": 5,
+      "docs_hits": 6,
       "hk_hits": 0,
       "playbook_hits": 0,
       "dual_rate": 0.0,
@@ -16,34 +16,34 @@
     },
     "hk_cde": {
       "mode": "hk_cde",
-      "cases": 6,
+      "cases": 7,
       "dual_hits": 0,
       "triple_hits": 0,
       "docs_hits": 0,
-      "hk_hits": 6,
+      "hk_hits": 7,
       "playbook_hits": 0,
       "dual_rate": 0.0,
       "triple_rate": 0.0
     },
     "playbook": {
       "mode": "playbook",
-      "cases": 6,
+      "cases": 7,
       "dual_hits": 0,
       "triple_hits": 0,
       "docs_hits": 0,
       "hk_hits": 0,
-      "playbook_hits": 6,
+      "playbook_hits": 7,
       "dual_rate": 0.0,
       "triple_rate": 0.0
     },
     "hybrid": {
       "mode": "hybrid",
-      "cases": 6,
-      "dual_hits": 6,
-      "triple_hits": 6,
-      "docs_hits": 6,
-      "hk_hits": 6,
-      "playbook_hits": 6,
+      "cases": 7,
+      "dual_hits": 7,
+      "triple_hits": 7,
+      "docs_hits": 7,
+      "hk_hits": 7,
+      "playbook_hits": 7,
       "dual_rate": 1.0,
       "triple_rate": 1.0
     }
@@ -115,6 +115,16 @@
       "triple": false
     },
     {
+      "id": "hy_permissions",
+      "query": "按港标要求在ACC配置文件夹权限",
+      "mode": "docs",
+      "has_docs": true,
+      "has_hk_cde": false,
+      "has_playbook": false,
+      "dual": false,
+      "triple": false
+    },
+    {
       "id": "hy_folder_en",
       "query": "How do I set up ACC Docs folder structure to align with HK standard",
       "mode": "hk_cde",
@@ -175,6 +185,16 @@
       "triple": false
     },
     {
+      "id": "hy_permissions",
+      "query": "按港标要求在ACC配置文件夹权限",
+      "mode": "hk_cde",
+      "has_docs": false,
+      "has_hk_cde": true,
+      "has_playbook": false,
+      "dual": false,
+      "triple": false
+    },
+    {
       "id": "hy_folder_en",
       "query": "How do I set up ACC Docs folder structure to align with HK standard",
       "mode": "playbook",
@@ -235,6 +255,16 @@
       "triple": false
     },
     {
+      "id": "hy_permissions",
+      "query": "按港标要求在ACC配置文件夹权限",
+      "mode": "playbook",
+      "has_docs": false,
+      "has_hk_cde": false,
+      "has_playbook": true,
+      "dual": false,
+      "triple": false
+    },
+    {
       "id": "hy_folder_en",
       "query": "How do I set up ACC Docs folder structure to align with HK standard",
       "mode": "hybrid",
@@ -287,6 +317,16 @@
     {
       "id": "hy_force_shape",
       "query": "按CIC标准配置Docs审批工作流",
+      "mode": "hybrid",
+      "has_docs": true,
+      "has_hk_cde": true,
+      "has_playbook": true,
+      "dual": true,
+      "triple": true
+    },
+    {
+      "id": "hy_permissions",
+      "query": "按港标要求在ACC配置文件夹权限",
       "mode": "hybrid",
       "has_docs": true,
       "has_hk_cde": true,

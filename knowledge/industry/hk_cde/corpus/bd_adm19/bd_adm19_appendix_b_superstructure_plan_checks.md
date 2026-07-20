@@ -6,6 +6,10 @@ title: Appendix B — Superstructure Plan Checks
 page_start: 12
 page_end: 14
 authority: BD PNAP ADM-19 §Appendix B — Superstructure Plan Checks
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
 priority: normal
 language: en
 source_url: hk_cde://bd_adm19/bd_adm19_appendix_b_superstructure_plan_checks

@@ -1,4 +1,5 @@
 {"id": "hy_folder_en", "query": "How do I set up ACC Docs folder structure to align with HK standard", "expect_track": "hybrid", "expect_capability": "folder"}
+{"id": "hy_wip_tree_en", "query": "Show a real WIP discipline folder tree example for HK CDE in ACC", "expect_track": "hybrid", "expect_capability": "folder"}
 {"id": "hy_project", "query": "怎样创建一个ACC项目，符合CIC BIM Standard", "expect_track": "hybrid", "expect_capability": "project_create"}
 {"id": "hy_workflow", "query": "怎么做一个符合ISO 19650要求的审批流", "expect_track": "hybrid", "expect_capability": "workflow"}
 {"id": "hy_naming", "query": "如何按DEVB要求在Docs创建命名标准", "expect_track": "hybrid", "expect_capability": "naming"}

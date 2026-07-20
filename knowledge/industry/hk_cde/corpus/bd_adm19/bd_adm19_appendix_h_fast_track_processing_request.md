@@ -6,6 +6,10 @@ title: Appendix H — Fast Track Processing Request
 page_start: 33
 page_end: 33
 authority: BD PNAP ADM-19 §Appendix H — Fast Track Processing Request
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
 priority: normal
 language: en
 source_url: hk_cde://bd_adm19/bd_adm19_appendix_h_fast_track_processing_request

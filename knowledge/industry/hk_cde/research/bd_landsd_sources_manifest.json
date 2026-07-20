@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-13T15:20:28.754457+00:00",
+  "generated_at": "2026-07-19T16:08:52.056986+00:00",
   "note": "Supplement to CIC/DEVB corpus; not part of extract_hk_cde_pdfs page_ledger gate. Source copies under output/HK Standard/BD_LandsD/.",
   "sources": [
     {
@@ -11,7 +11,7 @@
       "sections": 16,
       "high_sections": 9,
       "authority_prefix": "BD PNAP ADM-19",
-      "extracted_at": "2026-07-13T15:20:28.604204+00:00"
+      "extracted_at": "2026-07-19T16:08:51.906695+00:00"
     },
     {
       "doc_id": "bd_adv34",
@@ -22,7 +22,7 @@
       "sections": 2,
       "high_sections": 2,
       "authority_prefix": "BD PNAP ADV-34",
-      "extracted_at": "2026-07-13T15:20:28.636192+00:00"
+      "extracted_at": "2026-07-19T16:08:51.938643+00:00"
     },
     {
       "doc_id": "landsd_bim_gis",
@@ -33,7 +33,7 @@
       "sections": 6,
       "high_sections": 3,
       "authority_prefix": "LandsD BIM-GIS Guidelines Jun 2023",
-      "extracted_at": "2026-07-13T15:20:28.754446+00:00"
+      "extracted_at": "2026-07-19T16:08:52.056974+00:00"
     }
   ]
 }

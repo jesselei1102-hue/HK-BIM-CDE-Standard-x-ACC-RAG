@@ -7,6 +7,12 @@ title: TABLE OF CONTENTS
 page_start: 3
 page_end: 6
 authority: DEVB BIM Harmonisation v3.0 §TABLE
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2023
+software: null
 priority: normal
 language: en
 source_url: hk_cde://devb_harmonisation_v3/devb_harmonisation_v3_table_of_contents

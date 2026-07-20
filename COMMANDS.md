@@ -8,18 +8,19 @@
 ## 0. 环境准备（每次开始）
 
 ```bash
-cd /Users/jiaxi/Documents/爬虫项目
+cd <项目根>
 source .venv/bin/activate          # Windows: .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt    # 首次或依赖变更时
 ```
 
-检查 Ollama 与依赖：
+检查 Ollama、依赖与三轨索引：
 
 ```bash
 ollama serve                       # 若服务未启动
 ollama pull qwen3-embedding:0.6b
 ollama pull qwen3.5:4b
-python -m rag.preflight
+bash scripts/bootstrap_indexes.sh  # 首次：构建 HK + Playbook（无需 Docs）
+python -m rag.preflight            # Docs 可选；hybrid/docs 加 --require-docs
 ```
 
 ---
@@ -27,18 +28,22 @@ python -m rag.preflight
 ## 1. 问答（最常用）
 
 入口：`ask.py`  
-**默认** `--corpus hybrid`**（三轨）**。
+**默认** `--corpus auto`**（按意图分流；复合问会进 hybrid）**。
 
 ```bash
-# 默认 hybrid：港标 + Playbook + Docs
+# 默认 auto：编排分流（产品+港标 → hybrid 三轨）
 python ask.py "怎么按港标在 ACC 配置文件夹结构"
+# 强制三轨：
+# python ask.py --corpus hybrid "…"
 
 # 能力说明（不检索）
 python ask.py "你可以做什么"
 
-# 交互模式（不传问题）
+# 交互模式（不传问题）——支持多轮追问
 python ask.py
 # 输入问题；空行 / exit / quit / q 退出
+# /clear 清空会话历史（下一问作为独立首轮）
+# 追问时：历史只用于理解指代；每轮重新检索；事实只来自本轮来源
 ```
 
 ### 1.0 Streamlit 演示界面
@@ -49,8 +54,25 @@ pip install -r requirements.txt   # 需含 streamlit
 streamlit run streamlit_demo.py
 ```
 
-浏览器打开后：English UI；侧栏默认 Answer language = `en`；点示例或输入问题 → Ask。  
-hybrid 答案按四段卡片展示，右侧列出 HK / Playbook / Docs 来源。
+浏览器打开后：English UI；侧栏可选 Answer language；支持多轮聊天追问。  
+点示例或输入问题；侧栏 **New conversation** 清空会话。  
+hybrid 答案按四段卡片展示；每轮展示独立检索问题与本轮来源。  
+证据边界：历史答案不可信，仅用于指代；每轮重新检索。  
+
+评测多轮改写与重检索：
+
+```bash
+python scripts/eval_conversation.py
+pytest tests/test_conversation.py -q
+```
+
+生成质量门禁（默认无 LLM，仅 fixture）：
+
+```bash
+python scripts/eval_generation_gate.py
+# 可选：需要 Ollama
+# python scripts/eval_generation_gate.py --live
+```
 
 ---
 
@@ -59,8 +81,8 @@ hybrid 答案按四段卡片展示，右侧列出 HK / Playbook / Docs 来源。
 
 | 值          | 含义                                                 |
 | ---------- | -------------------------------------------------- |
-| `hybrid`   | **默认**。强制三轨并行检索并作四段答                               |
-| `auto`     | 意图分流：产品→docs / 港标→hk_cde / 实施→playbook / 复合→hybrid |
+| `auto`     | **默认**。意图分流：产品→docs / 港标→hk_cde / 实施→playbook / 复合→hybrid |
+| `hybrid`   | 强制三轨并行检索并作四段答                               |
 | `docs`     | 仅 Autodesk Docs 帮助                                 |
 | `hk_cde`   | 仅香港 CDE / CIC / DEVB / BD / LandsD                 |
 | `playbook` | 仅 ACC×港标实施手册                                       |
@@ -205,6 +227,15 @@ python scripts/eval_playbook_acc_hk.py --cases eval/playbook_acc_hk_cases.jsonl
 
 python scripts/eval_query_kb.py
 python scripts/eval_query_kb.py --cases eval/query_kb_cases.jsonl
+
+python scripts/eval_conversation.py   # 多轮追问改写 + 重检索证据边界
+python scripts/eval_conversation.py --cases eval/conversation_cases.jsonl
+
+python scripts/build_orchestrator_route_index.py --rebuild   # 语义路由索引
+python scripts/eval_capability_routing.py   # semantic vs legacy A/B（需先 build 路由索引）
+python scripts/eval_capability_routing.py --cases eval/capability_routing_cases.jsonl
+# RAG_SEMANTIC_ROUTER=on|shadow|off  切换语义路由模式（默认 shadow）
+# RAG_SUGGEST_FOLLOWUPS=true|false   答后显示追问建议（默认 true）
 ```
 
 结果摘要：[`eval/RESULTS.md`](eval/RESULTS.md)  
@@ -323,7 +354,7 @@ RAG_LLM_MODEL=qwen3.5:4b python ask.py "问题"
 ## 8. 推荐日常用法
 
 ```bash
-# 日常问答（默认 hybrid）
+# 日常问答（默认 auto：意图分流；复合问会进 hybrid）
 python ask.py "你的问题"
 
 # 纯标准（更快、不凑产品页）
@@ -350,7 +381,8 @@ python scripts/build_playbook_kb_index.py --rebuild
 | `ask.py`                                           | 问答入口             |
 | `ingest.py`                                        | Docs 向量索引        |
 | `compare_models.py`                                | 多 LLM 对比         |
-| `python -m rag.preflight`                          | 依赖与模型检查          |
+| `python -m rag.preflight`                          | 三轨语料/索引/Ollama 预检 |
+| `scripts/bootstrap_indexes.sh`                     | 一键构建 HK+Playbook 索引 |
 | `scripts/extract_hk_cde_pdfs.py`                   | 港标主 PDF 抽取       |
 | `scripts/extract_hk_bd_landsd.py`                  | BD/LandsD PDF 抽取 |
 | `scripts/extract_hk_templates.py`                  | D1–D9 模板字段       |

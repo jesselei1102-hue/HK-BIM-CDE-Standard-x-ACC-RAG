@@ -80,9 +80,9 @@ def main(argv: list[str] | None = None) -> int:
     print(f"  industry route accuracy: {route_acc:.1%} ({route_hits}/{route_total})")
     print(f"  docs false positive (industry steal): {docs_false_positive}")
 
-    ok = recall_at_1 >= 0.80 and docs_false_positive == 0
+    ok = recall_at_1 >= 0.95 and docs_false_positive == 0
     if not ok:
-        print("FAIL: 未达基线（Recall@1>=80%, docs误伤=0）", file=sys.stderr)
+        print("FAIL: 未达基线（Recall@1>=95%, docs误伤=0）", file=sys.stderr)
         return 1
     print("PASS")
     return 0

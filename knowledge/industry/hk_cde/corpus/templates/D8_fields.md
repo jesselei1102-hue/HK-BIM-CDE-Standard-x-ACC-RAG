@@ -1,10 +1,12 @@
 ---
+authority_type: template
+normative_weight: reference
 source_file: output/HK Standard/CIC BIM Standards General 2024/D8_CIC BIM Capability Summary Sheet and Schedule of Software Use.xlsx
 doc_id: template_d8
 section_id: d8_fields
 title: Appendix D8 Field Reference (Capability Summary)
 authority: CICBIMS 2024 Appendix D8
-priority: high
+priority: normal
 language: en
 ---
 

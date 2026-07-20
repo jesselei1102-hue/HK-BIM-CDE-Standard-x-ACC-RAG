@@ -1,11 +1,17 @@
 ---
-source_file: output/HK Standard/CIC Beginner Guide-Adoption of CDE.pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC Beginner Guide-Adoption of CDE.pdf
 doc_id: cic_beginner_cde
 section_id: cic_beginner_cde_2_2_1_advice_on_selection_of_cde_in_public_or_private_cloud_env
 title: 2.2.1. Advice on selection of CDE in public or private cloud environment
 page_start: 31
 page_end: 31
 authority: CIC CDE Beginner Guide §2.2.1.
+authority_type: standard
+normative_weight: recommended
+discipline: general
+lifecycle_stage: project
+publication_year: 2021
+software: null
 priority: high
 language: en
 source_url: hk_cde://cic_beginner_cde/cic_beginner_cde_2_2_1_advice_on_selection_of_cde_in_public_or_private_cloud_env

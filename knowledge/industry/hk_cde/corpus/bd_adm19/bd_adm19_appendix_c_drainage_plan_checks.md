@@ -6,6 +6,10 @@ title: Appendix C — Drainage Plan Checks
 page_start: 15
 page_end: 16
 authority: BD PNAP ADM-19 §Appendix C — Drainage Plan Checks
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
 priority: normal
 language: en
 source_url: hk_cde://bd_adm19/bd_adm19_appendix_c_drainage_plan_checks

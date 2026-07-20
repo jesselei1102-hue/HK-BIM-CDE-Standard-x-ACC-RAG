@@ -6,6 +6,10 @@ title: Processing of Plan Submissions
 page_start: 2
 page_end: 2
 authority: BD PNAP ADM-19 §Processing of Plan Submissions
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
 priority: high
 language: en
 source_url: hk_cde://bd_adm19/bd_adm19_processing_of_plan_submissions

@@ -6,6 +6,10 @@ title: Appendix A — GBP Fundamental Check Items
 page_start: 10
 page_end: 11
 authority: BD PNAP ADM-19 §Appendix A — GBP Fundamental Check Items
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
 priority: high
 language: en
 source_url: hk_cde://bd_adm19/bd_adm19_appendix_a_gbp_fundamental_check_items

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# 启动本地 RAG CLI（等价于 python ask.py …）
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT"
+
+if [[ -x "$ROOT/.venv/bin/python" ]]; then
+  exec "$ROOT/.venv/bin/python" "$ROOT/ask.py" "$@"
+fi
+
+if command -v python3 >/dev/null 2>&1; then
+  exec python3 "$ROOT/ask.py" "$@"
+fi
+
+exec python "$ROOT/ask.py" "$@"

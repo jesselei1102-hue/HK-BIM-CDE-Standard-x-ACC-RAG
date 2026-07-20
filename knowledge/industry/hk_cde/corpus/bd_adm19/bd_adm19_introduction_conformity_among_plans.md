@@ -6,6 +6,10 @@ title: Introduction & Conformity Among Plans
 page_start: 1
 page_end: 1
 authority: BD PNAP ADM-19 §Introduction & Conformity Among Plans
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
 priority: high
 language: en
 source_url: hk_cde://bd_adm19/bd_adm19_introduction_conformity_among_plans

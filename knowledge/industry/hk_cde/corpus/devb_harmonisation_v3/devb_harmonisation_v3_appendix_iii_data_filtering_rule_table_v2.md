@@ -7,7 +7,13 @@ title: Appendix III - Data Filtering Rule Table (v2)
 page_start: 51
 page_end: 52
 authority: DEVB BIM Harmonisation v3.0 §Appendix
-priority: normal
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2023
+software: null
+priority: high
 language: en
 source_url: hk_cde://devb_harmonisation_v3/devb_harmonisation_v3_appendix_iii_data_filtering_rule_table_v2
 ---

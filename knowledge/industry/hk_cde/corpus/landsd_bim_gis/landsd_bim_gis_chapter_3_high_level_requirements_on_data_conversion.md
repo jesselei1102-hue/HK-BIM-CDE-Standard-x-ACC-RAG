@@ -7,6 +7,10 @@ page_start: 11
 page_end: 12
 authority: LandsD BIM-GIS Guidelines Jun 2023 §Chapter 3 — High Level Requirements
   on Data Conversion
+authority_type: statutory
+normative_weight: mandatory
+discipline: gis
+lifecycle_stage: statutory
 priority: high
 language: en
 source_url: hk_cde://landsd_bim_gis/landsd_bim_gis_chapter_3_high_level_requirements_on_data_conversion

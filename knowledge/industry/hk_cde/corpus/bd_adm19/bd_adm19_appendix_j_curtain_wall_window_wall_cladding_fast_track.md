@@ -7,6 +7,10 @@ page_start: 35
 page_end: 35
 authority: BD PNAP ADM-19 §Appendix J — Curtain Wall / Window Wall / Cladding Fast
   Track
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
 priority: normal
 language: en
 source_url: hk_cde://bd_adm19/bd_adm19_appendix_j_curtain_wall_window_wall_cladding_fast_track

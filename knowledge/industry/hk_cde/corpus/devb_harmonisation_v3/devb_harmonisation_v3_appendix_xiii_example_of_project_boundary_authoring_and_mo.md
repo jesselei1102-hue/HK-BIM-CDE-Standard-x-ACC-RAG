@@ -7,7 +7,13 @@ title: Appendix XIII-Example of Project Boundary Authoring and Model File List (
 page_start: 152
 page_end: 155
 authority: DEVB BIM Harmonisation v3.0 §Appendix
-priority: normal
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2023
+software: null
+priority: high
 language: en
 source_url: hk_cde://devb_harmonisation_v3/devb_harmonisation_v3_appendix_xiii_example_of_project_boundary_authoring_and_mo
 ---

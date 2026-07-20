@@ -231,6 +231,22 @@ SEEDS = [
         "authority": "CICBIMS 2024 §4.5.5",
     },
     {
+        "id": "hk_zcp_folder_structure",
+        "topic": "ZCP case study folder structure",
+        "aliases": [
+            "ZCP folder",
+            "Zero Carbon Park folder",
+            "ZCP standardised folder",
+            "ZCP 文件夹",
+            "01_Revit Model",
+            "ZCP handover folders",
+        ],
+        "canonical_query_en": "What is the Zero Carbon Park BIMIP standardised folder structure?",
+        "canonical_query_zh": "Zero Carbon Park BIMIP 的标准文件夹结构是什么？",
+        "target_section": "cic_zcp_bimip_v15/cic_zcp_bimip_v15_figures_transcription",
+        "authority": "CIC ZCP BIMIP v1.5 Figure 9/10 (transcribed)",
+    },
+    {
         "id": "hk_cloud_cde",
         "topic": "Cloud-hosted CDE",
         "aliases": ["云CDE", "cloud CDE", "私有云", "公有云"],
@@ -347,6 +363,70 @@ SEEDS = [
         "canonical_query_zh": "屋宇署 ADV-34 对 BIM 法定图则提交有什么要求？",
         "target_section": "bd_adv34/bd_adv34_bim_submissions_general_guidelines",
         "authority": "BD PNAP ADV-34",
+    },
+    {
+        "id": "hk_cicbims_overview",
+        "topic": "CIC BIM Standards – General (CICBIMS) overview",
+        "aliases": [
+            "CIC standard",
+            "CIC standards",
+            "CIC BIM",
+            "CIC BIM Standard",
+            "CIC BIM Standards",
+            "CIC BIM Standards General",
+            "CICBIMS",
+            "CICBIMS overview",
+            "港标CIC",
+            "CIC标准",
+            "CIC BIM标准",
+            "CIC BIM 标准",
+        ],
+        "canonical_query_en": (
+            "CIC BIM Standards General CICBIMS 2024 introduction purpose "
+            "scope ISO 19650 information management overview"
+        ),
+        "canonical_query_zh": "CIC BIM Standards General（CICBIMS）涵盖什么范围与目的？",
+        "target_section": "cicbims_2024/cicbims_2024_introduction",
+        "authority": "CICBIMS 2024 §Introduction",
+    },
+    {
+        "id": "hk_cicbims_digitalisation",
+        "topic": "CICBIMS Digitalisation chapter headline",
+        "aliases": [
+            "CIC BIM CDE standards",
+            "CICBIMS chapter",
+            "CIC standards headline",
+            "CIC BIM contents",
+        ],
+        "canonical_query_en": (
+            "CIC BIM Standards General CICBIMS digitalisation information "
+            "management process chapter overview"
+        ),
+        "canonical_query_zh": "CICBIMS 数字化与信息管理章节讲什么？",
+        "target_section": "cicbims_2024/cicbims_2024_1_digitalisation",
+        "authority": "CICBIMS 2024 §1",
+    },
+    {
+        "id": "hk_devb_harmonisation_overview",
+        "topic": "DEVB BIM Harmonisation Guidelines overview",
+        "aliases": [
+            "harmonization guide",
+            "harmonisation guide",
+            "BIM harmonization",
+            "BIM Harmonisation",
+            "DEVB Harmonisation",
+            "Harmonisation Guidelines",
+            "工务署 BIM 协调",
+            "BIM协调指南",
+            "BIM 调和下",
+        ],
+        "canonical_query_en": (
+            "DEVB BIM Harmonisation Guidelines v3 executive summary "
+            "table of contents federation naming LOIN overview"
+        ),
+        "canonical_query_zh": "DEVB BIM Harmonisation Guidelines 主要内容是什么？",
+        "target_section": "devb_harmonisation_v3/devb_harmonisation_v3_executive_summary",
+        "authority": "DEVB Harmonisation v3.0 Executive Summary",
     },
     {
         "id": "hk_bd_adm19_bim",

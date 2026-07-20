@@ -1,10 +1,12 @@
 ---
+authority_type: template
+normative_weight: reference
 source_file: output/HK Standard/CIC BIM Standards General 2024/D7_CIC BIM Capability Assessment_Template.docx
 doc_id: template_d7
 section_id: d7_fields
 title: Appendix D7 Field Reference (Capability Assessment)
 authority: CICBIMS 2024 Appendix D7
-priority: high
+priority: normal
 language: en
 ---
 

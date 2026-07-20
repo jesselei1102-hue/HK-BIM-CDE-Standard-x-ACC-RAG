@@ -74,11 +74,11 @@ disclaimer: >
 | 標準概念 (Standard Concept) | ACC 對象 (ACC Object) | 本手冊章節 | 缺口 / BEP 約定 |
 |---|---|---|---|
 | **WIP 容器** (Work in Progress) | 文件夾 `01_WIP` + 權限隔離 | 02_folder_cde §2, 04_permissions §3 | ACC 無原生「狀態機」；容器狀態靠 **夾位置 + Custom Attribute** 共同表達 |
-| **Shared 容器** | 文件夾 `02_Shared` + 跨專業可見權限 | 02_folder_cde §3, 04_permissions §4 | 文件需 **人工遷夾或 Document Controller 操作**，非 Workflow 自動完成 |
-| **Published 容器** | 文件夾 `03_Published` | 02_folder_cde §4, 05_workflow §4 | 同上；需搭配 Transmittal 作正式發佈記錄 |
+| **Shared 容器** | 文件夾 `02_Shared` + 跨專業可見權限 | 02_folder_cde §3, 04_permissions §4 | 可用 Workflow **Copy approved files** 進入 Shared；源文件清理仍需紀律（copy ≠ move；同 top-level 約束） |
+| **Published 容器** | 文件夾 `03_Published` | 02_folder_cde §4, 05_workflow §4 | 同上；正式對外交換另配 Transmittal |
 | **Archived 容器** | 文件夾 `04_Archive` (只讀) | 02_folder_cde §5 | 歸檔靠操作紀律；ACC 無「自動鎖定」 |
-| **Information Gateway** | Approval Workflow + **人工遷夾紀律** | 05_workflow §3-4 | ACC Workflow 管審批流；但「通過後移至下一容器」須人工或二次開發實現 |
-| **Status / Suitability Code** | Custom Attribute (下拉) / 文件名 Status 段 | 03_naming §2-3, 02_folder_cde §6 | ACC Workflow 完成 **不自動** 寫屬性值；需 Document Controller 手動更新或 API 腳本 |
+| **Information Gateway** | Approval Workflow + **Action Upon Completion**（複製+屬性） | 05_workflow §3-5 | Docs 可自動複製已批准文件並更新屬性；BEP 仍須定義目標夾、屬性值與源夾清理 |
+| **Status / Suitability Code** | Custom Attribute (下拉) / 文件名 Status 段 | 03_naming §2-3, 02_folder_cde §6 | Workflow **Update attributes** 可在完成時寫入；須在 Workflow 配置並寫入 BEP |
 | **Revision** | ACC Version History + 文件名 Revision 段 | 03_naming §4 | 雙軌：ACC 自動版本 + 文件名顯式版本號，需在 BEP 定義以誰為準 |
 | **Information Container ID** | 文件名 + Naming Standard | 03_naming §5 | Harmonisation v3 字段數可能 > ACC Naming Standard 支持字段，需截斷規則 |
 | **Naming Convention** | Docs → Naming Standards 功能 | 03_naming §3 | 只在已啟用的文件夾內強制；不覆蓋 Desktop Connector 本地命名 |

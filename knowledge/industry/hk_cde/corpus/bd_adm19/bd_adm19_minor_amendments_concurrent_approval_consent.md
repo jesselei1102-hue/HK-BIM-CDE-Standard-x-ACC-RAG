@@ -6,6 +6,10 @@ title: Minor Amendments & Concurrent Approval-Consent
 page_start: 6
 page_end: 9
 authority: BD PNAP ADM-19 §Minor Amendments & Concurrent Approval-Consent
+authority_type: statutory
+normative_weight: mandatory
+discipline: statutory_submission
+lifecycle_stage: statutory
 priority: high
 language: en
 source_url: hk_cde://bd_adm19/bd_adm19_minor_amendments_concurrent_approval_consent

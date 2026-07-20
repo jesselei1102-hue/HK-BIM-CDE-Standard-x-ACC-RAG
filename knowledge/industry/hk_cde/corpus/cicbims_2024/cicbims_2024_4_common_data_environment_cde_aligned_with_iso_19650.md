@@ -1,12 +1,18 @@
 ---
-source_file: output/HK Standard/CIC BIM Standards General 2024/CIC BIM Standards General
-  (Version 2024).pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC BIM Standards General 2024/CIC
+  BIM Standards General (Version 2024).pdf
 doc_id: cicbims_2024
 section_id: cicbims_2024_4_common_data_environment_cde_aligned_with_iso_19650
 title: 4. Common Data Environment (CDE) [aligned with ISO 19650]
 page_start: 101
 page_end: 101
 authority: CICBIMS 2024 §4.
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2024
+software: null
 priority: high
 language: en
 source_url: hk_cde://cicbims_2024/cicbims_2024_4_common_data_environment_cde_aligned_with_iso_19650

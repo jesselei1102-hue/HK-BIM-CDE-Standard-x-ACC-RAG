@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-13T08:18:26.920309+00:00",
+  "generated_at": "2026-07-19T16:08:47.125064+00:00",
   "documents": [
     {
       "doc_id": "cicbims_2024",
@@ -30,9 +30,129 @@
       "garbage_pages": 0,
       "page_coverage_pct": 100.0,
       "gaps": []
+    },
+    {
+      "doc_id": "cic_mep_2021",
+      "page_count": 51,
+      "section_count": 22,
+      "ok_pages": 48,
+      "empty_pages": 3,
+      "garbage_pages": 0,
+      "page_coverage_pct": 94.12,
+      "gaps": []
+    },
+    {
+      "doc_id": "cic_uu_2021",
+      "page_count": 44,
+      "section_count": 28,
+      "ok_pages": 41,
+      "empty_pages": 3,
+      "garbage_pages": 0,
+      "page_coverage_pct": 93.18,
+      "gaps": []
+    },
+    {
+      "doc_id": "cic_object_guide_2021",
+      "page_count": 32,
+      "section_count": 34,
+      "ok_pages": 29,
+      "empty_pages": 3,
+      "garbage_pages": 0,
+      "page_coverage_pct": 90.62,
+      "gaps": []
+    },
+    {
+      "doc_id": "cic_statutory_plans_2020",
+      "page_count": 60,
+      "section_count": 70,
+      "ok_pages": 58,
+      "empty_pages": 2,
+      "garbage_pages": 0,
+      "page_coverage_pct": 96.67,
+      "gaps": []
+    },
+    {
+      "doc_id": "cic_dictionary_2024",
+      "page_count": 17,
+      "section_count": 1,
+      "ok_pages": 15,
+      "empty_pages": 2,
+      "garbage_pages": 0,
+      "page_coverage_pct": 88.24,
+      "gaps": []
+    },
+    {
+      "doc_id": "cic_amfm_case_2021",
+      "page_count": 46,
+      "section_count": 18,
+      "ok_pages": 43,
+      "empty_pages": 3,
+      "garbage_pages": 0,
+      "page_coverage_pct": 93.48,
+      "gaps": []
+    },
+    {
+      "doc_id": "cic_zcp_bimip_v15",
+      "page_count": 87,
+      "section_count": 23,
+      "ok_pages": 86,
+      "empty_pages": 1,
+      "garbage_pages": 0,
+      "page_coverage_pct": 98.85,
+      "gaps": []
+    },
+    {
+      "doc_id": "cic_stat_archicad_2020",
+      "page_count": 55,
+      "section_count": 49,
+      "ok_pages": 51,
+      "empty_pages": 4,
+      "garbage_pages": 0,
+      "page_coverage_pct": 92.73,
+      "gaps": []
+    },
+    {
+      "doc_id": "cic_stat_civil3d_2020",
+      "page_count": 30,
+      "section_count": 51,
+      "ok_pages": 28,
+      "empty_pages": 2,
+      "garbage_pages": 0,
+      "page_coverage_pct": 93.33,
+      "gaps": []
+    },
+    {
+      "doc_id": "cic_stat_revit_2020",
+      "page_count": 160,
+      "section_count": 56,
+      "ok_pages": 155,
+      "empty_pages": 5,
+      "garbage_pages": 0,
+      "page_coverage_pct": 96.88,
+      "gaps": []
+    },
+    {
+      "doc_id": "cic_stat_tekla_2020",
+      "page_count": 47,
+      "section_count": 69,
+      "ok_pages": 43,
+      "empty_pages": 4,
+      "garbage_pages": 0,
+      "page_coverage_pct": 91.49,
+      "gaps": []
+    },
+    {
+      "doc_id": "cic_stat_object_summary_2020",
+      "page_count": 42,
+      "section_count": 1,
+      "ok_pages": 38,
+      "empty_pages": 4,
+      "garbage_pages": 0,
+      "page_coverage_pct": 90.48,
+      "gaps": []
     }
   ],
-  "page_coverage_pct": 99.32,
+  "page_coverage_pct": 96.5,
   "outline_mapped_pct": 100.0,
   "gaps": [],
   "acknowledged_quality_issues": false,

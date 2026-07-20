@@ -1,12 +1,18 @@
 ---
-source_file: output/HK Standard/CIC BIM Standards General 2024/CIC BIM Standards General
-  (Version 2024).pdf
+source_file: output/HK Standard/CIC BIM Standard/CIC BIM Standards General 2024/CIC
+  BIM Standards General (Version 2024).pdf
 doc_id: cicbims_2024
 section_id: cicbims_2024_4_1_3_data_environments_and_common_data_environments
 title: 4.1.3 Data Environments and Common Data Environments
 page_start: 102
 page_end: 104
 authority: CICBIMS 2024 §4.1.3
+authority_type: standard
+normative_weight: mandatory
+discipline: general
+lifecycle_stage: project
+publication_year: 2024
+software: null
 priority: high
 language: en
 source_url: hk_cde://cicbims_2024/cicbims_2024_4_1_3_data_environments_and_common_data_environments

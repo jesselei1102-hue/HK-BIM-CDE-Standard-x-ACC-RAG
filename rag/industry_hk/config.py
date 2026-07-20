@@ -11,22 +11,19 @@ from rag.config import (
     ModelConfig,
     PROJECT_ROOT,
     RetrievalConfig,
+    _env_bool,
     _env_float,
     _env_int,
     _env_path,
 )
 
 from .paths import (
-    HK_CHROMA_DIR,
-    HK_CHUNKS_PATH,
     HK_COLLECTION_NAME,
     HK_CORPUS_DIR,
-    HK_KB_CHROMA_DIR,
     HK_KB_COLLECTION_NAME,
-    HK_KB_MANIFEST_PATH,
-    HK_MANIFEST_PATH,
     HK_QUERY_KB_PATH,
     HK_RAG_DATA_DIR,
+    storage_paths,
 )
 
 
@@ -35,6 +32,8 @@ class IndustryCorpusConfig:
     source_dir: Path = HK_CORPUS_DIR
     file_glob: str = "**/*.md"
     product: str = "hk_cde"
+    priority_filter: str | None = "high"
+    ingest_scope: str = "high"
 
 
 @dataclass(frozen=True)
@@ -57,27 +56,27 @@ class IndustryStorageConfig:
 
     @property
     def chroma_dir(self) -> Path:
-        return HK_CHROMA_DIR
+        return storage_paths(self.data_dir)["chroma_dir"]
 
     @property
     def chunks_path(self) -> Path:
-        return HK_CHUNKS_PATH
+        return storage_paths(self.data_dir)["chunks_path"]
 
     @property
     def manifest_path(self) -> Path:
-        return HK_MANIFEST_PATH
+        return storage_paths(self.data_dir)["manifest_path"]
 
     @property
     def kb_chroma_dir(self) -> Path:
-        return HK_KB_CHROMA_DIR
+        return storage_paths(self.data_dir)["kb_chroma_dir"]
 
     @property
     def kb_collection_name(self) -> str:
-        return HK_KB_COLLECTION_NAME
+        return os.getenv("INDUSTRY_HK_KB_COLLECTION", HK_KB_COLLECTION_NAME)
 
     @property
     def kb_manifest_path(self) -> Path:
-        return HK_KB_MANIFEST_PATH
+        return storage_paths(self.data_dir)["kb_manifest_path"]
 
 
 @dataclass(frozen=True)
@@ -100,6 +99,22 @@ class IndustryHKConfig:
 
 
 def get_industry_hk_config() -> IndustryHKConfig:
+    ingest_all = os.getenv("INDUSTRY_HK_INGEST_ALL", "false").lower() in {
+        "1",
+        "true",
+        "yes",
+    }
+    scope = os.getenv("INDUSTRY_HK_INGEST_SCOPE", "all" if ingest_all else "high")
+    priority_filter = None if scope in {"all", "substantive"} and scope != "high" else (
+        None if scope == "all" else ("high" if scope == "high" else None)
+    )
+    if scope == "high":
+        priority_filter = "high"
+    elif scope == "all":
+        priority_filter = None
+    else:
+        priority_filter = None
+
     return IndustryHKConfig(
         corpus=IndustryCorpusConfig(
             source_dir=_env_path(
@@ -108,6 +123,8 @@ def get_industry_hk_config() -> IndustryHKConfig:
             ),
             file_glob=os.getenv("INDUSTRY_HK_FILE_GLOB", "**/*.md"),
             product=os.getenv("INDUSTRY_HK_PRODUCT", "hk_cde"),
+            priority_filter=priority_filter,
+            ingest_scope=scope,
         ),
         models=ModelConfig(
             ollama_host=os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434"),
@@ -130,6 +147,10 @@ def get_industry_hk_config() -> IndustryHKConfig:
             rrf_k=_env_int("RAG_RRF_K", 60),
             maximum_context_tokens=_env_int("RAG_MAX_CONTEXT_TOKENS", 2_000),
             minimum_vector_similarity=_env_float("RAG_MIN_SIMILARITY", 0.50),
+            nlp_coarse_enabled=_env_bool("RAG_NLP_COARSE", True),
+            nlp_coarse_candidates=_env_int("RAG_NLP_COARSE_CANDIDATES", 80),
+            nlp_rerank_enabled=_env_bool("RAG_NLP_RERANK", True),
+            hybrid_prefetch=_env_int("RAG_HYBRID_PREFETCH", 12),
         ),
         query_kb=IndustryQueryKBConfig(
             enabled=os.getenv("INDUSTRY_KB_ENABLED", "true").lower()
@@ -160,6 +181,5 @@ def get_industry_hk_config() -> IndustryHKConfig:
                 "INDUSTRY_HK_COLLECTION", "industry_hk_cde"
             ),
         ),
-        ingest_all_priorities=os.getenv("INDUSTRY_HK_INGEST_ALL", "false").lower()
-        in {"1", "true", "yes"},
+        ingest_all_priorities=ingest_all or scope == "all",
     )

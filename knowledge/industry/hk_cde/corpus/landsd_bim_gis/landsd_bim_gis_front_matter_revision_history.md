@@ -6,6 +6,10 @@ title: Front Matter & Revision History
 page_start: 1
 page_end: 2
 authority: LandsD BIM-GIS Guidelines Jun 2023 §Front Matter & Revision History
+authority_type: statutory
+normative_weight: mandatory
+discipline: gis
+lifecycle_stage: statutory
 priority: normal
 language: en
 source_url: hk_cde://landsd_bim_gis/landsd_bim_gis_front_matter_revision_history
