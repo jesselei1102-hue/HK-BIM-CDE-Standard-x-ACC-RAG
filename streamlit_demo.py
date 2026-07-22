@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ACC × HK BIM RAG — Streamlit demo (English UI).
+"""ACC × HK BIM RAG — Streamlit demo (EN / 中文 UI).
 
 Run:
   source .venv/bin/activate
@@ -11,6 +11,7 @@ from __future__ import annotations
 import re
 import time
 from dataclasses import dataclass
+from typing import Any
 
 import streamlit as st
 
@@ -24,12 +25,152 @@ from rag.orchestrator.pipeline import HybridOrchestrator, format_orchestrator_de
 from rag.playbook_acc_hk.config import get_playbook_config
 
 PAGE_TITLE = "ACC × HK BIM"
-EXAMPLES = [
-    "How to set up ACC folders to HK CDE standards",
-    "file naming standard",
-    "How to run HK-aligned approval workflows in ACC",
-    "What can you do?",
-]
+
+UI_COPY: dict[str, dict[str, Any]] = {
+    "en": {
+        "controls": "Controls",
+        "ui_language": "UI language",
+        "corpus": "Corpus",
+        "corpus_help": "auto = router; hybrid = all three tracks; others = single track",
+        "answer_language": "Answer language",
+        "answer_language_help": (
+            "Follow UI uses the selected interface language. "
+            "Auto follows the question language."
+        ),
+        "answer_lang_options": {
+            "follow_ui": "Follow UI",
+            "auto": "Auto (question)",
+            "en": "English",
+            "zh-Hans": "简体中文",
+            "zh-Hant": "繁體中文",
+        },
+        "top_k": "Top-k per track",
+        "no_generate": "Retrieve only (no LLM)",
+        "show_debug": "Show retrieval debug",
+        "show_context": "Show chunk snippets",
+        "new_conversation": "New conversation",
+        "turns_caption": "Turns · `{n}` (session memory only)",
+        "hybrid_sections": "Hybrid sections",
+        "followups_note": (
+            "Follow-ups re-retrieve every turn. "
+            "Prior answers are untrusted context only."
+        ),
+        "hero_kicker": "Local grounded RAG",
+        "hero_sub": (
+            "Three-track grounding: Hong Kong BIM/CDE standards · ACC×HK playbook · "
+            "Autodesk Docs. Multi-turn follow-ups rewrite the question, then "
+            "re-retrieve this turn's evidence."
+        ),
+        "examples": [
+            "How to set up ACC folders to HK CDE standards",
+            "file naming standard",
+            "How to run HK-aligned approval workflows in ACC",
+            "What can you do?",
+        ],
+        "chat_placeholder": "Ask a question or follow up…",
+        "empty_hint": "Pick an example or type a question to start a multi-turn session.",
+        "you_might_ask": "You might also ask",
+        "sources": "Sources",
+        "no_sources": "No sources",
+        "validation_notes": "Validation notes",
+        "orchestrator_debug": "Orchestrator debug",
+        "retrieved_chunks": "Retrieved chunks",
+        "standalone_query": "Standalone retrieval query",
+        "status_working": "Working on your question…",
+        "status_retrieving": "Retrieving + answering (single pass)…",
+        "status_sources": "Sources",
+        "status_retrieve": "retrieve",
+        "status_generate": "generate",
+        "status_total": "total",
+        "status_standalone": "Standalone query",
+        "status_done": "Done",
+        "status_retrieve_only": "retrieve-only",
+        "missing_index": "Missing index",
+        "missing_index_body": (
+            "Index or corpus missing: {exc}\n\n"
+            "Run `bash scripts/bootstrap_indexes.sh` "
+            "or `python -m rag.preflight` for repair commands."
+        ),
+        "request_failed": "Request failed",
+        "could_not_answer": "Could not answer: {exc}",
+        "retrieve_only_answer": "(Retrieve-only mode — generation skipped)",
+        "no_answer": "(No answer)",
+        "section_titles": {
+            "standards": "Standards Requirements",
+            "playbook": "Implementation Guidance",
+            "product": "Product Steps",
+            "alignment": "Alignment & Gaps",
+        },
+    },
+    "zh": {
+        "controls": "控制面板",
+        "ui_language": "界面语言",
+        "corpus": "语料轨道",
+        "corpus_help": "auto = 自动路由；hybrid = 三轨联查；其余 = 单轨",
+        "answer_language": "回答语言",
+        "answer_language_help": "跟随界面使用当前界面语言；自动则跟随提问语言。",
+        "answer_lang_options": {
+            "follow_ui": "跟随界面",
+            "auto": "自动（跟随提问）",
+            "en": "English",
+            "zh-Hans": "简体中文",
+            "zh-Hant": "繁體中文",
+        },
+        "top_k": "每轨 Top-k",
+        "no_generate": "仅检索（不调用大模型）",
+        "show_debug": "显示检索调试信息",
+        "show_context": "显示原文片段",
+        "new_conversation": "新对话",
+        "turns_caption": "轮次 · `{n}`（仅会话记忆）",
+        "hybrid_sections": "混合回答章节",
+        "followups_note": "追问每轮都会重新检索。上一轮答案仅作不可信上下文。",
+        "hero_kicker": "本地有据可查 RAG",
+        "hero_sub": (
+            "三轨 grounding：香港 BIM/CDE 标准 · ACC×HK Playbook · Autodesk Docs。"
+            "多轮追问会改写问题，并按本轮证据重新检索。"
+        ),
+        "examples": [
+            "如何按港标搭建 ACC 文件夹结构",
+            "文件命名标准",
+            "如何在 ACC 跑符合港标的审批流程",
+            "你能做什么？",
+        ],
+        "chat_placeholder": "输入问题或继续追问…",
+        "empty_hint": "点选示例，或直接输入问题开始多轮对话。",
+        "you_might_ask": "你还可以问",
+        "sources": "来源",
+        "no_sources": "暂无来源",
+        "validation_notes": "校验说明",
+        "orchestrator_debug": "编排调试",
+        "retrieved_chunks": "检索片段",
+        "standalone_query": "本轮独立检索问句",
+        "status_working": "正在处理你的问题…",
+        "status_retrieving": "检索 + 生成（单次）…",
+        "status_sources": "来源",
+        "status_retrieve": "检索",
+        "status_generate": "生成",
+        "status_total": "合计",
+        "status_standalone": "独立问句",
+        "status_done": "完成",
+        "status_retrieve_only": "仅检索",
+        "missing_index": "索引缺失",
+        "missing_index_body": (
+            "索引或语料缺失：{exc}\n\n"
+            "请运行 `bash scripts/bootstrap_indexes.sh` "
+            "或 `python -m rag.preflight` 查看修复命令。"
+        ),
+        "request_failed": "请求失败",
+        "could_not_answer": "无法回答：{exc}",
+        "retrieve_only_answer": "（仅检索模式 — 已跳过生成）",
+        "no_answer": "（无回答）",
+        "section_titles": {
+            "standards": "标准要求",
+            "playbook": "实施建议",
+            "product": "产品操作",
+            "alignment": "对齐与缺口",
+        },
+    },
+}
 
 TRACK_COLORS = {
     "hk_cde": "#0B6E4F",
@@ -39,13 +180,22 @@ TRACK_COLORS = {
     "meta": "#64748B",
 }
 
-# key, badge, accent, English section title for UI chrome
 SECTION_META = (
-    ("standards", "HK", "#0B6E4F", "Standards Requirements"),
-    ("playbook", "Playbook", "#B45309", "Implementation Guidance"),
-    ("product", "Docs", "#1D4ED8", "Product Steps"),
-    ("alignment", "Align", "#7C2D12", "Alignment & Gaps"),
+    ("standards", "HK", "#0B6E4F"),
+    ("playbook", "Playbook", "#B45309"),
+    ("product", "Docs", "#1D4ED8"),
+    ("alignment", "Align", "#7C2D12"),
 )
+
+
+def _t(ui_lang: str) -> dict[str, Any]:
+    return UI_COPY["zh" if ui_lang == "zh" else "en"]
+
+
+def _resolve_answer_lang_choice(choice: str, ui_lang: str) -> str:
+    if choice == "follow_ui":
+        return "zh-Hans" if ui_lang == "zh" else "en"
+    return choice
 
 _HEADER_PATTERNS = (
     (
@@ -205,7 +355,8 @@ div[data-testid="stSidebar"] {
 div[data-testid="stSidebar"] * { color: #e2e8f0 !important; }
 div[data-testid="stSidebar"] .stSelectbox label,
 div[data-testid="stSidebar"] .stCheckbox label,
-div[data-testid="stSidebar"] .stSlider label {
+div[data-testid="stSidebar"] .stSlider label,
+div[data-testid="stSidebar"] .stRadio label {
   color: #cbd5e1 !important;
 }
 </style>
@@ -274,23 +425,23 @@ def _render_meta(result, answer_lang: str, question: str) -> None:
     )
 
 
-def _render_hybrid_sections(answer_text: str) -> None:
+def _render_hybrid_sections(answer_text: str, *, ui_lang: str) -> None:
     blocks = _split_sections(answer_text)
     if not blocks:
         st.markdown(answer_text)
         return
-    meta_by_key = {key: (badge, color, en_title) for key, badge, color, en_title in SECTION_META}
+    titles = _t(ui_lang)["section_titles"]
+    meta_by_key = {key: (badge, color) for key, badge, color in SECTION_META}
     cols = st.columns(2)
     for i, block in enumerate(blocks):
-        badge, color, en_title = meta_by_key.get(
-            block.key, ("?", "#334155", block.title)
-        )
+        badge, color = meta_by_key.get(block.key, ("?", "#334155"))
+        title = titles.get(block.key, block.title)
         with cols[i % 2]:
             st.markdown(
                 f"""
 <div class="section-card" style="--accent:{color}">
   <div class="section-label">{badge}</div>
-  <div class="section-title">{en_title}</div>
+  <div class="section-title">{title}</div>
 </div>
                 """,
                 unsafe_allow_html=True,
@@ -324,9 +475,9 @@ def _track_from_label(label: str) -> str:
     return "hybrid"
 
 
-def _render_sources(source_lines: list[str]) -> None:
+def _render_sources(source_lines: list[str], *, ui_lang: str) -> None:
     if not source_lines:
-        st.caption("No sources")
+        st.caption(_t(ui_lang)["no_sources"])
         return
     for line in source_lines:
         idx, label, title, url = _parse_source_line(line)
@@ -346,7 +497,9 @@ def _render_sources(source_lines: list[str]) -> None:
         )
 
 
-def _collect_result_payload(result, *, no_generate: bool) -> tuple[str, list[str], list]:
+def _collect_result_payload(
+    result, *, no_generate: bool, ui_lang: str
+) -> tuple[str, list[str], list]:
     if result.track == "hybrid" and result.merged is not None:
         source_lines = format_hybrid_sources(result.merged)
         contexts = [item.chunk for item in result.merged.tracked]
@@ -362,10 +515,11 @@ def _collect_result_payload(result, *, no_generate: bool) -> tuple[str, list[str
         source_lines = format_sources(result.chunks_docs)
         contexts = result.chunks_docs
 
+    copy = _t(ui_lang)
     if no_generate:
-        answer_text = "(Retrieve-only mode — generation skipped)"
+        answer_text = copy["retrieve_only_answer"]
     else:
-        answer_text = result.answer.answer if result.answer else "(No answer)"
+        answer_text = result.answer.answer if result.answer else copy["no_answer"]
     return answer_text, source_lines, contexts
 
 
@@ -373,11 +527,12 @@ def _render_followup_suggestions(
     followups: list[str],
     *,
     key_prefix: str,
+    ui_lang: str,
 ) -> None:
     """Render clickable follow-ups. Must be shown on every rerun so clicks register."""
     if not followups:
         return
-    st.markdown("**You might also ask**")
+    st.markdown(f"**{_t(ui_lang)['you_might_ask']}**")
     cols = st.columns(min(len(followups), 3))
     for index, suggestion in enumerate(followups):
         col = cols[index % len(cols)]
@@ -403,26 +558,41 @@ def main() -> None:
         st.session_state.conversation = ConversationSession()
     if "chat_messages" not in st.session_state:
         st.session_state.chat_messages = []
+    if "ui_lang_radio" not in st.session_state:
+        st.session_state.ui_lang_radio = "English"
 
     with st.sidebar:
-        st.markdown("### Controls")
+        st.radio(
+            "界面语言 / UI language",
+            options=["English", "中文"],
+            horizontal=True,
+            key="ui_lang_radio",
+        )
+        ui_lang = "zh" if st.session_state.ui_lang_radio == "中文" else "en"
+        copy = _t(ui_lang)
+
+        st.markdown(f"### {copy['controls']}")
         corpus = st.selectbox(
-            "Corpus",
+            copy["corpus"],
             options=["auto", "hybrid", "docs", "hk_cde", "playbook"],
             index=0,
-            help="auto = router; hybrid = all three tracks; others = single track",
+            help=copy["corpus_help"],
         )
-        answer_lang = st.selectbox(
-            "Answer language",
-            options=["en", "auto", "zh-Hans", "zh-Hant"],
+        answer_lang_labels = copy["answer_lang_options"]
+        answer_lang_keys = list(answer_lang_labels.keys())
+        answer_lang_choice = st.selectbox(
+            copy["answer_language"],
+            options=answer_lang_keys,
+            format_func=lambda key: answer_lang_labels[key],
             index=0,
-            help="Default English. Use auto to follow the question language.",
+            help=copy["answer_language_help"],
         )
-        top_k = st.slider("Top-k per track", min_value=1, max_value=8, value=3)
-        no_generate = st.checkbox("Retrieve only (no LLM)", value=False)
-        show_debug = st.checkbox("Show retrieval debug", value=False)
-        show_context = st.checkbox("Show chunk snippets", value=False)
-        if st.button("New conversation", use_container_width=True):
+        answer_lang = _resolve_answer_lang_choice(answer_lang_choice, ui_lang)
+        top_k = st.slider(copy["top_k"], min_value=1, max_value=8, value=3)
+        no_generate = st.checkbox(copy["no_generate"], value=False)
+        show_debug = st.checkbox(copy["show_debug"], value=False)
+        show_context = st.checkbox(copy["show_context"], value=False)
+        if st.button(copy["new_conversation"], use_container_width=True):
             st.session_state.conversation = ConversationSession()
             st.session_state.chat_messages = []
             st.rerun()
@@ -430,28 +600,27 @@ def main() -> None:
         st.caption(
             f"LLM · `{docs_config.models.generation_model}`  \n"
             f"Embed · `{docs_config.models.embedding_model}`  \n"
-            f"Turns · `{len(st.session_state.conversation.turns)}` (session memory only)"
+            + copy["turns_caption"].format(n=len(st.session_state.conversation.turns))
         )
         if corpus == "hybrid":
             lang_key = answer_lang if answer_lang in HYBRID_SECTION_HEADERS else "en"
             expected = HYBRID_SECTION_HEADERS[lang_key]
-            st.caption("Hybrid sections: " + " · ".join(expected))
-        st.caption(
-            "Follow-ups re-retrieve every turn. Prior answers are untrusted context only."
-        )
+            st.caption(f"{copy['hybrid_sections']}: " + " · ".join(expected))
+        st.caption(copy["followups_note"])
 
-    st.markdown('<div class="hero-kicker">Local grounded RAG</div>', unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="hero-kicker">{copy["hero_kicker"]}</div>',
+        unsafe_allow_html=True,
+    )
     st.markdown(f'<div class="hero-title">{PAGE_TITLE}</div>', unsafe_allow_html=True)
     st.markdown(
-        '<div class="hero-sub">'
-        "Three-track grounding: Hong Kong BIM/CDE standards · ACC×HK playbook · Autodesk Docs. "
-        "Multi-turn follow-ups rewrite the question, then re-retrieve this turn's evidence."
-        "</div>",
+        f'<div class="hero-sub">{copy["hero_sub"]}</div>',
         unsafe_allow_html=True,
     )
 
-    example_cols = st.columns(len(EXAMPLES))
-    for col, example in zip(example_cols, EXAMPLES):
+    examples = copy["examples"]
+    example_cols = st.columns(len(examples))
+    for col, example in zip(example_cols, examples):
         if col.button(example, use_container_width=True):
             st.session_state["_pending_question"] = example
 
@@ -466,31 +635,32 @@ def main() -> None:
                 q = payload.get("question", "")
                 no_gen = payload.get("no_generate", False)
                 answer_text, source_lines, contexts = _collect_result_payload(
-                    result, no_generate=no_gen
+                    result, no_generate=no_gen, ui_lang=ui_lang
                 )
                 rewritten = getattr(result.debug, "rewritten_query", None)
                 if rewritten and rewritten != q:
-                    st.caption(f"Standalone retrieval query · {rewritten}")
+                    st.caption(f"{copy['standalone_query']} · {rewritten}")
                 _render_meta(result, answer_lang, q)
                 if result.track == "hybrid" and not no_gen:
-                    _render_hybrid_sections(answer_text)
+                    _render_hybrid_sections(answer_text, ui_lang=ui_lang)
                 else:
                     st.markdown(answer_text)
-                with st.expander("Sources", expanded=False):
-                    _render_sources(source_lines)
+                with st.expander(copy["sources"], expanded=False):
+                    _render_sources(source_lines, ui_lang=ui_lang)
                 warnings = result.debug.validation_warnings or []
                 if warnings:
-                    with st.expander(f"Validation notes ({len(warnings)})"):
+                    with st.expander(f"{copy['validation_notes']} ({len(warnings)})"):
                         for w in warnings:
                             st.text(w)
                 if show_debug:
-                    with st.expander("Orchestrator debug", expanded=False):
+                    with st.expander(copy["orchestrator_debug"], expanded=False):
                         st.code(
                             format_orchestrator_debug(result.debug), language="text"
                         )
                 if show_context and contexts:
                     with st.expander(
-                        f"Retrieved chunks ({len(contexts)})", expanded=False
+                        f"{copy['retrieved_chunks']} ({len(contexts)})",
+                        expanded=False,
                     ):
                         for index, chunk in enumerate(contexts, start=1):
                             sim = (
@@ -511,14 +681,15 @@ def main() -> None:
                 _render_followup_suggestions(
                     list(payload.get("suggested_followups") or []),
                     key_prefix=f"hist_followup_{msg_index}",
+                    ui_lang=ui_lang,
                 )
 
     pending = st.session_state.pop("_pending_question", None)
-    prompt = st.chat_input("Ask a question or follow up…")
+    prompt = st.chat_input(copy["chat_placeholder"])
     user_text = pending or prompt
     if not user_text:
         if not st.session_state.chat_messages:
-            st.info("Pick an example or type a question to start a multi-turn session.")
+            st.info(copy["empty_hint"])
         return
 
     q = user_text.strip()
@@ -531,8 +702,8 @@ def main() -> None:
     conversation: ConversationSession = st.session_state.conversation
 
     with st.chat_message("assistant"):
-        with st.status("Working on your question…", expanded=True) as status:
-            status.write("Retrieving + answering (single pass)…")
+        with st.status(copy["status_working"], expanded=True) as status:
+            status.write(copy["status_retrieving"])
             t0 = time.perf_counter()
             try:
                 result = orchestrator.ask(
@@ -545,17 +716,13 @@ def main() -> None:
                     record_turn=not no_generate,
                 )
             except FileNotFoundError as exc:
-                status.update(label="Missing index", state="error")
-                st.error(
-                    f"Index or corpus missing: {exc}\n\n"
-                    "Run `bash scripts/bootstrap_indexes.sh` "
-                    "or `python -m rag.preflight` for repair commands."
-                )
+                status.update(label=copy["missing_index"], state="error")
+                st.error(copy["missing_index_body"].format(exc=exc))
                 st.session_state.chat_messages.pop()
                 return
             except Exception as exc:  # noqa: BLE001 — surface to UI
-                status.update(label="Request failed", state="error")
-                st.error(f"Could not answer: {exc}")
+                status.update(label=copy["request_failed"], state="error")
+                st.error(copy["could_not_answer"].format(exc=exc))
                 st.session_state.chat_messages.pop()
                 return
 
@@ -575,33 +742,39 @@ def main() -> None:
 
             rewritten = result.debug.rewritten_query
             if rewritten and rewritten != q:
-                status.write(f"Standalone query: {rewritten}")
+                status.write(f"{copy['status_standalone']}: {rewritten}")
             status.write(
-                f"Sources: {n_src} · retrieve {retrieve_s:.1f}s"
-                + (f" · generate {generate_s:.1f}s" if not no_generate else "")
-                + f" · total {total_s:.1f}s"
+                f"{copy['status_sources']}: {n_src} · "
+                f"{copy['status_retrieve']} {retrieve_s:.1f}s"
+                + (
+                    f" · {copy['status_generate']} {generate_s:.1f}s"
+                    if not no_generate
+                    else ""
+                )
+                + f" · {copy['status_total']} {total_s:.1f}s"
             )
             status.update(
                 label=(
-                    f"Done ({'retrieve-only' if no_generate else result.track}"
+                    f"{copy['status_done']} ("
+                    f"{copy['status_retrieve_only'] if no_generate else result.track}"
                     f" · {total_s:.1f}s)"
                 ),
                 state="complete",
             )
 
         answer_text, source_lines, contexts = _collect_result_payload(
-            result, no_generate=no_generate
+            result, no_generate=no_generate, ui_lang=ui_lang
         )
         rewritten = getattr(result.debug, "rewritten_query", None)
         if rewritten and rewritten != q:
-            st.caption(f"Standalone retrieval query · {rewritten}")
+            st.caption(f"{copy['standalone_query']} · {rewritten}")
         _render_meta(result, answer_lang, q)
         if result.track == "hybrid" and not no_generate:
-            _render_hybrid_sections(answer_text)
+            _render_hybrid_sections(answer_text, ui_lang=ui_lang)
         else:
             st.markdown(answer_text)
-        with st.expander("Sources", expanded=True):
-            _render_sources(source_lines)
+        with st.expander(copy["sources"], expanded=True):
+            _render_sources(source_lines, ui_lang=ui_lang)
 
     st.session_state.chat_messages.append(
         {

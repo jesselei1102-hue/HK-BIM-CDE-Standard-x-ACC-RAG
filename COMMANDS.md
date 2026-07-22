@@ -54,10 +54,26 @@ pip install -r requirements.txt   # 需含 streamlit
 streamlit run streamlit_demo.py
 ```
 
-浏览器打开后：English UI；侧栏可选 Answer language；支持多轮聊天追问。  
+浏览器打开后：可切换 English / 中文界面；侧栏可选 Answer language；支持多轮聊天追问。  
 点示例或输入问题；侧栏 **New conversation** 清空会话。  
 hybrid 答案按四段卡片展示；每轮展示独立检索问题与本轮来源。  
 证据边界：历史答案不可信，仅用于指代；每轮重新检索。  
+
+### 1.0b HK CDE Assistant Web UI（独立于 Streamlit）
+
+浅色三轨 routing 界面：
+
+```bash
+source .venv/bin/activate
+pip install -r requirements.txt   # 需含 fastapi / uvicorn
+python -m web_hybrid.app
+```
+
+浏览器打开：http://127.0.0.1:8787  
+左侧展示三轨 chunk 规模；「试试这些问题」每次显示 3 条，可点「换一批」从问题库抽样。  
+问题库：`knowledge/demo_question_bank.json`（中英双语）。  
+与 Streamlit 共用同一套 `HybridOrchestrator`，互不影响。  
+端口占用时可设：`HYBRID_UI_PORT=8790 python -m web_hybrid.app`
 
 评测多轮改写与重检索：
 
@@ -92,7 +108,8 @@ python scripts/eval_generation_gate.py
 python ask.py --corpus auto "WIP 是什么"
 python ask.py --corpus docs "如何创建文件夹"
 python ask.py --corpus hk_cde "ADM-19 关于从BIM模型提取信息的规定"
-python ask.py --corpus playbook "香港总包ACC项目样板怎么配置"
+python ask.py --corpus playbook "Buildings九段命名 Revision 能不能写进文件名"
+python ask.py --corpus playbook "Civil LandsD 提交包最少要有什么"
 python ask.py --corpus hybrid "符合港标的审批流怎么在 ACC 做"
 ```
 
@@ -338,7 +355,8 @@ RAG_LLM_MODEL=qwen3.5:4b python ask.py "问题"
 | --------------------------------------- | ------------------------ |
 | `knowledge/query_kb.jsonl`              | Docs 路由 KB               |
 | `knowledge/industry/hk_cde/corpus/`     | 港标 Markdown 语料           |
-| `knowledge/playbook/acc_hk_bim/corpus/` | Playbook 语料              |
+| `knowledge/playbook/acc_hk_bim/corpus/` | Playbook 语料（HK CDE Spec Buildings/Civil） |
+| `output/HK CDE Spec/`                    | 实际项目说明书源（Buildings / Civil） |
 | `.rag_data/`                            | Docs chunks + Chroma     |
 | `.rag_data/industry_hk_cde/`            | 港标索引                     |
 | `.rag_data/playbook_acc_hk/`            | Playbook 索引              |

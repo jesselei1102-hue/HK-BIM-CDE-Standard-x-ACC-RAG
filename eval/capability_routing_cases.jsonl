@@ -60,3 +60,9 @@
 {"id": "rt_para_meta", "query": "Autodesk Docs supported file formats", "expect_track": "docs", "expect_capability": null, "tags": ["verified"], "conflict": false}
 {"id": "rt_para_zh_playbook", "query": "推荐默认配置 playbook", "expect_track": "playbook", "expect_capability": null, "tags": ["verified"], "conflict": false}
 {"id": "rt_para_en_cic_hy", "query": "Align ACC with CIC CDE requirements", "expect_track": "hybrid", "expect_capability": null, "tags": ["verified"], "conflict": false}
+{"id": "hy_bim_manager_roles", "query": "BIM Manager的责任是什么？在ACC上他需要使用哪些功能", "expect_track": "hybrid", "expect_capability": "roles", "tags": ["roles"], "conflict": false}
+{"id": "rt_cde_buildings_naming", "query": "Buildings九段命名Revision能不能写进文件名", "expect_track": "playbook", "expect_capability": "naming", "tags": ["cde_spec"], "conflict": false}
+{"id": "rt_cde_civil_folders", "query": "Civil项目By Section和LandsD目录怎么建", "expect_track": "playbook", "expect_capability": "folder", "tags": ["cde_spec"], "conflict": false}
+{"id": "rt_cde_bd_wfc", "query": "Buildings WF-C BD提交需要哪些强制检查表", "expect_track": "playbook", "expect_capability": "workflow", "tags": ["cde_spec"], "conflict": false}
+{"id": "rt_cde_landsd_gate", "query": "Civil WF-C LandsD缺边界或模型清单能否通过", "expect_track": "playbook", "expect_capability": "workflow", "tags": ["cde_spec"], "conflict": false}
+{"id": "rt_cde_spec_index", "query": "HK CDE Spec project specification Buildings Civil", "expect_track": "playbook", "expect_capability": "project_template", "tags": ["cde_spec"], "conflict": false}

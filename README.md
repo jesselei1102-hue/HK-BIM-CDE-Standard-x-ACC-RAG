@@ -334,7 +334,8 @@ PDF extraction and copyright notes: `knowledge/industry/hk_cde/README.md`. Offic
 
 ```text
 ask.py / ingest.py / start   CLI entry points
-streamlit_demo.py            Optional web demo
+streamlit_demo.py            Optional Streamlit web demo
+web_hybrid/                  Dark hybrid web UI (FastAPI + static)
 rag/                         Retrieval, generation, track configs, orchestrator
 knowledge/                   Versioned Markdown corpora + route KBs
 scripts/                     Extract, ingest, eval, research scripts

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from rag.orchestrator.classify import (
     classify_intent,
+    classify_intent_legacy,
     detect_capability,
     is_folder_question,
 )
@@ -136,13 +137,19 @@ def test_bare_wip_glossary_still_not_folder() -> None:
     assert decision.capability is None
     assert not is_folder_question(q, decision.capability)
 
-def test_hk_aligned_workflow_routes_hybrid() -> None:
-    q = "How to run HK-aligned approval workflows in ACC"
-    decision = classify_intent(q)
+def test_bim_manager_roles_routes_hybrid() -> None:
+    q = "BIM Manager的责任是什么？在ACC上他需要使用哪些功能"
+    cap = detect_capability(q)
+    assert cap is not None
+    assert cap.key == "roles"
+    decision = classify_intent_legacy(q)
     assert decision.track == "hybrid"
-    assert decision.capability == "workflow"
-    assert "Action Upon Completion" in (decision.product_query or "")
-    assert "Copy approved files" in (decision.playbook_query or "")
+    assert decision.capability == "roles"
+    assert decision.has_industry_signal
+    assert "BIM Manager" in (decision.industry_query or "")
+    assert "Project Admin" in (decision.product_query or "") or "ACC" in (
+        decision.product_query or ""
+    )
 
 
 def test_explicit_folder_words_without_capability() -> None:

@@ -39,6 +39,16 @@ _INDUSTRY_PATTERNS = (
     re.compile(r"BIM\s*Dictionary|术语表|詞典|词典", re.I),
     re.compile(r"AM/?FM|case\s*sharing|Zero\s*Carbon\s*Park|(?<![A-Za-z])ZCP(?![A-Za-z])", re.I),
     re.compile(
+        r"BIM\s*Manager|BIM\s*经理|BIM\s*經理|"
+        r"Information\s*Manager|信息管理(?:者|员|員|职能|職能)?|"
+        r"Task\s*Team\s*Manager|Task\s*Information\s*Manager|"
+        r"Document\s*Controller|"
+        r"Project\s*Information\s*Functions?|"
+        r"Assignment\s*Matrix|"
+        r"信息管理职能|信息管理職能|职责矩阵|職責矩陣",
+        re.I,
+    ),
+    re.compile(
         r"(?:Revit|ArchiCAD|Archi\s*CAD|Civil\s*3D|Tekla).{0,40}"
         r"(?:statutory|user\s*guide|submission)|"
         r"(?:statutory|user\s*guide|submission).{0,40}"
@@ -95,6 +105,20 @@ _PLAYBOOK_PATTERNS = (
     re.compile(r"对齐表|對齊表"),
     re.compile(r"落地|落实|落實"),
     re.compile(r"项目样板|項目樣板|项目模板|項目模板|project\s*template", re.I),
+    re.compile(r"HK\s*CDE\s*Spec|项目说明书|項目說明書|项目规格|項目規格", re.I),
+    re.compile(r"ACC\s*HK\s*GC|GC\s*Buildings|GC\s*Civil", re.I),
+    # Actual-project Spec operational cues (Buildings / Civil trunks)
+    re.compile(
+        r"九段命名|SuitabilityStatus|WF-[ABCD]\b|"
+        r"PROJECT_BOUNDARY|MODEL_FILE_LIST|EMSD_Code|AssetClass|"
+        r"By\s*Section|区段码|區段碼|MIDP\b",
+        re.I,
+    ),
+    re.compile(
+        r"(?:Buildings|Civil|楼宇|樓宇|土木).{0,20}"
+        r"(?:文件夹|文件夾|目录|目錄|命名|权限|權限|审批|審批|表单|表單|移交)",
+        re.I,
+    ),
 )
 
 
@@ -114,7 +138,7 @@ CAPABILITY_TEMPLATES: tuple[CapabilityTemplate, ...] = (
             re.compile(
                 r"项目样板|項目樣板|项目模板|項目模板|"
                 r"project\s*template|GC\s*模板|总包模板|總包模板|"
-                r"Buildings\s*模板|ACC\s*HK\s*GC",
+                r"Buildings\s*模板|Civil\s*模板|ACC\s*HK\s*GC",
                 re.I,
             ),
         ),
@@ -127,8 +151,8 @@ CAPABILITY_TEMPLATES: tuple[CapabilityTemplate, ...] = (
             "Issues Design Collaboration"
         ),
         playbook_query=(
-            "ACC HK GC Buildings project template folder structure "
-            "permissions naming workflows forms playbook"
+            "ACC HK GC Buildings Civil project template specification "
+            "folder permissions naming workflows forms EMSD MIDP"
         ),
     ),
     CapabilityTemplate(
@@ -210,7 +234,9 @@ CAPABILITY_TEMPLATES: tuple[CapabilityTemplate, ...] = (
                 r"Authorisation\s*Gateway|Authorization\s*Gateway|"
                 r"授权网关|授權網關|"
                 r"(?<![A-Za-z])workflow(?![A-Za-z])|"
-                r"(?<![A-Za-z])gateway(?![A-Za-z])",
+                r"(?<![A-Za-z])gateway(?![A-Za-z])|"
+                r"WF-[ABCD]\b|强制检查表|強制檢查表|"
+                r"Submission\s*Checklist|Completeness\s*Check",
                 re.I,
             ),
         ),
@@ -247,6 +273,37 @@ CAPABILITY_TEMPLATES: tuple[CapabilityTemplate, ...] = (
         ),
     ),
     CapabilityTemplate(
+        key="roles",
+        patterns=(
+            re.compile(
+                r"BIM\s*Manager|BIM\s*经理|BIM\s*經理|"
+                r"Information\s*Manager|"
+                r"Task\s*Team\s*Manager|Task\s*Information\s*Manager|"
+                r"Document\s*Controller|"
+                r"Project\s*Information\s*Functions?|"
+                r"Assignment\s*Matrix|"
+                r"(?:角色|职责|職責|责任|責任|responsibilit).{0,24}"
+                r"(?:BIM\s*Manager|Information\s*Manager|ACC)|"
+                r"(?:BIM\s*Manager|Information\s*Manager).{0,40}"
+                r"(?:角色|职责|職責|责任|責任|responsibilit|功能|ACC|Project\s*Admin)",
+                re.I,
+            ),
+        ),
+        industry_query=(
+            "BIM Manager Information Manager Task Team Manager "
+            "project information functions assignment matrix "
+            "CICBIMS information management roles responsibilities"
+        ),
+        product_query=(
+            "ACC Project Admin members companies roles permissions "
+            "account administration Autodesk Docs"
+        ),
+        playbook_query=(
+            "BIM Manager Project Admin Information Manager "
+            "role mapping ACC HK BIM playbook companies members"
+        ),
+    ),
+    CapabilityTemplate(
         key="folder",
         patterns=(
             re.compile(
@@ -259,11 +316,13 @@ CAPABILITY_TEMPLATES: tuple[CapabilityTemplate, ...] = (
                 r"创建文件夹|建文件夹|创建文件夾|"
                 r"文件夹|文件夾|四容器|cde\s*容器|"
                 r"four\s*container|4\s*container|"
+                r"目录怎么建|目錄怎麼建|By\s*Section|"
+                r"LandsD\s*(?:目录|目錄|Submission)|"
                 r"(?<![A-Za-z])WIP(?![A-Za-z]).{0,48}"
                 r"(folder|tree|discipline|container|subfolder|ARC|STR|MEP|CIV)|"
                 r"(folder|tree|discipline|container|subfolder).{0,48}"
                 r"(?<![A-Za-z])WIP(?![A-Za-z])|"
-                r"01_WIP|02_Shared|03_Published|04_Archive",
+                r"01_WIP|02_Shared|02_SHARED|03_Published|03_PUBLISHED|04_Archive|04_ARCHIVE",
                 re.I,
             ),
         ),
@@ -290,6 +349,7 @@ _CAPABILITY_PRIORITY: tuple[str, ...] = (
     "naming",
     "workflow",
     "project_create",
+    "roles",
     "folder",
 )
 
@@ -313,6 +373,9 @@ def has_industry_signal(query: str) -> bool:
     text = query.strip()
     if not text:
         return False
+    # Spec branding contains "CDE" / "HK CDE"; strip it so the product name
+    # does not steal the industry (standards) track from Playbook Spec queries.
+    text = re.sub(r"HK\s*CDE\s*Spec", " ", text, flags=re.I)
     return any(pattern.search(text) for pattern in _INDUSTRY_PATTERNS)
 
 
@@ -460,16 +523,98 @@ def _fallback_queries(query: str) -> tuple[str, str, str]:
     return product_query, industry_query, playbook_query
 
 
-# hybrid 检索时按 capability 提升 playbook 章节召回（URL 前缀匹配）
-CAPABILITY_PLAYBOOK_URL_PREFIX: dict[str, str] = {
-    "folder": "playbook://acc_hk_bim/02_folder_cde",
-    "naming": "playbook://acc_hk_bim/03_naming",
-    "workflow": "playbook://acc_hk_bim/05_workflow",
-    "project_create": "playbook://acc_hk_bim/01_project_setup",
-    "project_template": "playbook://acc_hk_bim/08_project_template",
-    "model_viewer": "playbook://acc_hk_bim/06_design_collab",
-    "permissions": "playbook://acc_hk_bim/04_permissions",
+# hybrid 检索时按 capability + domain 提升 playbook 章节召回（URL 前缀匹配）
+_PLAYBOOK_CHAPTER_BY_CAPABILITY: dict[str, dict[str, str]] = {
+    "folder": {
+        "buildings": "11_buildings_folders_permissions",
+        "civil": "21_civil_folders_permissions",
+    },
+    "permissions": {
+        "buildings": "11_buildings_folders_permissions",
+        "civil": "21_civil_folders_permissions",
+    },
+    "naming": {
+        "buildings": "13_buildings_naming_fields",
+        "civil": "23_civil_naming_fields",
+    },
+    "workflow": {
+        "buildings": "12_buildings_issues_workflows",
+        "civil": "22_civil_issues_workflows",
+    },
+    "project_create": {
+        "buildings": "10_buildings_overview_roles",
+        "civil": "20_civil_overview_roles",
+    },
+    "project_template": {
+        "buildings": "00_hk_cde_spec_index",
+        "civil": "00_hk_cde_spec_index",
+    },
+    "model_viewer": {
+        "buildings": "15_buildings_assets_midp_acceptance",
+        "civil": "25_civil_assets_midp_acceptance",
+    },
+    "roles": {
+        "buildings": "10_buildings_overview_roles",
+        "civil": "20_civil_overview_roles",
+    },
 }
+
+# 兼容旧调用方：默认 Buildings 前缀
+CAPABILITY_PLAYBOOK_URL_PREFIX: dict[str, str] = {
+    key: f"playbook://acc_hk_bim/{chapters['buildings']}"
+    for key, chapters in _PLAYBOOK_CHAPTER_BY_CAPABILITY.items()
+}
+
+_CIVIL_DOMAIN_RE = re.compile(
+    r"\bCivil\b|土木|基建|基础设施|基礎設施|LandsD|区段|區段|"
+    r"Chainage|ContractPackage|By\s*Section|SEC-[A-C]|道路排水|地工",
+    re.I,
+)
+_BUILDINGS_DOMAIN_RE = re.compile(
+    # Prefer plural "Buildings" / 楼宇; avoid bare "Building" (naming field).
+    r"\bBuildings\b|楼宇|樓宇|屋宇署|Fit-?out|住宅|办公|辦公|商业|商業|"
+    r"(?<![A-Za-z])BD(?![A-Za-z])\s*(?:提交|Submission|法定)",
+    re.I,
+)
+
+
+def detect_playbook_domain(question: str) -> str:
+    """Return buildings | civil | mixed for Playbook chapter boost."""
+    text = question or ""
+    has_civil = bool(_CIVIL_DOMAIN_RE.search(text))
+    has_buildings = bool(_BUILDINGS_DOMAIN_RE.search(text))
+    if has_civil and not has_buildings:
+        return "civil"
+    if has_buildings and not has_civil:
+        return "buildings"
+    if has_civil and has_buildings:
+        # Field-name collisions (Building=section) should not flip Civil → mixed.
+        if re.search(r"Building\s*字段|Building\s*=|Building\s*等于|Building\s*等於", text, re.I):
+            return "civil"
+        return "mixed"
+    return "buildings"
+
+
+def playbook_url_prefix_for(
+    capability: str | None,
+    question: str = "",
+) -> str | None:
+    """Capability + domain aware Playbook URL prefix for retrieval boost."""
+    if not capability:
+        return None
+    chapters = _PLAYBOOK_CHAPTER_BY_CAPABILITY.get(capability)
+    if not chapters:
+        return CAPABILITY_PLAYBOOK_URL_PREFIX.get(capability)
+    domain = detect_playbook_domain(question)
+    if domain == "civil":
+        chapter = chapters.get("civil") or chapters.get("buildings")
+    elif domain == "mixed":
+        chapter = "00_hk_cde_spec_index"
+    else:
+        chapter = chapters.get("buildings") or chapters.get("civil")
+    if not chapter:
+        return None
+    return f"playbook://acc_hk_bim/{chapter}"
 
 # 保留最小确定性措辞，供 legacy 低置信度回退（非主路由路径）
 _FOLDER_QUESTION_RE = re.compile(

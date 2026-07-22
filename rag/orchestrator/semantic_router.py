@@ -15,6 +15,7 @@ CAPABILITY_LABELS: tuple[str, ...] = (
     "naming",
     "workflow",
     "project_create",
+    "roles",
     "folder",
 )
 
@@ -160,7 +161,16 @@ def _derive_track(
         return "docs", True, None
 
     # capability-only fallback hints
-    if capability in {"project_template", "folder", "permissions", "naming", "workflow", "project_create", "model_viewer"}:
+    if capability in {
+        "project_template",
+        "folder",
+        "permissions",
+        "naming",
+        "workflow",
+        "project_create",
+        "model_viewer",
+        "roles",
+    }:
         if capability in {"project_template"} and has_playbook:
             return "playbook", False, "capability_playbook_hint"
         if has_industry or has_product:

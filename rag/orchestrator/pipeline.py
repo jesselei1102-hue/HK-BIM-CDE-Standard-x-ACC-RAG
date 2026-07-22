@@ -14,6 +14,7 @@ from rag.industry_hk.config import IndustryHKConfig, get_industry_hk_config
 from rag.industry_hk.retrieval import IndustryHybridRetriever
 from rag.orchestrator.classify import (
     CAPABILITY_PLAYBOOK_URL_PREFIX,
+    playbook_url_prefix_for,
     IntentDecision,
     classify_intent,
     classify_intent_legacy,
@@ -163,10 +164,18 @@ class HybridOrchestrator:
             source_hint_urls=source_hint_urls,
         ).chunks
         for chunk in wider:
-            if "2_wip" in chunk.source_url or "Central_Models" in chunk.text:
+            if any(
+                marker in chunk.source_url
+                for marker in (
+                    "11_buildings_folders_permissions",
+                    "21_civil_folders_permissions",
+                )
+            ) and ("01_WIP" in chunk.text or "Team_" in chunk.text):
                 return [chunk]
         for chunk in wider:
-            if "`01_WIP`" in chunk.text and "`02_Shared`" in chunk.text:
+            if "01_WIP" in chunk.text and (
+                "02_SHARED" in chunk.text or "02_Shared" in chunk.text
+            ):
                 return [chunk]
         return chunks
 
@@ -202,11 +211,11 @@ class HybridOrchestrator:
             question, decision, decision.playbook_query
         )
         pin_threshold = self.docs_config.semantic_router.pin_min_top1_sim
-        playbook_boost = CAPABILITY_PLAYBOOK_URL_PREFIX.get(
-            decision.capability or ""
+        playbook_boost = playbook_url_prefix_for(
+            decision.capability, question
         )
         if is_folder_question(question, decision.capability):
-            playbook_boost = CAPABILITY_PLAYBOOK_URL_PREFIX["folder"]
+            playbook_boost = playbook_url_prefix_for("folder", question)
 
         with ThreadPoolExecutor(max_workers=3) as pool:
             docs_future = pool.submit(
@@ -929,8 +938,8 @@ class HybridOrchestrator:
             )
 
         if decision.track == "playbook":
-            playbook_boost = CAPABILITY_PLAYBOOK_URL_PREFIX.get(
-                decision.capability or ""
+            playbook_boost = playbook_url_prefix_for(
+                decision.capability, q
             )
             t_ret = perf_counter()
             retrieval = self.playbook_retriever.retrieve_with_debug(

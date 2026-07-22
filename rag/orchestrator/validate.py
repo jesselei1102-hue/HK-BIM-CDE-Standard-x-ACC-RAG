@@ -166,6 +166,18 @@ _CAPABILITY_DOCS_KEYWORDS: dict[str, tuple[str, ...]] = {
         "object properties",
         "model properties",
     ),
+    "roles": (
+        "project admin",
+        "members",
+        "companies",
+        "roles",
+        "account administration",
+        "member",
+        "company",
+        "权限",
+        "成員",
+        "成员",
+    ),
 }
 
 # 几乎从不该出现在能力相关产品段的 Docs 噪声页

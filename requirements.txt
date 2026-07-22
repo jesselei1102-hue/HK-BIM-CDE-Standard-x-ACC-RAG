@@ -8,12 +8,15 @@ rank-bm25>=0.2.2,<0.3
 
 # Hong Kong CDE extract helpers:
 pypdf>=4.0.0,<6
+cryptography>=3.1,<50
 python-docx>=1.1.0,<2
 openpyxl>=3.1.0,<4
 PyYAML>=6.0,<7
 
 # Demo UI:
 streamlit>=1.32.0,<2
+fastapi>=0.110.0,<1
+uvicorn>=0.27.0,<1
 
 # Tests:
 pytest>=8.0.0,<9

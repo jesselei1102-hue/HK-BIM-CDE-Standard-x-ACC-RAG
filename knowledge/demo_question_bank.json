@@ -1,0 +1,244 @@
+{
+  "version": 1,
+  "description": "Demo question bank for Hybrid UI Try-these chips (EN / 中文).",
+  "questions": [
+    {
+      "id": "folder_setup_en",
+      "en": "How do I set up ACC Docs folder structure to align with HK standard?",
+      "zh": "如何按港标在 ACC Docs 搭建文件夹结构？",
+      "track": "hybrid",
+      "capability": "folder"
+    },
+    {
+      "id": "wip_tree",
+      "en": "Show a real WIP discipline folder tree example for HK CDE in ACC",
+      "zh": "给我一个 ACC 里符合港标的 WIP 专业文件夹树示例",
+      "track": "hybrid",
+      "capability": "folder"
+    },
+    {
+      "id": "permissions_hk",
+      "en": "How should ACC folder permissions be configured for HK CDE compliance?",
+      "zh": "如何按港标配置 ACC 文件夹权限？",
+      "track": "hybrid",
+      "capability": "permissions"
+    },
+    {
+      "id": "workflow_hk",
+      "en": "How to run HK-aligned approval workflows in ACC",
+      "zh": "如何在 ACC 跑符合港标的审批流程？",
+      "track": "hybrid",
+      "capability": "workflow"
+    },
+    {
+      "id": "naming_devb",
+      "en": "How do I create a naming standard in Docs per DEVB requirements?",
+      "zh": "如何按 DEVB 要求在 Docs 创建命名标准？",
+      "track": "hybrid",
+      "capability": "naming"
+    },
+    {
+      "id": "project_cic",
+      "en": "How do I create an ACC project aligned with CIC BIM Standard?",
+      "zh": "怎样创建一个符合 CIC BIM Standard 的 ACC 项目？",
+      "track": "hybrid",
+      "capability": "project_create"
+    },
+    {
+      "id": "cde_in_acc",
+      "en": "How can a CIC-aligned CDE be implemented in ACC?",
+      "zh": "符合 CIC 的 CDE 怎么在 ACC 落实？",
+      "track": "hybrid",
+      "capability": null
+    },
+    {
+      "id": "iso_workflow",
+      "en": "How do I build an approval workflow that meets ISO 19650?",
+      "zh": "怎么做一个符合 ISO 19650 要求的审批流？",
+      "track": "hybrid",
+      "capability": "workflow"
+    },
+    {
+      "id": "wip_glossary",
+      "en": "What is WIP in Hong Kong CDE?",
+      "zh": "香港 CDE 里的 WIP 是什么？",
+      "track": "hk_cde",
+      "capability": null
+    },
+    {
+      "id": "wip_vs_shared",
+      "en": "What is the difference between WIP and Shared?",
+      "zh": "WIP 和 Shared 有什么区别？",
+      "track": "hk_cde",
+      "capability": null
+    },
+    {
+      "id": "wip_gateway",
+      "en": "What is the WIP Gateway?",
+      "zh": "WIP Gateway 是什么？",
+      "track": "hk_cde",
+      "capability": "workflow"
+    },
+    {
+      "id": "auth_gateway",
+      "en": "What is the Authorisation Gateway?",
+      "zh": "Authorisation Gateway 是什么？",
+      "track": "hk_cde",
+      "capability": "workflow"
+    },
+    {
+      "id": "pir",
+      "en": "What are Project Information Requirements (PIR)?",
+      "zh": "什么是 Project Information Requirements（PIR）？",
+      "track": "hk_cde",
+      "capability": null
+    },
+    {
+      "id": "cic_overview",
+      "en": "I want to know more about CIC Standard",
+      "zh": "我想了解 CIC Standard",
+      "track": "hk_cde",
+      "capability": null
+    },
+    {
+      "id": "harmonisation",
+      "en": "What is the DEVB BIM Harmonisation guide?",
+      "zh": "DEVB BIM Harmonisation 指南是什么？",
+      "track": "hk_cde",
+      "capability": null
+    },
+    {
+      "id": "four_container",
+      "en": "What are the four CDE containers in HK practice?",
+      "zh": "港标实践中的四容器 CDE 是什么？",
+      "track": "hk_cde",
+      "capability": "folder"
+    },
+    {
+      "id": "docs_permissions",
+      "en": "How do I set folder permissions in Autodesk Docs?",
+      "zh": "如何在 Autodesk Docs 设置文件夹权限？",
+      "track": "docs",
+      "capability": "permissions"
+    },
+    {
+      "id": "docs_share",
+      "en": "How do I share files in ACC Docs?",
+      "zh": "如何在 ACC Docs 分享文件？",
+      "track": "docs",
+      "capability": null
+    },
+    {
+      "id": "docs_create_project",
+      "en": "How do I create a project in ACC?",
+      "zh": "如何在 ACC 创建项目？",
+      "track": "docs",
+      "capability": "project_create"
+    },
+    {
+      "id": "model_browser",
+      "en": "How do I filter BIM model properties with Model Browser?",
+      "zh": "如何用 Model Browser 过滤模型属性？",
+      "track": "docs",
+      "capability": "model_viewer"
+    },
+    {
+      "id": "docs_reviews",
+      "en": "How do I create an approval workflow in Docs Reviews?",
+      "zh": "如何在 Docs Reviews 创建审批工作流？",
+      "track": "docs",
+      "capability": "workflow"
+    },
+    {
+      "id": "playbook_template",
+      "en": "How do I choose Buildings vs Civil in the HK CDE Spec?",
+      "zh": "HK CDE Spec 里 Buildings 和 Civil 怎么选用？",
+      "track": "playbook",
+      "capability": "project_template"
+    },
+    {
+      "id": "playbook_wip_folders",
+      "en": "What WIP / Shared folder tree does the HK CDE Spec (Buildings) recommend?",
+      "zh": "HK CDE Spec（Buildings）建议的 WIP / Shared 文件夹树是什么？",
+      "track": "playbook",
+      "capability": "folder"
+    },
+    {
+      "id": "file_naming",
+      "en": "What is the file naming standard for HK BIM projects?",
+      "zh": "香港 BIM 项目的文件命名标准是什么？",
+      "track": "hk_cde",
+      "capability": "naming"
+    },
+    {
+      "id": "bim_manager_roles",
+      "en": "What are BIM Manager responsibilities and which ACC features should they use?",
+      "zh": "BIM Manager的责任是什么？在ACC上他需要使用哪些功能？",
+      "track": "hybrid",
+      "capability": "roles"
+    },
+    {
+      "id": "cde_owner_wip",
+      "en": "In the HK CDE Spec, can the Owner see WIP folders?",
+      "zh": "HK CDE Spec 里 Owner 能不能看到 WIP？",
+      "track": "playbook",
+      "capability": "permissions"
+    },
+    {
+      "id": "cde_nine_segment_naming",
+      "en": "What is the Buildings nine-segment file naming rule, and can Revision go in the filename?",
+      "zh": "Buildings 九段命名规则是什么？Revision 能写进文件名吗？",
+      "track": "playbook",
+      "capability": "naming"
+    },
+    {
+      "id": "cde_wfb_midp",
+      "en": "What MIDP gate must pass before WF-B Shared to Published?",
+      "zh": "进入 WF-B（Shared→Published）前 MIDP 门禁是什么？",
+      "track": "playbook",
+      "capability": "workflow"
+    },
+    {
+      "id": "cde_bd_wfc",
+      "en": "Which mandatory checklists does Buildings WF-C BD submission require?",
+      "zh": "Buildings WF-C BD 提交需要哪些强制检查表？",
+      "track": "playbook",
+      "capability": "workflow"
+    },
+    {
+      "id": "cde_emsd_tandem",
+      "en": "How should EMSD_Code be used for Buildings handover and Tandem?",
+      "zh": "Buildings 移交和 Tandem 里 EMSD_Code 怎么用？",
+      "track": "playbook",
+      "capability": "project_template"
+    },
+    {
+      "id": "cde_civil_section_building",
+      "en": "In Civil naming, how does the Building field map to section codes?",
+      "zh": "Civil 命名里 Building 字段如何对应区段码？",
+      "track": "playbook",
+      "capability": "naming"
+    },
+    {
+      "id": "cde_landsd_package",
+      "en": "What must a Civil LandsD submission package contain at minimum?",
+      "zh": "Civil LandsD 提交包最少要包含什么？",
+      "track": "playbook",
+      "capability": "folder"
+    },
+    {
+      "id": "cde_boundary_model_list",
+      "en": "Can Civil WF-C pass without PROJECT_BOUNDARY or MODEL_FILE_LIST?",
+      "zh": "Civil WF-C 缺 PROJECT_BOUNDARY 或 MODEL_FILE_LIST 能否通过？",
+      "track": "playbook",
+      "capability": "workflow"
+    },
+    {
+      "id": "cde_emsd_vs_assetclass",
+      "en": "When should Civil use EMSD_Code versus AssetClass?",
+      "zh": "Civil 什么时候用 EMSD_Code，什么时候用 AssetClass？",
+      "track": "playbook",
+      "capability": "project_template"
+    }
+  ]
+}

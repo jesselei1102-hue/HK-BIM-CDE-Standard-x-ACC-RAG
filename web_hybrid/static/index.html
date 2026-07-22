@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HK CDE Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f5f5f4;
+    --panel: #ffffff;
+    --line: #ececea;
+    --shadow: 0 1px 2px rgba(20,20,19,0.04), 0 8px 24px rgba(20,20,19,0.05);
+    --shadow-soft: 0 1px 2px rgba(20,20,19,0.03), 0 4px 14px rgba(20,20,19,0.04);
+
+    --ink: #1c1c1a;
+    --ink-soft: #6b6b66;
+    --ink-faint: #a8a8a2;
+
+    --accent: #4c5ee8;
+    --accent-soft: #eceefd;
+
+    --standards: #b8863c;
+    --standards-soft: #f7f0e4;
+    --playbook: #2f8f79;
+    --playbook-soft: #e9f4f1;
+    --docs: #4c5ee8;
+    --docs-soft: #eceefd;
+
+    --sans: 'Inter', -apple-system, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    font-size: 16px;
+    min-height: 100vh;
+  }
+
+  .app{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px 90px;
+  }
+
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+  }
+  .brand-mark{
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    background: var(--ink);
+    color: #fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink:0;
+  }
+  .brand-name{
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .brand-sub{
+    font-size: 13.5px;
+    color: var(--ink-faint);
+    margin-top: 1px;
+  }
+  .top-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap: wrap;
+  }
+  .status-pill{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 8px 14px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+  }
+  .status-dot{
+    width:7px; height:7px; border-radius:50%;
+    background: var(--playbook);
+  }
+  .status-pill.warn .status-dot{
+    background: var(--standards);
+  }
+  .ghost-btn{
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 8px 14px;
+    cursor: pointer;
+    box-shadow: var(--shadow-soft);
+  }
+  .ghost-btn:hover{ color: var(--ink); border-color: #ddd; }
+
+  .layout{
+    display:grid;
+    grid-template-columns: 270px 1fr;
+    gap: 20px;
+    align-items:start;
+  }
+
+  .rail{
+    position: relative;
+  }
+  .rail-label{
+    position: absolute;
+    left: 4px;
+    top: -22px;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    margin: 0;
+    line-height: 1;
+  }
+  .track-card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-soft);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .track-card:first-of-type{
+    margin-top: 0;
+  }
+  .track-card.active{
+    border-color: var(--tc);
+    box-shadow: 0 2px 4px rgba(20,20,19,0.04), 0 10px 28px -6px var(--tc-glow, rgba(76,94,232,0.28));
+  }
+  .track-top{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+  }
+  .track-name{
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .track-dot{
+    width:9px; height:9px; border-radius:50%;
+    background: var(--tc);
+    flex-shrink:0;
+  }
+  .track-id{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--tc);
+    margin-top: 3px;
+    font-weight: 600;
+  }
+  .track-meta{
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 12px;
+    display:flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+  .track-meta b{ color: var(--ink); font-weight: 600; }
+
+  .try-block{
+    margin-top: 18px;
+    padding: 14px;
+    background: linear-gradient(180deg, #ffffff 0%, #f7f8ff 100%);
+    border: 1px solid #dfe3fb;
+    border-radius: 16px;
+    box-shadow: var(--shadow-soft);
+  }
+  .try-head{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .try-label{
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+  }
+  .try-hint{
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--ink-faint);
+  }
+  .try-refresh{
+    display:inline-flex;
+    align-items:center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid #d5dbf8;
+    border-radius: 999px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  .try-refresh:hover{
+    filter: brightness(0.98);
+    border-color: var(--accent);
+  }
+  .try-refresh:disabled{
+    opacity: 0.55;
+    cursor: wait;
+  }
+  .try-refresh.spin span:first-child{
+    display:inline-block;
+    animation: try-spin 0.55s linear;
+  }
+  @keyframes try-spin{
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .examples{
+    display:flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .example-btn{
+    text-align:left;
+    font-size: 13px;
+    line-height: 1.45;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--panel);
+    border: 1px solid #e4e7f5;
+    border-radius: 12px;
+    padding: 11px 12px 11px 12px;
+    cursor: pointer;
+    display:flex;
+    gap: 10px;
+    align-items: flex-start;
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+  }
+  .example-btn .n{
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 7px;
+    min-width: 22px;
+    height: 22px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    margin-top: 1px;
+  }
+  .example-btn:hover{
+    color: var(--accent);
+    border-color: var(--accent);
+    background: #fafbff;
+    transform: translateY(-1px);
+  }
+  .lang-toggle{
+    display:inline-flex;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 3px;
+    box-shadow: var(--shadow-soft);
+  }
+  .lang-toggle button{
+    border: none;
+    background: transparent;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    padding: 6px 10px;
+    border-radius: 16px;
+    cursor: pointer;
+  }
+  .lang-toggle button.active{
+    background: var(--ink);
+    color: #fff;
+  }
+
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    min-height: 640px;
+    display:flex;
+    flex-direction: column;
+  }
+  .thread{
+    padding: 28px 32px 6px;
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 240px);
+  }
+  .empty-state{
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--ink-faint);
+    padding: 36px 8px 48px;
+  }
+
+  .msg-user{
+    display:flex;
+    justify-content:flex-end;
+    margin-bottom: 24px;
+  }
+  .msg-user-bubble{
+    font-size: 15.5px;
+    font-weight: 500;
+    color: #fff;
+    background: var(--ink);
+    border-radius: 16px 16px 4px 16px;
+    padding: 13px 18px;
+    max-width: 74%;
+    line-height: 1.5;
+  }
+  .msg-assistant{
+    margin-bottom: 28px;
+  }
+
+  .trace{
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: #fbfbfa;
+    padding: 18px 20px 16px;
+    margin-bottom: 24px;
+  }
+  .trace-head{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .trace-title{
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .trace-verdict{
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 4px 10px;
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .trace-verdict.show{ opacity: 1; }
+
+  .lane{
+    display:grid;
+    grid-template-columns: 96px 1fr 46px;
+    align-items:center;
+    gap: 12px;
+    padding: 8px 0;
+  }
+  .lane-label{
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--lc);
+  }
+  .lane-track{
+    position:relative;
+    height: 8px;
+    background: var(--line);
+    border-radius: 5px;
+    overflow:hidden;
+  }
+  .lane-fill{
+    position:absolute; left:0; top:0; bottom:0;
+    width: 0%;
+    background: var(--lc);
+    border-radius: 5px;
+    transition: width 1.1s cubic-bezier(.2,.8,.2,1);
+  }
+  .lane-pct{
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    text-align: right;
+  }
+
+  .answer{
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .answer.show{ opacity: 1; transform: translateY(0); }
+
+  .section{
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+  }
+  .section:first-child{ border-top: none; padding-top: 2px; }
+  .section-tag{
+    display:inline-flex;
+    align-items:center;
+    gap: 7px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--sc);
+    background: var(--scbg);
+    padding: 4px 11px;
+    border-radius: 7px;
+    margin-bottom: 10px;
+  }
+  .section-body{
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+  .section-body p{ margin: 0 0 8px; }
+  .section-body p:last-child{ margin-bottom: 0; }
+  .section-body ul{ margin: 0 0 8px; padding-left: 1.15rem; }
+  .section-body li{ margin-bottom: 4px; }
+  .cite{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1px 6px;
+    margin-left: 3px;
+    white-space: nowrap;
+  }
+
+  .cite-list{
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    display:flex;
+    flex-direction: column;
+    gap: 9px;
+    padding-bottom: 8px;
+  }
+  .cite-row{
+    display:flex;
+    gap: 11px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    align-items: center;
+  }
+  .cite-row .num{
+    font-family: var(--mono);
+    font-weight:600;
+    color: var(--ink-faint);
+    width:16px;
+    flex-shrink:0;
+  }
+  .cite-row .src{
+    word-break: break-word;
+  }
+  .cite-row .track-flag{
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 5px;
+    flex-shrink:0;
+  }
+
+  .followups{
+    margin-top: 14px;
+    padding-bottom: 18px;
+    display:flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .followup-btn{
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    background: #fbfbfa;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 12px;
+    cursor: pointer;
+  }
+  .followup-btn:hover{
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .error-box{
+    border: 1px solid #f0c7c7;
+    background: #fdf4f4;
+    color: #8b3a3a;
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+
+  .inputbar{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--line);
+    background: #fbfbfa;
+  }
+  .select-pill{
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 8px 12px;
+    white-space: nowrap;
+    flex-shrink:0;
+    background: var(--panel);
+    outline: none;
+  }
+  .textfield{
+    flex:1;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    padding: 11px 15px;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 14.5px;
+    outline: none;
+  }
+  .textfield:focus{ border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .send-btn{
+    font-size: 13.5px;
+    font-weight: 600;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 11px;
+    padding: 11px 18px;
+    cursor: pointer;
+    transition: filter 0.15s ease;
+    flex-shrink:0;
+  }
+  .send-btn:hover{ filter: brightness(1.08); }
+  .send-btn:active{ filter: brightness(0.94); }
+  .send-btn:disabled{
+    opacity: 0.55;
+    cursor: wait;
+    filter: none;
+  }
+  .send-btn:focus-visible,
+  .textfield:focus-visible,
+  .select-pill:focus-visible{
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 780px){
+    .layout{ grid-template-columns: 1fr; }
+    .rail{
+      display:flex;
+      overflow-x:auto;
+      gap:12px;
+      padding-bottom:6px;
+      padding-top: 18px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .rail-label{
+      position: absolute;
+      top: 0;
+      left: 4px;
+    }
+    .track-card{ min-width: 220px; margin-bottom:0; }
+    .try-block{ min-width: 240px; }
+    .msg-user-bubble{ max-width: 88%; }
+    .lane{ grid-template-columns: 80px 1fr 42px; gap: 8px; }
+    .inputbar{ flex-wrap: wrap; }
+    .thread{ max-height: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .lane-fill, .answer, .track-card, .trace-verdict{ transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">C</div>
+      <div>
+        <div class="brand-name" data-i18n="brandName">HK CDE Assistant</div>
+        <div class="brand-sub" data-i18n="brandSub">Standards · Playbook · Product Docs</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <div class="lang-toggle" role="group" aria-label="UI language">
+        <button type="button" id="langEnBtn" class="active" data-ui-lang="en">EN</button>
+        <button type="button" id="langZhBtn" data-ui-lang="zh">中文</button>
+      </div>
+      <button class="ghost-btn" id="clearBtn" type="button" data-i18n="newSession">New session</button>
+      <div class="status-pill" id="statusPill"><span class="status-dot"></span> <span id="statusText" data-i18n="checking">checking tracks…</span></div>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <div class="rail">
+      <div class="rail-label" data-i18n="tracks">Knowledge tracks</div>
+
+      <div class="track-card" id="card-standards" style="--tc: var(--standards); --tc-glow: rgba(184,134,60,0.24);">
+        <div class="track-top">
+          <div class="track-name" data-i18n="trackStandards">Standards</div>
+          <div class="track-dot"></div>
+        </div>
+        <div class="track-id">hk_cde</div>
+        <div class="track-meta"><span data-i18n="metaStandards">CIC / BD / LandsD</span><b id="count-standards">—</b></div>
+      </div>
+
+      <div class="track-card" id="card-playbook" style="--tc: var(--playbook); --tc-glow: rgba(47,143,121,0.24);">
+        <div class="track-top">
+          <div class="track-name" data-i18n="trackPlaybook">Playbook</div>
+          <div class="track-dot"></div>
+        </div>
+        <div class="track-id">playbook</div>
+        <div class="track-meta"><span data-i18n="metaPlaybook">ACC × HK guide</span><b id="count-playbook">—</b></div>
+      </div>
+
+      <div class="track-card" id="card-docs" style="--tc: var(--docs); --tc-glow: rgba(76,94,232,0.24);">
+        <div class="track-top">
+          <div class="track-name" data-i18n="trackDocs">Product Docs</div>
+          <div class="track-dot"></div>
+        </div>
+        <div class="track-id">docs</div>
+        <div class="track-meta"><span data-i18n="metaDocs">Autodesk help</span><b id="count-docs">—</b></div>
+      </div>
+
+      <div class="try-block">
+        <div class="try-head">
+          <div class="try-label" data-i18n="try">Try these</div>
+          <button class="try-refresh" id="refreshExamplesBtn" type="button" title="Refresh">
+            <span aria-hidden="true">↻</span>
+            <span data-i18n="refresh">Refresh</span>
+          </button>
+        </div>
+        <div class="examples" id="examples"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="thread" id="thread">
+        <div class="empty-state" id="emptyState" data-i18n="empty">
+          Ask a grounded question. Routing bars show which tracks fired;
+          the answer is synthesized only from this turn’s retrieved evidence.
+        </div>
+      </div>
+
+      <div class="inputbar">
+        <select class="select-pill" id="corpusSelect" aria-label="Corpus">
+          <option value="auto">corpus: auto</option>
+          <option value="hybrid">corpus: hybrid</option>
+          <option value="hk_cde">corpus: hk_cde</option>
+          <option value="playbook">corpus: playbook</option>
+          <option value="docs">corpus: docs</option>
+        </select>
+        <select class="select-pill" id="langSelect" aria-label="Answer language">
+          <option value="follow_ui">lang: follow UI</option>
+          <option value="auto">lang: auto</option>
+          <option value="en">lang: en</option>
+          <option value="zh-Hans">lang: 简体</option>
+          <option value="zh-Hant">lang: 繁體</option>
+        </select>
+        <input class="textfield" id="questionInput" type="text" placeholder="Ask a question or follow up…" aria-label="Ask a question">
+        <button class="send-btn" id="sendBtn" type="button" data-i18n="run">Run →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const I18N = {
+    en: {
+      brandName: "HK CDE Assistant",
+      brandSub: "Standards · Playbook · Product Docs",
+      newSession: "New session",
+      checking: "checking tracks…",
+      synced: "3 tracks synced",
+      incomplete: "indexes incomplete",
+      offline: "API offline",
+      tracks: "Knowledge tracks",
+      trackStandards: "Standards",
+      trackPlaybook: "Playbook",
+      trackDocs: "Product Docs",
+      metaStandards: "CIC / BD / LandsD",
+      metaPlaybook: "ACC × HK guide",
+      metaDocs: "Autodesk help",
+      try: "Try these",
+      refresh: "Refresh",
+      empty: "Ask a grounded question. Routing bars show which tracks fired; the answer is synthesized only from this turn’s retrieved evidence.",
+      placeholder: "Ask a question or follow up…",
+      run: "Run →",
+      running: "Running…",
+      routingTrace: "Routing trace",
+      noSources: "No sources for this turn.",
+      noAnswer: "(No answer)",
+      answer: "Answer",
+      capability: "capability",
+      loadingExamples: "Loading questions…",
+      corpusOptions: {
+        auto: "corpus: auto",
+        hybrid: "corpus: hybrid",
+        hk_cde: "corpus: hk_cde",
+        playbook: "corpus: playbook",
+        docs: "corpus: docs",
+      },
+      langOptions: {
+        follow_ui: "lang: follow UI",
+        auto: "lang: auto",
+        en: "lang: en",
+        "zh-Hans": "lang: 简体",
+        "zh-Hant": "lang: 繁體",
+      },
+      lane: { standards: "STANDARDS", playbook: "PLAYBOOK", docs: "DOCS" },
+      flags: { hk_cde: "STANDARDS", playbook: "PLAYBOOK", docs: "DOCS" },
+    },
+    zh: {
+      brandName: "HK CDE Assistant",
+      brandSub: "标准 · Playbook · 产品文档",
+      newSession: "新会话",
+      checking: "正在检查轨道…",
+      synced: "三轨已同步",
+      incomplete: "索引不完整",
+      offline: "API 离线",
+      tracks: "知识轨道",
+      trackStandards: "标准",
+      trackPlaybook: "Playbook",
+      trackDocs: "产品文档",
+      metaStandards: "CIC / BD / LandsD",
+      metaPlaybook: "ACC × 港标指南",
+      metaDocs: "Autodesk 帮助",
+      try: "试试这些问题",
+      refresh: "换一批",
+      empty: "输入有据可查的问题。路由条会显示命中了哪些轨道；答案只基于本轮检索证据合成。",
+      placeholder: "输入问题或继续追问…",
+      run: "运行 →",
+      running: "运行中…",
+      routingTrace: "路由轨迹",
+      noSources: "本轮暂无来源。",
+      noAnswer: "（无回答）",
+      answer: "回答",
+      capability: "能力",
+      loadingExamples: "正在加载问题…",
+      corpusOptions: {
+        auto: "语料: auto",
+        hybrid: "语料: hybrid",
+        hk_cde: "语料: hk_cde",
+        playbook: "语料: playbook",
+        docs: "语料: docs",
+      },
+      langOptions: {
+        follow_ui: "回答: 跟随界面",
+        auto: "回答: 自动",
+        en: "回答: 英文",
+        "zh-Hans": "回答: 简体",
+        "zh-Hant": "回答: 繁體",
+      },
+      lane: { standards: "标准", playbook: "手册", docs: "文档" },
+      flags: { hk_cde: "标准", playbook: "手册", docs: "文档" },
+    },
+  };
+
+  const SECTION_STYLE = {
+    standards: { color: "var(--standards)", bg: "var(--standards-soft)" },
+    playbook: { color: "var(--playbook)", bg: "var(--playbook-soft)" },
+    product: { color: "var(--docs)", bg: "var(--docs-soft)" },
+    alignment: { color: "var(--ink-soft)", bg: "var(--line)" },
+  };
+
+  const state = {
+    sessionId: localStorage.getItem("hybrid_rag_session") || null,
+    busy: false,
+    uiLang: localStorage.getItem("hybrid_rag_ui_lang") || "en",
+    statusKind: "checking",
+    shownExampleIds: [],
+    loadingExamples: false,
+    questionBank: [],
+    questionBankLang: null,
+  };
+
+  const thread = document.getElementById("thread");
+  const input = document.getElementById("questionInput");
+  const sendBtn = document.getElementById("sendBtn");
+  const clearBtn = document.getElementById("clearBtn");
+  const corpusSelect = document.getElementById("corpusSelect");
+  const langSelect = document.getElementById("langSelect");
+  const statusPill = document.getElementById("statusPill");
+  const statusText = document.getElementById("statusText");
+  const langEnBtn = document.getElementById("langEnBtn");
+  const langZhBtn = document.getElementById("langZhBtn");
+  const examplesHost = document.getElementById("examples");
+  const refreshExamplesBtn = document.getElementById("refreshExamplesBtn");
+  const cards = {
+    standards: document.getElementById("card-standards"),
+    playbook: document.getElementById("card-playbook"),
+    docs: document.getElementById("card-docs"),
+  };
+
+  function t(key) {
+    return I18N[state.uiLang][key];
+  }
+
+  function resolveAnswerLang() {
+    const choice = langSelect.value;
+    if (choice === "follow_ui") {
+      return state.uiLang === "zh" ? "zh-Hans" : "en";
+    }
+    return choice;
+  }
+
+  function applyStaticI18n() {
+    document.documentElement.lang = state.uiLang === "zh" ? "zh-Hans" : "en";
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      const key = el.getAttribute("data-i18n");
+      const value = t(key);
+      if (typeof value === "string") el.textContent = value;
+    });
+    input.placeholder = t("placeholder");
+    langEnBtn.classList.toggle("active", state.uiLang === "en");
+    langZhBtn.classList.toggle("active", state.uiLang === "zh");
+
+    const corpusLabels = t("corpusOptions");
+    Array.from(corpusSelect.options).forEach((opt) => {
+      if (corpusLabels[opt.value]) opt.textContent = corpusLabels[opt.value];
+    });
+    const langLabels = t("langOptions");
+    Array.from(langSelect.options).forEach((opt) => {
+      if (langLabels[opt.value]) opt.textContent = langLabels[opt.value];
+    });
+
+    if (state.statusKind === "synced") statusText.textContent = t("synced");
+    else if (state.statusKind === "incomplete") statusText.textContent = t("incomplete");
+    else if (state.statusKind === "offline") statusText.textContent = t("offline");
+    else statusText.textContent = t("checking");
+
+    if (!state.busy) sendBtn.textContent = t("run");
+    loadExamples({ remapOnly: state.shownExampleIds.length > 0 });
+  }
+
+  function paintExamples(items) {
+    examplesHost.innerHTML = "";
+    if (!items.length) {
+      examplesHost.innerHTML = `<div class="try-hint">${escapeHtml(t("loadingExamples"))}</div>`;
+      return;
+    }
+    items.slice(0, 3).forEach((item, index) => {
+      const btn = document.createElement("button");
+      btn.className = "example-btn";
+      btn.type = "button";
+      btn.innerHTML = `<span class="n">${index + 1}</span><span>${escapeHtml(item.text)}</span>`;
+      btn.addEventListener("click", () => ask(item.text));
+      examplesHost.appendChild(btn);
+    });
+  }
+
+  function shuffle(items) {
+    const arr = items.slice();
+    for (let i = arr.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  async function ensureQuestionBank() {
+    if (state.questionBankLang === state.uiLang && state.questionBank.length) {
+      return state.questionBank;
+    }
+    const res = await fetch(`/api/demo_questions?count=100&lang=${encodeURIComponent(state.uiLang)}`);
+    const data = await res.json();
+    state.questionBank = data.questions || [];
+    state.questionBankLang = state.uiLang;
+    return state.questionBank;
+  }
+
+  async function loadExamples({ refresh = false, remapOnly = false } = {}) {
+    if (state.loadingExamples) return;
+    state.loadingExamples = true;
+    refreshExamplesBtn.disabled = true;
+    if (refresh) refreshExamplesBtn.classList.add("spin");
+    if (!remapOnly) {
+      examplesHost.innerHTML = `<div class="try-hint">${escapeHtml(t("loadingExamples"))}</div>`;
+    }
+    try {
+      const bank = await ensureQuestionBank();
+      if (remapOnly && state.shownExampleIds.length) {
+        const byId = Object.fromEntries(bank.map((q) => [q.id, q]));
+        const remapped = state.shownExampleIds.map((id) => byId[id]).filter(Boolean);
+        if (remapped.length) {
+          paintExamples(remapped);
+          return;
+        }
+      }
+
+      const exclude = new Set(refresh ? state.shownExampleIds : []);
+      let pool = bank.filter((q) => !exclude.has(q.id));
+      if (pool.length < 3) pool = bank.slice();
+      const picked = shuffle(pool).slice(0, 3);
+      state.shownExampleIds = picked.map((q) => q.id).filter(Boolean);
+      paintExamples(picked);
+    } catch (_) {
+      paintExamples([]);
+    } finally {
+      state.loadingExamples = false;
+      refreshExamplesBtn.disabled = false;
+      refreshExamplesBtn.classList.remove("spin");
+    }
+  }
+
+  function setUiLang(lang) {
+    state.uiLang = lang === "zh" ? "zh" : "en";
+    localStorage.setItem("hybrid_rag_ui_lang", state.uiLang);
+    applyStaticI18n();
+  }
+
+  function fmtCount(n) {
+    if (!n && n !== 0) return "—";
+    return Number(n).toLocaleString(state.uiLang === "zh" ? "zh-CN" : "en-US");
+  }
+
+  function trackFlag(track) {
+    const labels = t("flags");
+    const styles = {
+      hk_cde: { bg: "var(--standards-soft)", color: "var(--standards)" },
+      playbook: { bg: "var(--playbook-soft)", color: "var(--playbook)" },
+      docs: { bg: "var(--docs-soft)", color: "var(--docs)" },
+    };
+    const style = styles[track] || styles.docs;
+    return {
+      label: labels[track] || labels.docs,
+      bg: style.bg,
+      color: style.color,
+    };
+  }
+
+  async function loadStatus() {
+    try {
+      const res = await fetch("/api/status");
+      const data = await res.json();
+      document.getElementById("count-standards").textContent = fmtCount(data.tracks.standards.chunks);
+      document.getElementById("count-playbook").textContent = fmtCount(data.tracks.playbook.chunks);
+      document.getElementById("count-docs").textContent = fmtCount(data.tracks.docs.chunks);
+      if (data.ready) {
+        statusPill.classList.remove("warn");
+        state.statusKind = "synced";
+        statusText.textContent = t("synced");
+      } else {
+        statusPill.classList.add("warn");
+        state.statusKind = "incomplete";
+        statusText.textContent = t("incomplete");
+      }
+    } catch (err) {
+      statusPill.classList.add("warn");
+      state.statusKind = "offline";
+      statusText.textContent = t("offline");
+    }
+  }
+
+  function resetRail() {
+    Object.values(cards).forEach((card) => card.classList.remove("active"));
+  }
+
+  function animateRouting(block, routing, verdictText) {
+    const fills = {
+      standards: block.querySelector('[data-fill="standards"]'),
+      playbook: block.querySelector('[data-fill="playbook"]'),
+      docs: block.querySelector('[data-fill="docs"]'),
+    };
+    const pcts = {
+      standards: block.querySelector('[data-pct="standards"]'),
+      playbook: block.querySelector('[data-pct="playbook"]'),
+      docs: block.querySelector('[data-pct="docs"]'),
+    };
+    const verdict = block.querySelector(".trace-verdict");
+    const answer = block.querySelector(".answer");
+
+    Object.keys(fills).forEach((key) => {
+      fills[key].style.width = "0%";
+      pcts[key].textContent = "—";
+      cards[key].classList.remove("active");
+    });
+    verdict.classList.remove("show");
+    answer.classList.remove("show");
+    verdict.textContent = verdictText;
+
+    const keys = ["standards", "playbook", "docs"];
+    let i = 0;
+    function step() {
+      if (i >= keys.length) {
+        setTimeout(() => {
+          verdict.classList.add("show");
+          answer.classList.add("show");
+        }, 220);
+        return;
+      }
+      const key = keys[i];
+      const info = routing[key] || { score: 0, active: false };
+      if (info.active) cards[key].classList.add("active");
+      requestAnimationFrame(() => {
+        const score = info.active ? (info.score || 0) : 0;
+        fills[key].style.width = score + "%";
+        pcts[key].textContent = info.active ? score + "%" : "—";
+      });
+      i += 1;
+      setTimeout(step, 360);
+    }
+    step();
+  }
+
+  function sourceRows(sources) {
+    if (!sources || !sources.length) {
+      return `<div class="cite-row"><span class="src">${escapeHtml(t("noSources"))}</span></div>`;
+    }
+    return sources.map((src) => {
+      const flag = trackFlag(src.track);
+      return `
+        <div class="cite-row">
+          <span class="num">${src.index}</span>
+          <span class="track-flag" style="background:${flag.bg};color:${flag.color};">${flag.label}</span>
+          <span class="src">${escapeHtml(src.title || src.url || "")}</span>
+        </div>`;
+    }).join("");
+  }
+
+  function sectionBlocks(sections) {
+    if (!sections || !sections.length) {
+      return `<div class="section">
+        <div class="section-tag" style="--sc: var(--docs); --scbg: var(--docs-soft);">${escapeHtml(t("answer"))}</div>
+        <div class="section-body"><p>${escapeHtml(t("noAnswer"))}</p></div>
+      </div>`;
+    }
+    return sections.map((section) => {
+      const style = SECTION_STYLE[section.key] || SECTION_STYLE.product;
+      return `
+        <div class="section">
+          <div class="section-tag" style="--sc: ${style.color}; --scbg: ${style.bg};">${escapeHtml(section.tag)}</div>
+          <div class="section-body">${section.html}</div>
+        </div>`;
+    }).join("");
+  }
+
+  function followupButtons(items) {
+    if (!items || !items.length) return "";
+    return `<div class="followups">${items.map((q, i) =>
+      `<button class="followup-btn" type="button" data-followup="${i}">${escapeHtml(q)}</button>`
+    ).join("")}</div>`;
+  }
+
+  function escapeHtml(text) {
+    return String(text)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;");
+  }
+
+  function appendTurn(question, payload) {
+    const empty = document.getElementById("emptyState");
+    if (empty) empty.remove();
+
+    const user = document.createElement("div");
+    user.className = "msg-user";
+    user.innerHTML = `<div class="msg-user-bubble">${escapeHtml(question)}</div>`;
+    thread.appendChild(user);
+
+    const assistant = document.createElement("div");
+    assistant.className = "msg-assistant";
+
+    if (payload.error) {
+      assistant.innerHTML = `<div class="error-box">${escapeHtml(payload.error)}</div>`;
+      thread.appendChild(assistant);
+      thread.scrollTop = thread.scrollHeight;
+      return;
+    }
+
+    const cap = payload.capability
+      ? ` · ${t("capability")}: ${payload.capability}`
+      : "";
+    const verdictText = `${payload.track || "—"}${cap}`;
+    const lanes = t("lane");
+    assistant.innerHTML = `
+      <div class="trace">
+        <div class="trace-head">
+          <span class="trace-title">${escapeHtml(t("routingTrace"))}</span>
+          <span class="trace-verdict">${escapeHtml(verdictText)}</span>
+        </div>
+        <div class="lane">
+          <span class="lane-label" style="--lc: var(--standards);">${escapeHtml(lanes.standards)}</span>
+          <div class="lane-track"><div class="lane-fill" data-fill="standards" style="--lc: var(--standards);"></div></div>
+          <span class="lane-pct" data-pct="standards">—</span>
+        </div>
+        <div class="lane">
+          <span class="lane-label" style="--lc: var(--playbook);">${escapeHtml(lanes.playbook)}</span>
+          <div class="lane-track"><div class="lane-fill" data-fill="playbook" style="--lc: var(--playbook);"></div></div>
+          <span class="lane-pct" data-pct="playbook">—</span>
+        </div>
+        <div class="lane">
+          <span class="lane-label" style="--lc: var(--docs);">${escapeHtml(lanes.docs)}</span>
+          <div class="lane-track"><div class="lane-fill" data-fill="docs" style="--lc: var(--docs);"></div></div>
+          <span class="lane-pct" data-pct="docs">—</span>
+        </div>
+      </div>
+      <div class="answer">
+        ${sectionBlocks(payload.sections)}
+        <div class="cite-list">${sourceRows(payload.sources)}</div>
+        ${followupButtons(payload.suggested_followups)}
+      </div>
+    `;
+    thread.appendChild(assistant);
+
+    assistant.querySelectorAll("[data-followup]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const idx = Number(btn.getAttribute("data-followup"));
+        const q = (payload.suggested_followups || [])[idx];
+        if (q) ask(q);
+      });
+    });
+
+    animateRouting(assistant, payload.routing || {}, verdictText);
+    thread.scrollTop = thread.scrollHeight;
+  }
+
+  async function ask(question) {
+    const q = (question || "").trim();
+    if (!q || state.busy) return;
+    state.busy = true;
+    sendBtn.disabled = true;
+    sendBtn.textContent = t("running");
+    resetRail();
+
+    try {
+      const res = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: q,
+          corpus: corpusSelect.value,
+          answer_lang: resolveAnswerLang(),
+          session_id: state.sessionId,
+          top_k: 3,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        appendTurn(q, { error: data.detail || `Request failed (${res.status})` });
+      } else {
+        if (data.session_id) {
+          state.sessionId = data.session_id;
+          localStorage.setItem("hybrid_rag_session", data.session_id);
+        }
+        appendTurn(q, data);
+      }
+    } catch (err) {
+      appendTurn(q, { error: String(err) });
+    } finally {
+      state.busy = false;
+      sendBtn.disabled = false;
+      sendBtn.textContent = t("run");
+      input.value = "";
+      input.focus();
+    }
+  }
+
+  async function clearSession() {
+    if (state.sessionId) {
+      try {
+        await fetch(`/api/session/clear?session_id=${encodeURIComponent(state.sessionId)}`, {
+          method: "POST",
+        });
+      } catch (_) { /* ignore */ }
+    }
+    state.sessionId = null;
+    localStorage.removeItem("hybrid_rag_session");
+    thread.innerHTML = `<div class="empty-state" id="emptyState" data-i18n="empty">${escapeHtml(t("empty"))}</div>`;
+    resetRail();
+  }
+
+  sendBtn.addEventListener("click", () => ask(input.value));
+  clearBtn.addEventListener("click", clearSession);
+  refreshExamplesBtn.addEventListener("click", () => loadExamples({ refresh: true }));
+  langEnBtn.addEventListener("click", () => setUiLang("en"));
+  langZhBtn.addEventListener("click", () => setUiLang("zh"));
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      ask(input.value);
+    }
+  });
+
+  applyStaticI18n();
+  loadStatus();
+  input.focus();
+</script>
+</body>
+</html>

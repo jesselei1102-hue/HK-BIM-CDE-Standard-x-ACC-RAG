@@ -1,8 +1,10 @@
-{"id": "pb_folder", "query": "实施手册推荐的 CDE 四容器目录配置原则", "expect_track": "playbook", "expect_capability_contains": "folder"}
-{"id": "pb_naming", "query": "实施手册里命名规范推荐字段怎么配", "expect_track": "playbook", "expect_capability_contains": "naming"}
-{"id": "pb_workflow_gap", "query": "审批通过后能不能自动迁夹 推荐配置怎么说", "expect_track": "playbook", "expect_capability_contains": "workflow"}
-{"id": "pb_permissions", "query": "实施手册里各专业隔离的权限矩阵推荐默认", "expect_track": "playbook", "expect_capability_contains": "permission"}
-{"id": "pb_pir", "query": "OIR PIR EIR 信息要求落地 实施建议", "expect_track": "playbook", "expect_capability_contains": "information"}
-{"id": "pb_overview", "query": "对齐表有哪些缺口 推荐配置", "expect_track": "playbook", "expect_capability_contains": "overview"}
+{"id": "pb_buildings_folder", "query": "HK CDE Spec Buildings 文件夹和权限矩阵怎么配", "expect_track": "playbook", "expect_capability_contains": "folders_permissions"}
+{"id": "pb_buildings_naming", "query": "Buildings九段命名 Revision 能不能写进文件名 推荐配置", "expect_track": "playbook", "expect_capability_contains": "naming"}
+{"id": "pb_buildings_wfc", "query": "Buildings WF-C BD提交强制检查表有哪些 项目说明书", "expect_track": "playbook", "expect_capability_contains": "bd"}
+{"id": "pb_civil_folder", "query": "Civil项目 By Section 和 LandsD 目录怎么建 推荐配置", "expect_track": "playbook", "expect_capability_contains": "civil_folders"}
+{"id": "pb_civil_naming", "query": "Civil命名 Building 字段如何对应区段码", "expect_track": "playbook", "expect_capability_contains": "civil_naming"}
+{"id": "pb_civil_landsd", "query": "Civil WF-C LandsD 缺 PROJECT_BOUNDARY 能否通过 项目说明书", "expect_track": "playbook", "expect_capability_contains": "landsd"}
+{"id": "pb_owner_wip", "query": "项目说明书里 Owner 能不能看 WIP 推荐配置", "expect_track": "playbook", "expect_capability_contains": "wip"}
+{"id": "pb_emsd_midp", "query": "Buildings EMSD 和 MIDP 怎么控制移交 推荐配置", "expect_track": "playbook", "expect_capability_contains": "emsd"}
 {"id": "hy_folder_pb", "query": "How do I set up ACC Docs folder structure to align with HK standard", "expect_track": "hybrid", "expect_capability": "folder"}
 {"id": "hy_workflow_pb", "query": "怎么做一个符合ISO 19650要求的审批流", "expect_track": "hybrid", "expect_capability": "workflow"}

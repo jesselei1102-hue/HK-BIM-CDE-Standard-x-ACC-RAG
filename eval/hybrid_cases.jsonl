@@ -13,3 +13,6 @@
 {"id": "hy_force_shape", "query": "按CIC标准配置Docs审批工作流", "expect_track": "hybrid", "expect_capability": "workflow"}
 {"id": "hy_permissions", "query": "按港标要求在ACC配置文件夹权限", "expect_track": "hybrid", "expect_capability": "permissions"}
 {"id": "docs_model_viewer", "query": "如何用Model Browser过滤模型属性", "expect_track": "docs", "expect_capability": "model_viewer"}
+{"id": "hy_bim_manager_roles", "query": "BIM Manager的责任是什么？在ACC上他需要使用哪些功能", "expect_track": "hybrid", "expect_capability": "roles"}
+{"id": "hy_buildings_naming_spec", "query": "Buildings九段命名标准在ACC怎么落地", "expect_track": "hybrid", "expect_capability": "naming"}
+{"id": "hy_civil_landsd", "query": "按港标在ACC配置Civil LandsD提交目录和审批", "expect_track": "hybrid", "expect_capability": "workflow"}

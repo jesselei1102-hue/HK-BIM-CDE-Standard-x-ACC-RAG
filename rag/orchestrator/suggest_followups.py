@@ -46,6 +46,11 @@ _CAPABILITY_FOLLOWUPS: dict[str, dict[str, tuple[str, ...]]] = {
             "What are common Viewer Settings options?",
             "How do I review a federated model by discipline?",
         ),
+        "roles": (
+            "How does BIM Manager map to ACC Project Admin?",
+            "What Information Manager duties are in CICBIMS?",
+            "Which ACC tools should a BIM Manager use day to day?",
+        ),
     },
     "zh-Hans": {
         "folder": (
@@ -83,6 +88,11 @@ _CAPABILITY_FOLLOWUPS: dict[str, dict[str, tuple[str, ...]]] = {
             "Viewer Settings 有哪些常用选项？",
             "联邦模型审查时怎么按专业查看？",
         ),
+        "roles": (
+            "BIM Manager 如何对应 ACC Project Admin？",
+            "CICBIMS 里 Information Manager 职责有哪些？",
+            "BIM Manager 日常该用 ACC 哪些功能？",
+        ),
     },
     "zh-Hant": {
         "folder": (
@@ -119,6 +129,11 @@ _CAPABILITY_FOLLOWUPS: dict[str, dict[str, tuple[str, ...]]] = {
             "Model Browser 怎麼過濾 RVT / IFC 屬性？",
             "Viewer Settings 有哪些常用選項？",
             "聯邦模型審查時怎麼按專業查看？",
+        ),
+        "roles": (
+            "BIM Manager 如何對應 ACC Project Admin？",
+            "CICBIMS 裡 Information Manager 職責有哪些？",
+            "BIM Manager 日常該用 ACC 哪些功能？",
         ),
     },
 }
